@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Shop TM Marchant</title>
+<title>Digital Shop TM Merchant</title>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -11,29 +11,30 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Hind Siliguri',sans-serif;background:#f8fafb;color:var(--dark);overflow-x:hidden}
 .page{display:none}.page.active{display:block}
-.navbar{background:var(--white);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,0.07);position:sticky;top:0;z-index:100}
+.navbar{background:var(--white);padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,0.07);position:sticky;top:0;z-index:100}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
-.logo-icon{width:40px;height:40px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:18px}
-.logo-text{font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;color:var(--dark);line-height:1.1}
-.logo-text span{color:var(--primary)}.logo-sub{font-size:10px;color:var(--gray)}
+.logo img{height:48px;width:auto;object-fit:contain}
 .nav-btns{display:flex;gap:10px}
-.btn{padding:9px 20px;border-radius:var(--radius-sm);font-family:'Hind Siliguri',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s}
+.btn{padding:9px 20px;border-radius:var(--radius-sm);font-family:'Hind Siliguri',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
 .btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
 .btn-outline:hover{background:var(--primary);color:white}
 .btn-primary{background:var(--primary);color:white}
 .btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px)}
 .btn-danger{background:var(--danger);color:white}.btn-danger:hover{background:#dc2626}
 .btn-warning{background:var(--warning);color:white}
+.btn-success{background:var(--primary);color:white}
 .btn-sm{padding:6px 14px;font-size:13px}
-.hero{background:linear-gradient(135deg,#00a651 0%,#007a3d 50%,#004d26 100%);color:white;padding:80px 24px;text-align:center;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.05) 0%,transparent 60%);animation:pulse 4s ease-in-out infinite}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.hero h1{font-family:'Poppins',sans-serif;font-size:42px;font-weight:800;margin-bottom:16px;position:relative}
-.hero p{font-size:18px;opacity:0.9;margin-bottom:32px;position:relative}
-.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;position:relative}
-.btn-white{background:white;color:var(--primary);font-weight:700;padding:14px 32px;border-radius:10px;border:none;cursor:pointer;font-family:'Hind Siliguri',sans-serif;font-size:16px;transition:all 0.2s}
-.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
-.btn-ghost{background:transparent;color:white;border:2px solid rgba(255,255,255,0.6);padding:12px 30px;border-radius:10px;cursor:pointer;font-family:'Hind Siliguri',sans-serif;font-size:16px;font-weight:600;transition:all 0.2s}
+.hero{background:#111;position:relative;overflow:hidden;min-height:400px;display:flex;align-items:center}
+.hero-banner-img{width:100%;height:420px;object-fit:cover;display:block}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.2) 60%,transparent 100%);display:flex;align-items:center;padding:0 60px}
+.hero-text{color:white;max-width:520px}
+.hero-text h1{font-family:'Poppins',sans-serif;font-size:40px;font-weight:800;margin-bottom:14px;line-height:1.2}
+.hero-text h1 span{color:#4ade80}
+.hero-text p{font-size:17px;opacity:0.85;margin-bottom:28px;line-height:1.6}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn-white{background:white;color:var(--primary);font-weight:700;padding:13px 28px;border-radius:10px;border:none;cursor:pointer;font-family:'Hind Siliguri',sans-serif;font-size:15px;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.25)}
+.btn-ghost{background:transparent;color:white;border:2px solid rgba(255,255,255,0.6);padding:11px 26px;border-radius:10px;cursor:pointer;font-family:'Hind Siliguri',sans-serif;font-size:15px;font-weight:600;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
 .btn-ghost:hover{background:rgba(255,255,255,0.15);border-color:white}
 .features{padding:60px 24px;max-width:1100px;margin:0 auto}
 .features h2{text-align:center;font-family:'Poppins',sans-serif;font-size:28px;font-weight:700;margin-bottom:40px}
@@ -45,7 +46,7 @@ body{font-family:'Hind Siliguri',sans-serif;background:#f8fafb;color:var(--dark)
 .feature-card p{font-size:13px;color:var(--gray);line-height:1.6}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.active{display:flex}
-.modal{background:white;border-radius:16px;padding:32px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;position:relative;animation:modalIn 0.3s ease}
+.modal{background:white;border-radius:16px;padding:32px;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;position:relative;animation:modalIn 0.3s ease}
 @keyframes modalIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
 .modal-close{position:absolute;top:16px;right:16px;background:var(--light-gray);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
 .modal-icon{width:64px;height:64px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--primary)}
@@ -54,25 +55,30 @@ body{font-family:'Hind Siliguri',sans-serif;background:#f8fafb;color:var(--dark)
 .form-group{margin-bottom:14px}
 .form-group label{display:block;font-size:13px;font-weight:600;color:var(--dark);margin-bottom:6px}
 .input-wrap{position:relative}
-.input-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:14px;pointer-events:none}
-.input-wrap input,.input-wrap textarea{width:100%;padding:11px 12px 11px 36px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'Hind Siliguri',sans-serif;font-size:14px;transition:border-color 0.2s;outline:none}
-.input-wrap input:focus,.input-wrap textarea:focus{border-color:var(--primary)}
+.input-wrap i.ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:14px;pointer-events:none}
+.input-wrap i.ico-top{position:absolute;left:12px;top:14px;color:var(--gray);font-size:14px;pointer-events:none}
+.input-wrap input,.input-wrap select,.input-wrap textarea{width:100%;padding:11px 12px 11px 36px;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:'Hind Siliguri',sans-serif;font-size:14px;transition:border-color 0.2s;outline:none;background:white}
+.input-wrap input:focus,.input-wrap select:focus,.input-wrap textarea:focus{border-color:var(--primary)}
 .input-wrap textarea{padding-top:10px;height:70px;resize:none}
+.input-wrap select{appearance:none;cursor:pointer}
 .form-full{grid-column:1/-1}
-.btn-block{width:100%;padding:13px;font-size:16px;border-radius:var(--radius-sm);margin-top:8px}
+.btn-block{width:100%;padding:13px;font-size:16px;border-radius:var(--radius-sm);margin-top:8px;justify-content:center}
 .terms-wrap{display:flex;align-items:flex-start;gap:10px;margin:10px 0;font-size:13px;color:var(--gray)}
 .terms-wrap input[type="checkbox"]{margin-top:2px;width:16px;height:16px;cursor:pointer;accent-color:var(--primary)}
 .terms-link{color:var(--primary);cursor:pointer;font-weight:600;text-decoration:underline}
-.terms-modal{max-width:700px}
 .terms-content{font-size:13px;line-height:1.8;color:#374151;max-height:400px;overflow-y:auto;padding-right:8px}
 .terms-content h3{font-size:15px;color:var(--dark);margin:16px 0 8px}
 .terms-content p{margin-bottom:10px}
+.err-box{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}
 .dashboard-layout{display:flex;min-height:100vh}
 .sidebar{width:240px;background:var(--dark);color:white;padding:0;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:50;transition:transform 0.3s}
-.sidebar-header{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:12px}
-.sidebar-avatar{width:48px;height:48px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0}
-.sidebar-name{font-size:14px;font-weight:600;line-height:1.3}
-.sidebar-id{font-size:11px;color:rgba(255,255,255,0.5)}
+.sb-header{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sb-logo{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.sb-logo img{height:36px;border-radius:6px}
+.sb-user{display:flex;align-items:center;gap:10px}
+.sb-avatar{width:44px;height:44px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0}
+.sb-name{font-size:14px;font-weight:600;line-height:1.3}
+.sb-id{font-size:11px;color:rgba(255,255,255,0.5)}
 .sidebar-menu{padding:12px 0}
 .sidebar-label{font-size:10px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:1px;padding:12px 16px 6px;text-transform:uppercase}
 .sidebar-item{display:flex;align-items:center;gap:12px;padding:11px 16px;color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.2s;font-size:14px;border-left:3px solid transparent}
@@ -86,16 +92,16 @@ body{font-family:'Hind Siliguri',sans-serif;background:#f8fafb;color:var(--dark)
 .topbar-icon-btn{width:36px;height:36px;background:var(--light-gray);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray);font-size:15px;position:relative}
 .badge{position:absolute;top:-4px;right:-4px;background:var(--danger);color:white;font-size:9px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
 .content-area{padding:24px}
-.status-banner{background:linear-gradient(135deg,#fff7ed,#fed7aa);border:2px solid #f59e0b;border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.status-banner{border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:24px;background:linear-gradient(135deg,#fff7ed,#fed7aa);border:2px solid #f59e0b}
 .status-banner.approved{background:linear-gradient(135deg,#f0fdf4,#bbf7d0);border-color:var(--primary)}
-.status-banner.rejected-status{background:linear-gradient(135deg,#fef2f2,#fecaca);border-color:var(--danger)}
+.status-banner.rejected-s{background:linear-gradient(135deg,#fef2f2,#fecaca);border-color:var(--danger)}
 .status-banner-icon{font-size:32px}
-.status-banner h3{font-size:16px;font-weight:700;color:#92400e;margin-bottom:4px}
-.status-banner.approved h3{color:var(--primary-dark)}
-.status-banner.rejected-status h3{color:#991b1b}
-.status-banner p{font-size:13px;color:#78350f}
-.status-banner.approved p{color:#166534}
-.status-banner.rejected-status p{color:#991b1b}
+.sb-title{font-size:16px;font-weight:700;color:#92400e;margin-bottom:4px}
+.approved .sb-title{color:var(--primary-dark)}
+.rejected-s .sb-title{color:#991b1b}
+.sb-desc{font-size:13px;color:#78350f}
+.approved .sb-desc{color:#166534}
+.rejected-s .sb-desc{color:#991b1b}
 .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
 .stat-card{background:white;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border-left:4px solid var(--primary)}
 .stat-card.orange{border-left-color:var(--accent)}.stat-card.blue{border-left-color:var(--info)}.stat-card.red{border-left-color:var(--danger)}
@@ -109,74 +115,88 @@ body{font-family:'Hind Siliguri',sans-serif;background:#f8fafb;color:var(--dark)
 .bg-green{background:#dcfce7;color:#16a34a}.bg-blue{background:#dbeafe;color:#2563eb}.bg-orange{background:#ffedd5;color:#ea580c}
 .bg-purple{background:#ede9fe;color:#7c3aed}.bg-red{background:#fee2e2;color:#dc2626}.bg-teal{background:#ccfbf1;color:#0d9488}
 .bg-yellow{background:#fef9c3;color:#ca8a04}.bg-pink{background:#fce7f3;color:#db2777}.bg-indigo{background:#e0e7ff;color:#4338ca}.bg-gray{background:#f3f4f6;color:#6b7280}
-.dash-card h4{font-size:13px;font-weight:600;color:var(--dark)}.dash-card .lock-icon{font-size:10px;color:var(--gray);margin-top:4px}
-.table-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-top:0}
+.dash-card h4{font-size:13px;font-weight:600;color:var(--dark)}
+.dash-card .lock-icon{font-size:10px;color:var(--gray);margin-top:4px}
+.table-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 table{width:100%;border-collapse:collapse}
 th{background:var(--light-gray);padding:12px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px}
-td{padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px}
+td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:14px}
 tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 .status-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
-.status-pending{background:#fef9c3;color:#854d0e}.status-active{background:#dcfce7;color:#166534}.status-rejected{background:#fee2e2;color:#991b1b}
-.merchant-detail{padding:4px 0}
+.s-pending{background:#fef9c3;color:#854d0e}.s-active{background:#dcfce7;color:#166634}.s-rejected{background:#fee2e2;color:#991b1b}
+.s-published{background:#dbeafe;color:#1d4ed8}.s-confirmed{background:#dcfce7;color:#166534}
 .detail-row{display:flex;margin-bottom:12px;gap:8px}
-.detail-label{font-size:13px;color:var(--gray);min-width:140px;font-weight:600}
+.detail-label{font-size:13px;color:var(--gray);min-width:150px;font-weight:600}
 .detail-value{font-size:13px;color:var(--dark)}
 .action-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:white;padding:14px 20px;border-radius:var(--radius-sm);font-size:14px;z-index:9999;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg);transform:translateY(100px);opacity:0;transition:all 0.3s;max-width:300px}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.success{background:var(--primary)}.toast.error{background:var(--danger)}.toast.warning{background:var(--warning)}
-.section-heading{font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.section-heading::after{content:'';flex:1;height:2px;background:var(--border)}
+.sec-heading{font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sec-heading::after{content:'';flex:1;height:2px;background:var(--border)}
 .loader{text-align:center;padding:40px;color:var(--gray)}
 .loader i{font-size:28px;animation:spin 1s linear infinite;color:var(--primary);display:block;margin-bottom:12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty-state{text-align:center;padding:40px 20px;color:var(--gray)}
 .empty-state i{font-size:48px;opacity:0.3;display:block;margin-bottom:12px}
-.empty-state p{font-size:15px}
 .content-section{display:none}.content-section.active{display:block}
 .overlay-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:45}
 .overlay-backdrop.show{display:block}
 .admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
 .admin-stat{background:white;border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);display:flex;align-items:center;gap:16px}
 .admin-stat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.admin-stat-info{flex:1}.admin-stat-value{font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;line-height:1}
+.admin-stat-value{font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;line-height:1}
 .admin-stat-label{font-size:12px;color:var(--gray);margin-top:4px}
 .white-card{background:white;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
-@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main-content{margin-left:0}.form-row{grid-template-columns:1fr}.hero h1{font-size:28px}.dashboard-grid{grid-template-columns:repeat(3,1fr)}}
+.img-preview{width:100%;max-height:160px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-top:8px;display:none}
+.sks-badge{background:#e0e7ff;color:#4338ca;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;font-family:'Poppins',sans-serif;letter-spacing:1px}
+.search-bar{position:relative;margin-bottom:16px}
+.search-bar input{width:100%;padding:10px 12px 10px 38px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:'Hind Siliguri',sans-serif;outline:none}
+.search-bar input:focus{border-color:var(--primary)}
+.search-bar i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray)}
+.prod-img-thumb{width:44px;height:44px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
+.specs-label{color:var(--gray);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px 0 6px;grid-column:1/-1;border-top:1px solid var(--border);margin-top:4px}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .main-content{margin-left:0}.form-row{grid-template-columns:1fr}
+  .hero-overlay{padding:0 20px}.hero-text h1{font-size:24px}.hero-text p{font-size:15px}
+  .dashboard-grid{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
 <body>
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <div id="page-home" class="page active">
   <nav class="navbar">
     <a class="logo" href="#">
-      <div class="logo-icon"><i class="fas fa-store"></i></div>
-      <div>
-        <div class="logo-text">Digital Shop <span>TM</span></div>
-        <div class="logo-sub">Marchant Platform</div>
-      </div>
+      <img src="ko.jpeg" alt="Digital Shop TM" onerror="this.outerHTML='<span style=\'font-family:Poppins,sans-serif;font-weight:800;font-size:18px;color:#00a651\'>Digital Shop TM</span>'">
     </a>
     <div class="nav-btns">
-      <button class="btn btn-outline" id="nav-login-btn">লগইন</button>
-      <button class="btn btn-primary" id="nav-signup-btn">সাইন আপ</button>
+      <button class="btn btn-outline" id="nav-login-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <button class="btn btn-primary" id="nav-signup-btn"><i class="fas fa-user-plus"></i> Sign Up</button>
     </div>
   </nav>
   <div class="hero">
-    <h1>🛒 আপনার ব্যবসা শুরু করুন<br>Digital Shop TM তে</h1>
-    <p>লক্ষাধিক ক্রেতার কাছে আপনার পণ্য পৌঁছে দিন।<br>আজই মার্চেন্ট হিসেবে যোগ দিন!</p>
-    <div class="hero-btns">
-      <button class="btn-white" id="hero-signup-btn"><i class="fas fa-rocket"></i> এখনই শুরু করুন</button>
-      <button class="btn-ghost" id="hero-login-btn"><i class="fas fa-sign-in-alt"></i> লগইন করুন</button>
+    <img src="orjo.png" class="hero-banner-img" alt="Banner" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#0f172a,#052e16)';this.parentElement.style.minHeight='400px'">
+    <div class="hero-overlay">
+      <div class="hero-text">
+        <h1>Grow Your Business<br>with <span>Digital Shop TM</span></h1>
+        <p>Reach millions of buyers. Publish your products and manage orders easily from one dashboard.</p>
+        <div class="hero-btns">
+          <button class="btn-white" id="hero-signup-btn"><i class="fas fa-rocket"></i> Start Now</button>
+          <button class="btn-ghost" id="hero-login-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="features">
-    <h2>কেন Digital Shop TM বেছে নেবেন?</h2>
+    <h2>Why Choose Digital Shop TM?</h2>
     <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon"><i class="fas fa-box"></i></div><h3>সহজ পণ্য পাবলিশ</h3><p>মাত্র কয়েক মিনিটে আপনার পণ্য অনলাইনে প্রকাশ করুন</p></div>
-      <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3>বিক্রয় ট্র্যাকিং</h3><p>রিয়েল টাইমে আপনার অর্ডার ও বিক্রয় পর্যবেক্ষণ করুন</p></div>
-      <div class="feature-card"><div class="feature-icon"><i class="fas fa-shield-alt"></i></div><h3>নিরাপদ পেমেন্ট</h3><p>দ্রুত ও নিরাপদ পেমেন্ট সিস্টেমে অর্থ উত্তোলন করুন</p></div>
-      <div class="feature-card"><div class="feature-icon"><i class="fas fa-headset"></i></div><h3>২৪/৭ সাপোর্ট</h3><p>যেকোনো সমস্যায় আমাদের সাপোর্ট টিম সর্বদা প্রস্তুত</p></div>
+      <div class="feature-card"><div class="feature-icon"><i class="fas fa-box"></i></div><h3>Easy Publishing</h3><p>Publish products online in just a few minutes with SKS tracking ID.</p></div>
+      <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3>Sales Tracking</h3><p>Monitor your orders and sales in real time from dashboard.</p></div>
+      <div class="feature-card"><div class="feature-icon"><i class="fas fa-shield-alt"></i></div><h3>Secure Payments</h3><p>Fast and secure payment withdrawal system.</p></div>
+      <div class="feature-card"><div class="feature-icon"><i class="fas fa-headset"></i></div><h3>24/7 Support</h3><p>Our support team is always ready to help you anytime.</p></div>
     </div>
   </div>
 </div>
@@ -185,112 +205,175 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 <div id="page-user-dashboard" class="page">
   <div class="overlay-backdrop" id="sidebar-backdrop"></div>
   <div class="sidebar" id="user-sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-avatar"><i class="fas fa-user"></i></div>
-      <div>
-        <div class="sidebar-name" id="sidebar-username">মার্চেন্ট</div>
-        <div class="sidebar-id" id="sidebar-uid">ID: ---</div>
+    <div class="sb-header">
+      <div class="sb-logo"><img src="ko.jpeg" alt="Logo" onerror="this.style.display='none'"><span style="font-size:13px;font-weight:700;color:white">Digital Shop TM</span></div>
+      <div class="sb-user">
+        <div class="sb-avatar"><i class="fas fa-user"></i></div>
+        <div><div class="sb-name" id="sidebar-username">Merchant</div><div class="sb-id" id="sidebar-uid">ID: ---</div></div>
       </div>
     </div>
     <div class="sidebar-menu">
-      <div class="sidebar-label">প্রধান মেনু</div>
-      <div class="sidebar-item active" data-section="dashboard"><i class="fas fa-th-large"></i> ড্যাশবোর্ড</div>
-      <div class="sidebar-item" data-section="add-product"><i class="fas fa-plus-circle"></i> পণ্য যোগ করুন</div>
-      <div class="sidebar-item" data-section="my-products"><i class="fas fa-boxes"></i> পাবলিশ করা পণ্য</div>
-      <div class="sidebar-item" data-section="orders"><i class="fas fa-shopping-bag"></i> অর্ডার</div>
-      <div class="sidebar-item" data-section="track-parcel"><i class="fas fa-map-marker-alt"></i> পার্সেল ট্র্যাক</div>
-      <div class="sidebar-label">আর্থিক</div>
-      <div class="sidebar-item" data-section="withdraw"><i class="fas fa-wallet"></i> উত্তোলন</div>
-      <div class="sidebar-item" data-section="add-money"><i class="fas fa-plus"></i> এড মানি</div>
-      <div class="sidebar-label">অন্যান্য</div>
-      <div class="sidebar-item" data-section="pickup"><i class="fas fa-map-pin"></i> পিকআপ এড্রেস</div>
-      <div class="sidebar-item" data-section="delivery"><i class="fas fa-truck"></i> নিজে ডেলিভারি</div>
-      <div class="sidebar-item" data-section="returns"><i class="fas fa-undo"></i> রিটার্ন</div>
-      <div class="sidebar-item" data-section="support"><i class="fas fa-headset"></i> সাপোর্ট</div>
-      <div class="sidebar-label">অ্যাকাউন্ট</div>
-      <div class="sidebar-item" id="user-logout-btn"><i class="fas fa-sign-out-alt"></i> লগআউট</div>
+      <div class="sidebar-label">Main Menu</div>
+      <div class="sidebar-item active" data-section="dashboard"><i class="fas fa-th-large"></i> Dashboard</div>
+      <div class="sidebar-item" data-section="add-product"><i class="fas fa-plus-circle"></i> Add Product</div>
+      <div class="sidebar-item" data-section="my-products"><i class="fas fa-boxes"></i> Published Products</div>
+      <div class="sidebar-item" data-section="orders"><i class="fas fa-shopping-bag"></i> Orders</div>
+      <div class="sidebar-item" data-section="track-parcel"><i class="fas fa-map-marker-alt"></i> Track Parcel</div>
+      <div class="sidebar-label">Financial</div>
+      <div class="sidebar-item" data-section="withdraw"><i class="fas fa-wallet"></i> Withdraw</div>
+      <div class="sidebar-item" data-section="add-money"><i class="fas fa-plus"></i> Add Money</div>
+      <div class="sidebar-label">Others</div>
+      <div class="sidebar-item" data-section="pickup"><i class="fas fa-map-pin"></i> Pickup Address</div>
+      <div class="sidebar-item" data-section="delivery"><i class="fas fa-truck"></i> Self Delivery</div>
+      <div class="sidebar-item" data-section="returns"><i class="fas fa-undo"></i> Return</div>
+      <div class="sidebar-item" data-section="support"><i class="fas fa-headset"></i> Support</div>
+      <div class="sidebar-label">Account</div>
+      <div class="sidebar-item" id="user-logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</div>
     </div>
   </div>
   <div class="main-content">
     <div class="topbar">
       <div class="topbar-left">
         <button class="topbar-icon-btn" id="sidebar-toggle"><i class="fas fa-bars"></i></button>
-        <span class="topbar-title" id="topbar-title">ড্যাশবোর্ড</span>
+        <span class="topbar-title" id="topbar-title">Dashboard</span>
       </div>
       <div class="topbar-right">
-        <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge" id="notif-badge" style="display:none">1</span></button>
-        <button class="btn btn-sm btn-danger" id="user-logout-btn2"><i class="fas fa-sign-out-alt"></i> লগআউট</button>
+        <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge" id="notif-badge" style="display:none">!</span></button>
       </div>
     </div>
     <div class="content-area">
+
       <div id="section-dashboard" class="content-section active">
         <div id="approval-banner"></div>
         <div id="user-stats-row" class="stats-row"></div>
-        <div class="section-heading">দ্রুত অ্যাকশন</div>
+        <div class="sec-heading">Quick Actions</div>
         <div id="user-dash-grid" class="dashboard-grid"></div>
       </div>
+
       <div id="section-add-product" class="content-section">
-        <div class="section-heading">পণ্য যোগ করুন</div>
+        <div class="sec-heading">Add Product</div>
         <div class="white-card">
-          <div id="add-product-locked" style="display:none"><div class="empty-state"><i class="fas fa-lock"></i><p>একাউন্ট অ্যাপ্রুভালের পর এই ফিচার ব্যবহার করা যাবে।</p></div></div>
+          <div id="add-product-locked" style="display:none"><div class="empty-state"><i class="fas fa-lock"></i><p>This feature is available after account approval.</p></div></div>
           <div id="add-product-form">
             <div class="form-row">
-              <div class="form-group"><label>পণ্যের নাম</label><div class="input-wrap"><i class="fas fa-tag"></i><input type="text" id="prod-name" placeholder="পণ্যের নাম"></div></div>
-              <div class="form-group"><label>মূল্য (টাকা)</label><div class="input-wrap"><i class="fas fa-bangladeshi-taka-sign"></i><input type="number" id="prod-price" placeholder="০.০০"></div></div>
-              <div class="form-group form-full"><label>বিবরণ</label><div class="input-wrap"><i class="fas fa-align-left" style="top:18px"></i><textarea id="prod-desc" placeholder="পণ্যের বিবরণ"></textarea></div></div>
-              <div class="form-group"><label>ক্যাটাগরি</label><div class="input-wrap"><i class="fas fa-list"></i><input type="text" id="prod-cat" placeholder="ক্যাটাগরি"></div></div>
-              <div class="form-group"><label>স্টক</label><div class="input-wrap"><i class="fas fa-cubes"></i><input type="number" id="prod-stock" placeholder="স্টক পরিমাণ"></div></div>
+              <div class="form-group form-full">
+                <label>SKS ID (Auto Generated - Unique)</label>
+                <div class="input-wrap"><i class="fas fa-barcode ico"></i><input type="text" id="prod-sks" readonly style="background:#f3f4f6;color:#7c3aed;font-weight:700"></div>
+              </div>
+              <div class="form-group"><label>Product Name *</label><div class="input-wrap"><i class="fas fa-tag ico"></i><input type="text" id="prod-name" placeholder="Product name"></div></div>
+              <div class="form-group"><label>Price (৳) *</label><div class="input-wrap"><i class="fas fa-coins ico"></i><input type="number" id="prod-price" placeholder="0.00"></div></div>
+              <div class="form-group form-full">
+                <label>Category *</label>
+                <div class="input-wrap"><i class="fas fa-list ico"></i>
+                  <select id="prod-cat">
+                    <option value="">-- Select Category --</option>
+                    <option>Electronics</option><option>Mobile &amp; Accessories</option>
+                    <option>Computers &amp; Laptops</option><option>Gaming</option>
+                    <option>Clothing &amp; Fashion</option><option>Home &amp; Kitchen</option>
+                    <option>Sports &amp; Fitness</option><option>Books &amp; Education</option>
+                    <option>Health &amp; Beauty</option><option>Toys &amp; Baby</option>
+                    <option>Food &amp; Grocery</option><option>Automotive</option><option>Others</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group form-full">
+                <label>Title / Headline</label>
+                <div class="input-wrap"><i class="fas fa-heading ico"></i>
+                  <select id="prod-title-type">
+                    <option value="">-- Select Title --</option>
+                    <option>New Arrival</option><option>Best Seller</option>
+                    <option>Limited Edition</option><option>Hot Deal</option>
+                    <option>Featured</option><option>Exclusive</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group"><label>Stock *</label><div class="input-wrap"><i class="fas fa-cubes ico"></i><input type="number" id="prod-stock" placeholder="Qty"></div></div>
+              <div class="form-group"><label>Discount (%)</label><div class="input-wrap"><i class="fas fa-percent ico"></i><input type="number" id="prod-discount" placeholder="0"></div></div>
+              <div class="form-group form-full">
+                <label>Product Image URL</label>
+                <div class="input-wrap"><i class="fas fa-image ico"></i><input type="url" id="prod-img-url" placeholder="https://..." oninput="previewImg(this.value)"></div>
+                <img id="prod-img-preview" class="img-preview" alt="Preview">
+              </div>
+              <div class="form-group form-full"><label>Description</label><div class="input-wrap"><i class="fas fa-align-left ico-top"></i><textarea id="prod-desc" placeholder="Product description"></textarea></div></div>
+              <div class="form-group form-full"><label>Search Tags (comma separated)</label><div class="input-wrap"><i class="fas fa-hashtag ico"></i><input type="text" id="prod-tags" placeholder="e.g. phone, samsung, mobile"></div></div>
+              <div class="specs-label">SPECIFICATIONS</div>
+              <div class="form-group"><label>Product Type</label><div class="input-wrap"><i class="fas fa-info-circle ico"></i><input type="text" id="prod-type" placeholder="e.g. Smartphone"></div></div>
+              <div class="form-group"><label>Size / Dimension</label><div class="input-wrap"><i class="fas fa-ruler ico"></i><input type="text" id="prod-size" placeholder="e.g. 6.1 inch"></div></div>
+              <div class="form-group"><label>Material</label><div class="input-wrap"><i class="fas fa-layer-group ico"></i><input type="text" id="prod-material" placeholder="e.g. Aluminum"></div></div>
+              <div class="form-group"><label>Features</label><div class="input-wrap"><i class="fas fa-star ico"></i><input type="text" id="prod-features" placeholder="e.g. Waterproof, 5G"></div></div>
+              <div class="specs-label">DELIVERY</div>
+              <div class="form-group form-full">
+                <label>Delivery Method *</label>
+                <div class="input-wrap"><i class="fas fa-truck ico"></i>
+                  <select id="prod-delivery">
+                    <option value="our">Via Our Courier (Standard)</option>
+                    <option value="self">Self Delivery (৳30 commission deducted)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group"><label>Delivery Charge (৳)</label><div class="input-wrap"><i class="fas fa-money-bill ico"></i><input type="number" id="prod-del-charge" placeholder="60"></div></div>
             </div>
-            <button class="btn btn-primary" id="add-product-btn"><i class="fas fa-plus"></i> পণ্য পাবলিশ করুন</button>
+            <button class="btn btn-primary" id="add-product-btn" style="margin-top:8px"><i class="fas fa-paper-plane"></i> Publish Product</button>
           </div>
         </div>
       </div>
+
       <div id="section-my-products" class="content-section">
-        <div class="section-heading">পাবলিশ করা পণ্য</div>
-        <div class="table-card"><div id="products-table-body"><div class="loader"><i class="fas fa-spinner"></i>লোড হচ্ছে...</div></div></div>
+        <div class="sec-heading">Published Products</div>
+        <div class="table-card"><div id="products-table-body"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
+
       <div id="section-orders" class="content-section">
-        <div class="section-heading">অর্ডার তালিকা</div>
-        <div class="empty-state"><i class="fas fa-shopping-bag"></i><p>এখনো কোনো অর্ডার নেই।</p></div>
+        <div class="sec-heading">Orders</div>
+        <div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet.</p></div>
       </div>
+
       <div id="section-track-parcel" class="content-section">
-        <div class="section-heading">পার্সেল ট্র্যাক করুন</div>
+        <div class="sec-heading">Track Parcel</div>
         <div class="white-card">
-          <div class="form-group"><label>ট্র্যাকিং নম্বর</label><div class="input-wrap"><i class="fas fa-search"></i><input type="text" placeholder="ট্র্যাকিং নম্বর লিখুন"></div></div>
-          <button class="btn btn-primary"><i class="fas fa-search"></i> ট্র্যাক করুন</button>
+          <div class="form-group"><label>Tracking Number / SKS ID</label><div class="input-wrap"><i class="fas fa-search ico"></i><input type="text" id="track-input" placeholder="Enter tracking number"></div></div>
+          <button class="btn btn-primary" onclick="trackParcel()"><i class="fas fa-search"></i> Track</button>
+          <div id="track-result" style="margin-top:20px"></div>
         </div>
       </div>
+
       <div id="section-withdraw" class="content-section">
-        <div class="section-heading">উত্তোলন</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-wallet"></i><p>উত্তোলন ফিচার শীঘ্রই আসছে।</p></div></div>
+        <div class="sec-heading">Withdraw</div>
+        <div class="white-card"><div class="empty-state"><i class="fas fa-wallet"></i><p>Withdraw feature coming soon.</p></div></div>
       </div>
+
       <div id="section-add-money" class="content-section">
-        <div class="section-heading">এড মানি</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-plus-circle"></i><p>এড মানি ফিচার শীঘ্রই আসছে।</p></div></div>
+        <div class="sec-heading">Add Money</div>
+        <div class="white-card"><div class="empty-state"><i class="fas fa-plus-circle"></i><p>Add Money feature coming soon.</p></div></div>
       </div>
+
       <div id="section-pickup" class="content-section">
-        <div class="section-heading">পিকআপ এড্রেস যোগ করুন</div>
+        <div class="sec-heading">Pickup Address</div>
         <div class="white-card">
-          <div class="form-group"><label>পিকআপ ঠিকানা</label><div class="input-wrap"><i class="fas fa-map-marker-alt" style="top:18px"></i><textarea placeholder="সম্পূর্ণ পিকআপ ঠিকানা"></textarea></div></div>
-          <button class="btn btn-primary"><i class="fas fa-save"></i> সেভ করুন</button>
+          <div class="form-group"><label>Pickup Address</label><div class="input-wrap"><i class="fas fa-map-marker-alt ico-top"></i><textarea placeholder="Full pickup address" style="height:80px"></textarea></div></div>
+          <button class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
         </div>
       </div>
+
       <div id="section-delivery" class="content-section">
-        <div class="section-heading">নিজে পার্সেল ডেলিভারি করুন</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-truck"></i><p>এই ফিচার শীঘ্রই আসছে।</p></div></div>
+        <div class="sec-heading">Self Delivery</div>
+        <div class="white-card"><div class="empty-state"><i class="fas fa-truck"></i><p>Self delivery feature coming soon.</p></div></div>
       </div>
+
       <div id="section-returns" class="content-section">
-        <div class="section-heading">রিটার্ন</div>
-        <div class="empty-state"><i class="fas fa-undo"></i><p>কোনো রিটার্ন নেই।</p></div>
+        <div class="sec-heading">Returns</div>
+        <div class="empty-state"><i class="fas fa-undo"></i><p>No returns yet.</p></div>
       </div>
+
       <div id="section-support" class="content-section">
-        <div class="section-heading">সাপোর্ট</div>
+        <div class="sec-heading">Support</div>
         <div class="white-card">
-          <div class="form-group"><label>বিষয়</label><div class="input-wrap"><i class="fas fa-heading"></i><input type="text" placeholder="সমস্যার বিষয়"></div></div>
-          <div class="form-group"><label>বিবরণ</label><div class="input-wrap"><i class="fas fa-comment" style="top:18px"></i><textarea placeholder="বিস্তারিত লিখুন" style="height:100px"></textarea></div></div>
-          <button class="btn btn-primary"><i class="fas fa-paper-plane"></i> পাঠান</button>
+          <div class="form-group"><label>Subject</label><div class="input-wrap"><i class="fas fa-heading ico"></i><input type="text" placeholder="Issue subject"></div></div>
+          <div class="form-group"><label>Description</label><div class="input-wrap"><i class="fas fa-comment ico-top"></i><textarea placeholder="Describe your issue" style="height:100px"></textarea></div></div>
+          <button class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit</button>
         </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -299,69 +382,84 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 <div id="page-admin-dashboard" class="page">
   <div class="overlay-backdrop" id="admin-sidebar-backdrop"></div>
   <div class="sidebar" id="admin-sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-avatar" style="background:#7c3aed"><i class="fas fa-crown"></i></div>
-      <div>
-        <div class="sidebar-name">Admin Panel</div>
-        <div class="sidebar-id">Digital Shop TM</div>
+    <div class="sb-header">
+      <div class="sb-logo"><img src="ko.jpeg" alt="Logo" onerror="this.style.display='none'"><span style="font-size:13px;font-weight:700;color:white">Admin Panel</span></div>
+      <div class="sb-user">
+        <div class="sb-avatar" style="background:#7c3aed"><i class="fas fa-crown"></i></div>
+        <div><div class="sb-name">Administrator</div><div class="sb-id">Digital Shop TM</div></div>
       </div>
     </div>
     <div class="sidebar-menu">
-      <div class="sidebar-label">প্রধান মেনু</div>
-      <div class="sidebar-item active" data-admin-section="dashboard"><i class="fas fa-th-large"></i> ড্যাশবোর্ড</div>
-      <div class="sidebar-item" data-admin-section="new-merchants"><i class="fas fa-user-plus"></i> নতুন মার্চেন্ট <span id="new-merchant-count" style="background:var(--danger);color:white;border-radius:12px;padding:2px 8px;font-size:11px;margin-left:auto">0</span></div>
-      <div class="sidebar-item" data-admin-section="merchant-details"><i class="fas fa-users"></i> মার্চেন্ট ডিটেইলস</div>
-      <div class="sidebar-item" data-admin-section="published-products"><i class="fas fa-boxes"></i> পাবলিশকৃত পণ্য</div>
-      <div class="sidebar-item" data-admin-section="parcels"><i class="fas fa-box"></i> পার্সেল এড</div>
-      <div class="sidebar-item" data-admin-section="edit-parcel"><i class="fas fa-edit"></i> এডিট/নিউ পার্সেল</div>
-      <div class="sidebar-label">অ্যাকাউন্ট</div>
-      <div class="sidebar-item" id="admin-logout-btn"><i class="fas fa-sign-out-alt"></i> লগআউট</div>
+      <div class="sidebar-label">Main Menu</div>
+      <div class="sidebar-item active" data-admin-section="dashboard"><i class="fas fa-th-large"></i> Dashboard</div>
+      <div class="sidebar-item" data-admin-section="new-merchants"><i class="fas fa-user-plus"></i> New Merchants <span id="new-merchant-count" style="background:var(--danger);color:white;border-radius:12px;padding:2px 8px;font-size:11px;margin-left:auto">0</span></div>
+      <div class="sidebar-item" data-admin-section="merchant-details"><i class="fas fa-users"></i> Merchant Details</div>
+      <div class="sidebar-item" data-admin-section="published-products"><i class="fas fa-boxes"></i> Published Products</div>
+      <div class="sidebar-item" data-admin-section="parcels"><i class="fas fa-box"></i> Add Parcel</div>
+      <div class="sidebar-item" data-admin-section="edit-parcel"><i class="fas fa-edit"></i> Edit/New Parcel</div>
+      <div class="sidebar-item" data-admin-section="order-details"><i class="fas fa-list-alt"></i> User Order Details</div>
+      <div class="sidebar-label">Account</div>
+      <div class="sidebar-item" id="admin-logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</div>
     </div>
   </div>
   <div class="main-content">
     <div class="topbar">
       <div class="topbar-left">
         <button class="topbar-icon-btn" id="admin-sidebar-toggle"><i class="fas fa-bars"></i></button>
-        <span class="topbar-title" id="admin-topbar-title">অ্যাডমিন ড্যাশবোর্ড</span>
+        <span class="topbar-title" id="admin-topbar-title">Admin Dashboard</span>
       </div>
       <div class="topbar-right">
         <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge" id="admin-notif-badge">0</span></button>
-        <span style="font-size:13px;color:var(--gray)">Admin</span>
-        <button class="btn btn-sm btn-danger" id="admin-logout-btn2"><i class="fas fa-sign-out-alt"></i> লগআউট</button>
+        <span style="font-size:13px;color:var(--gray);font-weight:600">Admin</span>
+        <button class="btn btn-sm btn-danger" id="admin-logout-btn2"><i class="fas fa-sign-out-alt"></i> Logout</button>
       </div>
     </div>
     <div class="content-area">
+
       <div id="admin-section-dashboard" class="content-section active">
         <div id="admin-stats-row" class="admin-stats"></div>
-        <div class="section-heading">দ্রুত অ্যাকশন</div>
+        <div class="sec-heading">Quick Actions</div>
         <div class="dashboard-grid">
-          <div class="dash-card" data-admin-section="new-merchants"><div class="dash-card-icon bg-green"><i class="fas fa-user-plus"></i></div><h4>নতুন মার্চেন্ট</h4></div>
-          <div class="dash-card" data-admin-section="merchant-details"><div class="dash-card-icon bg-blue"><i class="fas fa-users"></i></div><h4>মার্চেন্ট ডিটেইলস</h4></div>
-          <div class="dash-card" data-admin-section="published-products"><div class="dash-card-icon bg-orange"><i class="fas fa-boxes"></i></div><h4>পাবলিশকৃত পণ্য</h4></div>
-          <div class="dash-card" data-admin-section="parcels"><div class="dash-card-icon bg-purple"><i class="fas fa-box"></i></div><h4>পার্সেল এড</h4></div>
-          <div class="dash-card" data-admin-section="edit-parcel"><div class="dash-card-icon bg-teal"><i class="fas fa-edit"></i></div><h4>এডিট/নিউ পার্সেল</h4></div>
+          <div class="dash-card" onclick="showAdminSection('new-merchants')"><div class="dash-card-icon bg-green"><i class="fas fa-user-plus"></i></div><h4>New Merchants</h4></div>
+          <div class="dash-card" onclick="showAdminSection('merchant-details')"><div class="dash-card-icon bg-blue"><i class="fas fa-users"></i></div><h4>Merchant Details</h4></div>
+          <div class="dash-card" onclick="showAdminSection('published-products')"><div class="dash-card-icon bg-orange"><i class="fas fa-boxes"></i></div><h4>Published Products</h4></div>
+          <div class="dash-card" onclick="showAdminSection('parcels')"><div class="dash-card-icon bg-purple"><i class="fas fa-box"></i></div><h4>Add Parcel</h4></div>
+          <div class="dash-card" onclick="showAdminSection('edit-parcel')"><div class="dash-card-icon bg-teal"><i class="fas fa-edit"></i></div><h4>Edit/New Parcel</h4></div>
+          <div class="dash-card" onclick="showAdminSection('order-details')"><div class="dash-card-icon bg-indigo"><i class="fas fa-list-alt"></i></div><h4>User Order Details</h4></div>
         </div>
       </div>
+
       <div id="admin-section-new-merchants" class="content-section">
-        <div class="section-heading">নতুন মার্চেন্ট আবেদন</div>
-        <div class="table-card"><div id="new-merchants-list"><div class="loader"><i class="fas fa-spinner"></i>লোড হচ্ছে...</div></div></div>
+        <div class="sec-heading">New Merchant Applications</div>
+        <div class="table-card"><div id="new-merchants-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
+
       <div id="admin-section-merchant-details" class="content-section">
-        <div class="section-heading">সক্রিয় মার্চেন্ট</div>
-        <div class="table-card"><div id="active-merchants-list"><div class="loader"><i class="fas fa-spinner"></i>লোড হচ্ছে...</div></div></div>
+        <div class="sec-heading">Active Merchants</div>
+        <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="merchant-search" placeholder="Search by name, shop, email, mobile..." oninput="filterMerchants(this.value)"></div>
+        <div class="table-card"><div id="active-merchants-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
+
       <div id="admin-section-published-products" class="content-section">
-        <div class="section-heading">পাবলিশকৃত সকল পণ্য</div>
-        <div class="table-card"><div id="all-products-list"><div class="loader"><i class="fas fa-spinner"></i>লোড হচ্ছে...</div></div></div>
+        <div class="sec-heading">All Published Products</div>
+        <div class="table-card"><div id="all-products-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
+
       <div id="admin-section-parcels" class="content-section">
-        <div class="section-heading">পার্সেল এড</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-box"></i><p>পার্সেল ম্যানেজমেন্ট শীঘ্রই আসছে।</p></div></div>
+        <div class="sec-heading">Add Parcel</div>
+        <div class="white-card"><div class="empty-state"><i class="fas fa-box"></i><p>Parcel management coming soon.</p></div></div>
       </div>
+
       <div id="admin-section-edit-parcel" class="content-section">
-        <div class="section-heading">এডিট/নিউ পার্সেল</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-edit"></i><p>এই ফিচার শীঘ্রই আসছে।</p></div></div>
+        <div class="sec-heading">Edit / New Parcel</div>
+        <div class="white-card"><div class="empty-state"><i class="fas fa-edit"></i><p>This feature coming soon.</p></div></div>
       </div>
+
+      <div id="admin-section-order-details" class="content-section">
+        <div class="sec-heading">User Order Details</div>
+        <div class="table-card"><div id="order-details-list"><div class="empty-state"><i class="fas fa-list-alt"></i><p>No orders yet.</p></div></div></div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -369,30 +467,22 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 <!-- LOGIN MODAL -->
 <div id="login-modal" class="modal-overlay">
   <div class="modal">
-    <button class="modal-close" data-close="login-modal"><i class="fas fa-times"></i></button>
+    <button class="modal-close" onclick="closeModal('login-modal')"><i class="fas fa-times"></i></button>
     <div class="modal-icon"><i class="fas fa-sign-in-alt"></i></div>
-    <h2>লগইন করুন</h2>
-    <div class="form-group">
-      <label>ইমেইল অথবা মোবাইল নম্বর</label>
-      <div class="input-wrap"><i class="fas fa-user"></i><input type="text" id="login-id" placeholder="ইমেইল বা মোবাইল নম্বর"></div>
+    <h2>Login</h2>
+    <div class="form-group"><label>Email or Mobile Number</label><div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="login-id" placeholder="Email or mobile number"></div></div>
+    <div class="form-group"><label>Password</label><div class="input-wrap"><i class="fas fa-lock ico"></i><input type="password" id="login-pass" placeholder="Password"></div></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:var(--primary)"> Remember me</label>
+      <span style="font-size:13px;color:var(--primary);cursor:pointer;font-weight:600">Forgot password?</span>
     </div>
-    <div class="form-group">
-      <label>পাসওয়ার্ড</label>
-      <div class="input-wrap"><i class="fas fa-lock"></i><input type="password" id="login-pass" placeholder="পাসওয়ার্ড"></div>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:var(--primary)"> মনে রাখুন</label>
-      <span style="font-size:13px;color:var(--primary);cursor:pointer;font-weight:600">পাসওয়ার্ড ভুলে গেছেন?</span>
-    </div>
-    <div class="terms-wrap"><input type="checkbox" id="login-terms1"><span><span class="terms-link" data-terms="terms">Terms & Conditions</span> পড়েছি ও সম্মত আছি</span></div>
-    <div class="terms-wrap"><input type="checkbox" id="login-terms2"><span><span class="terms-link" data-terms="privacy">Privacy Policy</span> পড়েছি ও সম্মত আছি</span></div>
-    <button class="btn btn-primary btn-block" id="login-submit-btn"><i class="fas fa-sign-in-alt"></i> লগইন</button>
-    <div style="text-align:center;margin-top:16px;font-size:13px">অ্যাকাউন্ট নেই? <span style="color:var(--primary);cursor:pointer;font-weight:600" id="go-signup">এখানে নিবন্ধন করুন</span></div>
+    <div class="terms-wrap"><input type="checkbox" id="login-terms1"><span>I agree to <span class="terms-link" data-terms="terms">Terms &amp; Conditions</span></span></div>
+    <div class="terms-wrap"><input type="checkbox" id="login-terms2"><span>I agree to <span class="terms-link" data-terms="privacy">Privacy Policy</span></span></div>
+    <div id="login-error" class="err-box"></div>
+    <button class="btn btn-primary btn-block" id="login-submit-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
+    <div style="text-align:center;margin-top:16px;font-size:13px">Don't have an account? <span style="color:var(--primary);cursor:pointer;font-weight:600" id="go-signup">Register here</span></div>
     <div style="text-align:center;margin-top:12px">
-      <span id="go-admin-login" style="font-size:13px;color:#7c3aed;cursor:pointer;font-weight:700;background:#ede9fe;padding:6px 16px;border-radius:20px;display:inline-block">
-        <i class="fas fa-crown"></i> Admin Login
-        <span style="background:#ef4444;color:white;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px">New</span>
-      </span>
+      <span id="go-admin-login" style="font-size:13px;color:#7c3aed;cursor:pointer;font-weight:700;background:#ede9fe;padding:6px 18px;border-radius:20px;display:inline-block"><i class="fas fa-crown"></i> Admin Login</span>
     </div>
   </div>
 </div>
@@ -400,575 +490,436 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 <!-- ADMIN LOGIN MODAL -->
 <div id="admin-login-modal" class="modal-overlay">
   <div class="modal" style="max-width:420px">
-    <button class="modal-close" data-close="admin-login-modal"><i class="fas fa-times"></i></button>
+    <button class="modal-close" onclick="closeModal('admin-login-modal')"><i class="fas fa-times"></i></button>
     <div class="modal-icon" style="background:#ede9fe"><i class="fas fa-crown" style="color:#7c3aed"></i></div>
-    <h2 style="color:#1a1a2e">Admin Login</h2>
-    <p style="text-align:center;font-size:13px;color:var(--gray);margin-top:-16px;margin-bottom:20px">শুধুমাত্র অ্যাডমিনের জন্য</p>
-    <div class="form-group">
-      <label>Admin Email</label>
-      <div class="input-wrap"><i class="fas fa-envelope"></i><input type="email" id="admin-login-email" placeholder="admin@example.com"></div>
-    </div>
-    <div class="form-group">
-      <label>Admin Password</label>
-      <div class="input-wrap"><i class="fas fa-lock"></i><input type="password" id="admin-login-pass" placeholder="পাসওয়ার্ড"></div>
-    </div>
-    <button class="btn btn-block" id="admin-login-submit-btn" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;margin-top:8px;padding:13px;font-size:16px;border-radius:var(--radius-sm);font-family:'Hind Siliguri',sans-serif;font-weight:600;cursor:pointer;border:none;transition:all 0.2s">
-      <i class="fas fa-crown"></i> Admin হিসেবে লগইন
+    <h2>Admin Login</h2>
+    <p style="text-align:center;font-size:13px;color:var(--gray);margin-top:-18px;margin-bottom:20px">Admin access only</p>
+    <div class="form-group"><label>Admin Email</label><div class="input-wrap"><i class="fas fa-envelope ico"></i><input type="email" id="admin-login-email" placeholder="admin@example.com"></div></div>
+    <div class="form-group"><label>Admin Password</label><div class="input-wrap"><i class="fas fa-lock ico"></i><input type="password" id="admin-login-pass" placeholder="Password"></div></div>
+    <div id="admin-login-error" class="err-box"></div>
+    <button class="btn btn-block" id="admin-login-submit-btn" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:white;padding:13px;font-size:16px;border-radius:var(--radius-sm);font-family:'Hind Siliguri',sans-serif;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:8px">
+      <i class="fas fa-crown"></i> Login as Admin
     </button>
-    <div style="text-align:center;margin-top:16px;font-size:13px">
-      <span id="back-to-user-login" style="color:var(--primary);cursor:pointer;font-weight:600"><i class="fas fa-arrow-left"></i> মার্চেন্ট লগইনে ফিরুন</span>
-    </div>
+    <div style="text-align:center;margin-top:16px;font-size:13px"><span id="back-to-user-login" style="color:var(--primary);cursor:pointer;font-weight:600"><i class="fas fa-arrow-left"></i> Back to Merchant Login</span></div>
   </div>
 </div>
 
 <!-- SIGNUP MODAL -->
 <div id="signup-modal" class="modal-overlay">
-  <div class="modal">
-    <button class="modal-close" data-close="signup-modal"><i class="fas fa-times"></i></button>
+  <div class="modal" style="max-width:560px">
+    <button class="modal-close" onclick="closeModal('signup-modal')"><i class="fas fa-times"></i></button>
     <div class="modal-icon"><i class="fas fa-user-plus"></i></div>
-    <h2>মার্চেন্ট হিসেবে নিবন্ধন</h2>
+    <h2>Register as Merchant</h2>
     <div class="form-row">
-      <div class="form-group"><label>প্রথম নাম *</label><div class="input-wrap"><i class="fas fa-user"></i><input type="text" id="reg-fname" placeholder="প্রথম নাম"></div></div>
-      <div class="form-group"><label>শেষ নাম *</label><div class="input-wrap"><i class="fas fa-user"></i><input type="text" id="reg-lname" placeholder="শেষ নাম"></div></div>
-      <div class="form-group"><label>মোবাইল নম্বর *</label><div class="input-wrap"><i class="fas fa-phone"></i><input type="tel" id="reg-phone" placeholder="০১XXXXXXXXX"></div></div>
-      <div class="form-group"><label>ইমেইল ঠিকানা *</label><div class="input-wrap"><i class="fas fa-envelope"></i><input type="email" id="reg-email" placeholder="email@example.com"></div></div>
-      <div class="form-group form-full"><label>বর্তমান ঠিকানা *</label><div class="input-wrap"><i class="fas fa-map-marker-alt" style="top:18px"></i><textarea id="reg-current-addr" placeholder="বর্তমান ঠিকানা"></textarea></div></div>
-      <div class="form-group form-full"><label>স্থায়ী ঠিকানা *</label><div class="input-wrap"><i class="fas fa-home" style="top:18px"></i><textarea id="reg-permanent-addr" placeholder="স্থায়ী ঠিকানা"></textarea></div></div>
-      <div class="form-group"><label>পাসওয়ার্ড *</label><div class="input-wrap"><i class="fas fa-lock"></i><input type="password" id="reg-pass" placeholder="পাসওয়ার্ড"></div></div>
-      <div class="form-group"><label>পাসওয়ার্ড নিশ্চিত *</label><div class="input-wrap"><i class="fas fa-lock"></i><input type="password" id="reg-cpass" placeholder="আবার লিখুন"></div></div>
+      <div class="form-group"><label>First Name *</label><div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="reg-fname" placeholder="First name"></div></div>
+      <div class="form-group"><label>Last Name *</label><div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="reg-lname" placeholder="Last name"></div></div>
+      <div class="form-group"><label>Mobile Number *</label><div class="input-wrap"><i class="fas fa-phone ico"></i><input type="tel" id="reg-phone" placeholder="01XXXXXXXXX"></div></div>
+      <div class="form-group"><label>Email Address *</label><div class="input-wrap"><i class="fas fa-envelope ico"></i><input type="email" id="reg-email" placeholder="email@example.com"></div></div>
+      <div class="form-group form-full">
+        <label>Shop Name *</label>
+        <div class="input-wrap"><i class="fas fa-store ico"></i><input type="text" id="reg-shop" placeholder="Your unique shop name" oninput="checkShopName(this.value)"></div>
+        <div id="shop-name-msg" style="font-size:12px;margin-top:4px"></div>
+      </div>
+      <div class="form-group form-full"><label>Current Address *</label><div class="input-wrap"><i class="fas fa-map-marker-alt ico-top"></i><textarea id="reg-current-addr" placeholder="Current address"></textarea></div></div>
+      <div class="form-group form-full"><label>Permanent Address *</label><div class="input-wrap"><i class="fas fa-home ico-top"></i><textarea id="reg-permanent-addr" placeholder="Permanent address"></textarea></div></div>
+      <div class="form-group"><label>Password *</label><div class="input-wrap"><i class="fas fa-lock ico"></i><input type="password" id="reg-pass" placeholder="Password"></div></div>
+      <div class="form-group"><label>Confirm Password *</label><div class="input-wrap"><i class="fas fa-lock ico"></i><input type="password" id="reg-cpass" placeholder="Re-enter password"></div></div>
     </div>
-    <div class="terms-wrap"><input type="checkbox" id="reg-terms1"><span><span class="terms-link" data-terms="terms">Terms & Conditions</span> পড়েছি ও সম্মত আছি</span></div>
-    <div class="terms-wrap"><input type="checkbox" id="reg-terms2"><span><span class="terms-link" data-terms="privacy">Privacy Policy</span> পড়েছি ও সম্মত আছি</span></div>
-    <button class="btn btn-primary btn-block" id="signup-submit-btn"><i class="fas fa-user-plus"></i> সাইন আপ করুন</button>
-    <div style="text-align:center;margin-top:16px;font-size:13px">ইতিমধ্যে অ্যাকাউন্ট আছে? <span style="color:var(--primary);cursor:pointer;font-weight:600" id="go-login">লগইন করুন</span></div>
+    <div class="terms-wrap"><input type="checkbox" id="reg-terms1"><span>I agree to <span class="terms-link" data-terms="terms">Terms &amp; Conditions</span></span></div>
+    <div class="terms-wrap"><input type="checkbox" id="reg-terms2"><span>I agree to <span class="terms-link" data-terms="privacy">Privacy Policy</span></span></div>
+    <div id="signup-error" class="err-box"></div>
+    <button class="btn btn-primary btn-block" id="signup-submit-btn"><i class="fas fa-user-plus"></i> Sign Up</button>
+    <div style="text-align:center;margin-top:16px;font-size:13px">Already have an account? <span style="color:var(--primary);cursor:pointer;font-weight:600" id="go-login">Login</span></div>
   </div>
 </div>
 
 <!-- TERMS MODAL -->
 <div id="terms-modal" class="modal-overlay">
   <div class="modal" style="max-width:700px">
-    <button class="modal-close" data-close="terms-modal"><i class="fas fa-times"></i></button>
-    <h2 id="terms-modal-title">Terms & Conditions</h2>
+    <button class="modal-close" onclick="closeModal('terms-modal')"><i class="fas fa-times"></i></button>
+    <h2 id="terms-modal-title" style="text-align:left;margin-bottom:20px">Terms &amp; Conditions</h2>
     <div class="terms-content" id="terms-modal-content"></div>
-    <button class="btn btn-primary btn-block" data-close="terms-modal" style="margin-top:20px">বন্ধ করুন</button>
+    <button class="btn btn-primary btn-block" onclick="closeModal('terms-modal')" style="margin-top:20px">Close</button>
   </div>
 </div>
 
 <!-- MERCHANT DETAIL MODAL -->
 <div id="merchant-detail-modal" class="modal-overlay">
   <div class="modal">
-    <button class="modal-close" data-close="merchant-detail-modal"><i class="fas fa-times"></i></button>
+    <button class="modal-close" onclick="closeModal('merchant-detail-modal')"><i class="fas fa-times"></i></button>
     <div class="modal-icon" style="background:#ede9fe"><i class="fas fa-user" style="color:#7c3aed"></i></div>
-    <h2>মার্চেন্ট তথ্য</h2>
-    <div class="merchant-detail" id="merchant-detail-content"></div>
+    <h2>Merchant Details</h2>
+    <div id="merchant-detail-content"></div>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div id="product-detail-modal" class="modal-overlay">
+  <div class="modal" style="max-width:620px">
+    <button class="modal-close" onclick="closeModal('product-detail-modal')"><i class="fas fa-times"></i></button>
+    <div id="product-detail-content"></div>
   </div>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg">সফল!</span></div>
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg">Success!</span></div>
 
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
 <script>
-// ===== FIREBASE INIT =====
-firebase.initializeApp({
-  apiKey:"AIzaSyBygH_x7ATAHpLarDhx9_piWPRbg8l704Q",
-  authDomain:"digitalshoptm-1.firebaseapp.com",
-  projectId:"digitalshoptm-1",
-  storageBucket:"digitalshoptm-1.firebasestorage.app",
-  messagingSenderId:"934689228132",
-  appId:"1:934689228128:web:95d930d4ebe491db84ca05"
-});
-const auth = firebase.auth();
-const db = firebase.firestore();
-const ADMIN_EMAIL = "digitalshoptm@gmail.com";
-let currentUser = null;
+firebase.initializeApp({apiKey:"AIzaSyBygH_x7ATAHpLarDhx9_piWPRbg8l704Q",authDomain:"digitalshoptm-1.firebaseapp.com",projectId:"digitalshoptm-1",storageBucket:"digitalshoptm-1.firebasestorage.app",messagingSenderId:"934689228128",appId:"1:934689228128:web:95d930d4ebe491db84ca05"});
+const auth=firebase.auth();
+const db=firebase.firestore();
+const ADMIN_EMAIL="digitalshoptm@gmail.com";
+let currentUser=null,allActiveMerchants=[];
 
-// ===== TERMS CONTENT =====
-const TERMS_TEXT = `<h3>১. সাধারণ শর্তাবলী</h3><p>Digital Shop TM Marchant প্ল্যাটফর্মে যোগ দিয়ে আপনি এই চুক্তির সমস্ত শর্ত মেনে নিচ্ছেন। এই চুক্তি আপনার এবং Digital Shop TM এর মধ্যে একটি বৈধ চুক্তি হিসেবে গণ্য হবে।</p><h3>২. মার্চেন্ট যোগ্যতা</h3><p>প্ল্যাটফর্মে বিক্রয় করতে হলে আপনাকে বাংলাদেশের বৈধ নাগরিক হতে হবে এবং ন্যূনতম ১৮ বছর বয়সী হতে হবে।</p><h3>৩. পণ্য তালিকাভুক্তি</h3><p>মার্চেন্টরা শুধুমাত্র আইনি ও বৈধ পণ্য বিক্রয় করতে পারবেন। নকল, জাল বা ক্ষতিকর পণ্য বিক্রয় সম্পূর্ণ নিষিদ্ধ।</p><h3>৪. কমিশন ও পেমেন্ট</h3><p>প্রতিটি বিক্রয়ের উপর নির্ধারিত হারে কমিশন প্রযোজ্য হবে। পেমেন্ট সাপ্তাহিক ভিত্তিতে প্রদান করা হবে।</p><h3>৫. পারফরম্যান্স</h3><p>নির্ধারিত সময়ে অর্ডার প্রক্রিয়া করতে হবে। বারবার নিয়ম ভঙ্গের কারণে অ্যাকাউন্ট বাতিল হতে পারে।</p><h3>৬. বিরোধ নিষ্পত্তি</h3><p>গ্রাহক ও মার্চেন্টের মধ্যে বিরোধের ক্ষেত্রে Digital Shop TM এর সিদ্ধান্ত চূড়ান্ত বলে বিবেচিত হবে।</p>`;
-const PRIVACY_TEXT = `<h3>১. তথ্য সংগ্রহ</h3><p>Digital Shop TM Marchant প্ল্যাটফর্ম আপনার ব্যক্তিগত তথ্য যেমন নাম, ইমেইল, মোবাইল নম্বর, ঠিকানা সংগ্রহ করে।</p><h3>২. তথ্য ব্যবহার</h3><p>সংগৃহীত তথ্য শুধুমাত্র প্ল্যাটফর্মের সেবা উন্নয়ন, অ্যাকাউন্ট যাচাই ও পেমেন্ট প্রক্রিয়াকরণের জন্য ব্যবহার করা হবে।</p><h3>৩. তথ্য সুরক্ষা</h3><p>আপনার তথ্য সুরক্ষিত রাখতে আমরা উন্নত এনক্রিপশন প্রযুক্তি ব্যবহার করি।</p><h3>৪. তৃতীয় পক্ষ</h3><p>আপনার অনুমতি ছাড়া কোনো তৃতীয় পক্ষের কাছে আপনার ব্যক্তিগত তথ্য বিক্রয় বা হস্তান্তর করা হবে না।</p><h3>৫. আপনার অধিকার</h3><p>আপনি যেকোনো সময় আপনার সংরক্ষিত তথ্য দেখতে, পরিবর্তন বা মুছে দেওয়ার অনুরোধ করতে পারবেন।</p>`;
+const TERMS_TEXT=`<h3>1. General Terms</h3><p>By joining Digital Shop TM Merchant platform, you agree to all conditions of this agreement. This constitutes a legal contract between you and Digital Shop TM.</p><h3>2. Merchant Eligibility</h3><p>To sell on the platform, you must be a legal citizen of Bangladesh and at least 18 years old.</p><h3>3. Product Listing</h3><p>Merchants may only sell legal products. Counterfeit, fake, or harmful products are strictly prohibited.</p><h3>4. Commission & Payment</h3><p>A commission rate applies on each sale. Payments are processed weekly.</p><h3>5. Performance</h3><p>Orders must be processed within specified time. Repeated violations may result in account suspension.</p><h3>6. Dispute Resolution</h3><p>In disputes between customers and merchants, Digital Shop TM's decision shall be final.</p><h3>7. Intellectual Property</h3><p>You may not use Digital Shop TM's trademarks or branding without written permission.</p><h3>8. Termination</h3><p>Digital Shop TM reserves the right to suspend or terminate any account for policy violations.</p>`;
+const PRIVACY_TEXT=`<h3>1. Data Collection</h3><p>We collect personal information such as name, email, mobile number, and address during registration.</p><h3>2. Use of Data</h3><p>Collected data is used solely for service improvement, account verification, and payment processing.</p><h3>3. Data Security</h3><p>We use advanced encryption to keep your data secure at all times.</p><h3>4. Third Parties</h3><p>Your personal data will not be sold or transferred to any third party without your consent.</p><h3>5. Your Rights</h3><p>You may request to view, modify, or delete your stored data at any time by contacting support.</p><h3>6. Cookies</h3><p>We use cookies to improve user experience. You can disable cookies in your browser settings.</p>`;
 
-// ===== HELPERS =====
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  var el = document.getElementById('page-' + id);
-  if (el) el.classList.add('active');
-}
-function openModal(id) {
-  var el = document.getElementById(id);
-  if (el) el.classList.add('active');
-}
-function closeModal(id) {
-  var el = document.getElementById(id);
-  if (el) el.classList.remove('active');
-}
-function showToast(msg, type) {
-  type = type || 'success';
-  var t = document.getElementById('toast');
-  document.getElementById('toast-msg').textContent = msg;
-  t.className = 'toast ' + type + ' show';
-  setTimeout(function(){ t.className = 'toast'; }, 3200);
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));var el=document.getElementById('page-'+id);if(el)el.classList.add('active');}
+function openModal(id){var el=document.getElementById(id);if(el)el.classList.add('active');}
+function closeModal(id){var el=document.getElementById(id);if(el)el.classList.remove('active');}
+function showToast(msg,type){type=type||'success';var t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;t.className='toast '+type+' show';setTimeout(()=>{t.className='toast';},3200);}
+function showErr(id,msg){var el=document.getElementById(id);if(el){el.textContent=msg;el.style.display=msg?'block':'none';}}
+function generateSKS(){var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';var s='SKS-';for(var i=0;i<8;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
+function previewImg(url){var img=document.getElementById('prod-img-preview');if(url&&url.startsWith('http')){img.src=url;img.style.display='block';}else img.style.display='none';}
+function refreshSKS(){var el=document.getElementById('prod-sks');if(el)el.value=generateSKS();}
+
+var shopCheckTimer=null;
+async function checkShopName(val){
+  var msg=document.getElementById('shop-name-msg');
+  if(!val||val.length<2){msg.innerHTML='';return;}
+  clearTimeout(shopCheckTimer);
+  shopCheckTimer=setTimeout(async()=>{
+    msg.innerHTML='<span style="color:var(--gray)"><i class="fas fa-spinner fa-spin"></i> Checking availability...</span>';
+    try{
+      var snap=await db.collection('merchants').where('shopName','==',val.trim()).get();
+      if(snap.empty)msg.innerHTML='<span style="color:var(--primary)"><i class="fas fa-check-circle"></i> Shop name available!</span>';
+      else msg.innerHTML='<span style="color:var(--danger)"><i class="fas fa-times-circle"></i> Shop name already taken!</span>';
+    }catch(e){msg.innerHTML='';}
+  },600);
 }
 
-// ===== BIND BUTTONS =====
-document.getElementById('nav-login-btn').onclick = function(){ openModal('login-modal'); };
-document.getElementById('nav-signup-btn').onclick = function(){ openModal('signup-modal'); };
-document.getElementById('hero-login-btn').onclick = function(){ openModal('login-modal'); };
-document.getElementById('hero-signup-btn').onclick = function(){ openModal('signup-modal'); };
-document.getElementById('go-signup').onclick = function(){ closeModal('login-modal'); openModal('signup-modal'); };
-document.getElementById('go-login').onclick = function(){ closeModal('signup-modal'); openModal('login-modal'); };
-document.getElementById('go-admin-login').onclick = function(){ closeModal('login-modal'); openModal('admin-login-modal'); };
-document.getElementById('back-to-user-login').onclick = function(){ closeModal('admin-login-modal'); openModal('login-modal'); };
-document.getElementById('admin-login-submit-btn').onclick = adminLoginUser;
-document.getElementById('login-submit-btn').onclick = loginUser;
-document.getElementById('signup-submit-btn').onclick = registerUser;
-document.getElementById('add-product-btn').onclick = addProduct;
-document.getElementById('user-logout-btn').onclick = logoutUser;
-document.getElementById('user-logout-btn2').onclick = logoutUser;
-document.getElementById('admin-logout-btn').onclick = logoutUser;
-document.getElementById('admin-logout-btn2').onclick = logoutUser;
-document.getElementById('sidebar-backdrop').onclick = closeSidebar;
-document.getElementById('admin-sidebar-backdrop').onclick = closeAdminSidebar;
-document.getElementById('sidebar-toggle').onclick = toggleSidebar;
-document.getElementById('admin-sidebar-toggle').onclick = toggleAdminSidebar;
+document.getElementById('nav-login-btn').onclick=()=>openModal('login-modal');
+document.getElementById('nav-signup-btn').onclick=()=>openModal('signup-modal');
+document.getElementById('hero-login-btn').onclick=()=>openModal('login-modal');
+document.getElementById('hero-signup-btn').onclick=()=>openModal('signup-modal');
+document.getElementById('go-signup').onclick=()=>{closeModal('login-modal');openModal('signup-modal');};
+document.getElementById('go-login').onclick=()=>{closeModal('signup-modal');openModal('login-modal');};
+document.getElementById('go-admin-login').onclick=()=>{closeModal('login-modal');openModal('admin-login-modal');};
+document.getElementById('back-to-user-login').onclick=()=>{closeModal('admin-login-modal');openModal('login-modal');};
+document.getElementById('login-submit-btn').onclick=loginUser;
+document.getElementById('signup-submit-btn').onclick=registerUser;
+document.getElementById('admin-login-submit-btn').onclick=adminLoginUser;
+document.getElementById('add-product-btn').onclick=addProduct;
+document.getElementById('user-logout-btn').onclick=logoutUser;
+document.getElementById('admin-logout-btn').onclick=logoutUser;
+document.getElementById('admin-logout-btn2').onclick=logoutUser;
+document.getElementById('sidebar-backdrop').onclick=()=>{document.getElementById('user-sidebar').classList.remove('open');document.getElementById('sidebar-backdrop').classList.remove('show');};
+document.getElementById('admin-sidebar-backdrop').onclick=()=>{document.getElementById('admin-sidebar').classList.remove('open');document.getElementById('admin-sidebar-backdrop').classList.remove('show');};
+document.getElementById('sidebar-toggle').onclick=()=>{document.getElementById('user-sidebar').classList.toggle('open');document.getElementById('sidebar-backdrop').classList.toggle('show');};
+document.getElementById('admin-sidebar-toggle').onclick=()=>{document.getElementById('admin-sidebar').classList.toggle('open');document.getElementById('admin-sidebar-backdrop').classList.toggle('show');};
+document.querySelectorAll('.terms-link').forEach(l=>{l.onclick=()=>{var t=l.getAttribute('data-terms');document.getElementById('terms-modal-title').textContent=t==='terms'?'Terms & Conditions':'Privacy Policy';document.getElementById('terms-modal-content').innerHTML=t==='terms'?TERMS_TEXT:PRIVACY_TEXT;openModal('terms-modal');};});
+document.querySelectorAll('#user-sidebar [data-section]').forEach(item=>item.onclick=()=>showUserSection(item.getAttribute('data-section')));
+document.querySelectorAll('#admin-sidebar [data-admin-section]').forEach(item=>item.onclick=()=>showAdminSection(item.getAttribute('data-admin-section')));
+document.querySelectorAll('.modal-overlay').forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove('active');});
 
-// Close buttons
-document.querySelectorAll('[data-close]').forEach(function(btn){
-  btn.onclick = function(){ closeModal(btn.getAttribute('data-close')); };
-});
-
-// Terms links
-document.querySelectorAll('.terms-link').forEach(function(link){
-  link.onclick = function(){
-    var type = link.getAttribute('data-terms');
-    document.getElementById('terms-modal-title').textContent = type==='terms'?'Terms & Conditions':'Privacy Policy';
-    document.getElementById('terms-modal-content').innerHTML = type==='terms'?TERMS_TEXT:PRIVACY_TEXT;
-    openModal('terms-modal');
-  };
-});
-
-// Sidebar user nav
-document.querySelectorAll('#user-sidebar [data-section]').forEach(function(item){
-  item.onclick = function(){ showUserSection(item.getAttribute('data-section')); };
-});
-
-// Sidebar admin nav
-document.querySelectorAll('#admin-sidebar [data-admin-section]').forEach(function(item){
-  item.onclick = function(){ showAdminSection(item.getAttribute('data-admin-section')); };
-});
-document.querySelectorAll('#page-admin-dashboard [data-admin-section]').forEach(function(item){
-  item.onclick = function(){ showAdminSection(item.getAttribute('data-admin-section')); };
-});
-
-// Close modal on overlay click
-document.querySelectorAll('.modal-overlay').forEach(function(overlay){
-  overlay.onclick = function(e){ if(e.target===overlay) overlay.classList.remove('active'); };
-});
-
-// ===== SIDEBAR =====
-function toggleSidebar(){
-  document.getElementById('user-sidebar').classList.toggle('open');
-  document.getElementById('sidebar-backdrop').classList.toggle('show');
-}
-function closeSidebar(){
-  document.getElementById('user-sidebar').classList.remove('open');
-  document.getElementById('sidebar-backdrop').classList.remove('show');
-}
-function toggleAdminSidebar(){
-  document.getElementById('admin-sidebar').classList.toggle('open');
-  document.getElementById('admin-sidebar-backdrop').classList.toggle('show');
-}
-function closeAdminSidebar(){
-  document.getElementById('admin-sidebar').classList.remove('open');
-  document.getElementById('admin-sidebar-backdrop').classList.remove('show');
-}
-
-// ===== SECTION NAV =====
-var sectionTitles = {
-  'dashboard':'ড্যাশবোর্ড','add-product':'পণ্য যোগ করুন','my-products':'পাবলিশ করা পণ্য',
-  'orders':'অর্ডার','track-parcel':'পার্সেল ট্র্যাক','withdraw':'উত্তোলন','add-money':'এড মানি',
-  'pickup':'পিকআপ এড্রেস','delivery':'নিজে ডেলিভারি','returns':'রিটার্ন','support':'সাপোর্ট'
-};
+var sT={'dashboard':'Dashboard','add-product':'Add Product','my-products':'Published Products','orders':'Orders','track-parcel':'Track Parcel','withdraw':'Withdraw','add-money':'Add Money','pickup':'Pickup Address','delivery':'Self Delivery','returns':'Return','support':'Support'};
 function showUserSection(name){
-  document.querySelectorAll('#page-user-dashboard .content-section').forEach(function(s){ s.classList.remove('active'); });
-  document.querySelectorAll('#user-sidebar .sidebar-item').forEach(function(s){ s.classList.remove('active'); });
-  var sec = document.getElementById('section-' + name);
-  if(sec) sec.classList.add('active');
-  document.getElementById('topbar-title').textContent = sectionTitles[name] || name;
-  var active = document.querySelector('#user-sidebar [data-section="'+name+'"]');
-  if(active) active.classList.add('active');
-  closeSidebar();
-  if(name==='my-products') loadUserProducts();
-  if(name==='add-product'){
-    var isApproved = currentUser && currentUser.status==='active';
-    document.getElementById('add-product-locked').style.display = isApproved?'none':'block';
-    document.getElementById('add-product-form').style.display = isApproved?'block':'none';
-  }
+  document.querySelectorAll('#page-user-dashboard .content-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('#user-sidebar .sidebar-item').forEach(s=>s.classList.remove('active'));
+  var sec=document.getElementById('section-'+name);if(sec)sec.classList.add('active');
+  document.getElementById('topbar-title').textContent=sT[name]||name;
+  var a=document.querySelector('#user-sidebar [data-section="'+name+'"]');if(a)a.classList.add('active');
+  document.getElementById('user-sidebar').classList.remove('open');document.getElementById('sidebar-backdrop').classList.remove('show');
+  if(name==='my-products')loadUserProducts();
+  if(name==='add-product'){var ok=currentUser&&currentUser.status==='active';document.getElementById('add-product-locked').style.display=ok?'none':'block';document.getElementById('add-product-form').style.display=ok?'block':'none';if(ok)refreshSKS();}
 }
 
-var adminSectionTitles = {
-  'dashboard':'অ্যাডমিন ড্যাশবোর্ড','new-merchants':'নতুন মার্চেন্ট',
-  'merchant-details':'মার্চেন্ট ডিটেইলস','published-products':'পাবলিশকৃত পণ্য',
-  'parcels':'পার্সেল এড','edit-parcel':'এডিট/নিউ পার্সেল'
-};
+var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','parcels':'Add Parcel','edit-parcel':'Edit/New Parcel','order-details':'User Order Details'};
 function showAdminSection(name){
-  document.querySelectorAll('#page-admin-dashboard .content-section').forEach(function(s){ s.classList.remove('active'); });
-  document.querySelectorAll('#admin-sidebar .sidebar-item').forEach(function(s){ s.classList.remove('active'); });
-  var sec = document.getElementById('admin-section-' + name);
-  if(sec) sec.classList.add('active');
-  document.getElementById('admin-topbar-title').textContent = adminSectionTitles[name] || name;
-  var active = document.querySelector('#admin-sidebar [data-admin-section="'+name+'"]');
-  if(active) active.classList.add('active');
-  closeAdminSidebar();
-  if(name==='new-merchants') loadNewMerchants();
-  if(name==='merchant-details') loadActiveMerchants();
-  if(name==='published-products') loadAllProducts();
+  document.querySelectorAll('#page-admin-dashboard .content-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('#admin-sidebar .sidebar-item').forEach(s=>s.classList.remove('active'));
+  var sec=document.getElementById('admin-section-'+name);if(sec)sec.classList.add('active');
+  document.getElementById('admin-topbar-title').textContent=aT[name]||name;
+  var a=document.querySelector('#admin-sidebar [data-admin-section="'+name+'"]');if(a)a.classList.add('active');
+  document.getElementById('admin-sidebar').classList.remove('open');document.getElementById('admin-sidebar-backdrop').classList.remove('show');
+  if(name==='new-merchants')loadNewMerchants();
+  if(name==='merchant-details')loadActiveMerchants();
+  if(name==='published-products')loadAllProducts();
 }
 
-// ===== AUTH =====
 auth.onAuthStateChanged(async function(user){
   if(user){
-    if(user.email===ADMIN_EMAIL){
-      showPage('admin-dashboard');
-      loadAdminDashboard();
-    } else {
-      try {
-        var snap = await db.collection('merchants').doc(user.uid).get();
-        if(snap.exists){
-          currentUser = Object.assign({uid:user.uid}, snap.data());
-          showPage('user-dashboard');
-          loadUserDashboard();
-        } else {
-          await auth.signOut();
-          showPage('home');
-        }
-      } catch(e){ showPage('home'); }
+    if(user.email===ADMIN_EMAIL){showPage('admin-dashboard');loadAdminDashboard();}
+    else{
+      try{var snap=await db.collection('merchants').doc(user.uid).get();
+        if(snap.exists){currentUser=Object.assign({uid:user.uid},snap.data());showPage('user-dashboard');loadUserDashboard();}
+        else{await auth.signOut();showPage('home');}
+      }catch(e){showPage('home');}
     }
-  } else {
-    currentUser = null;
-    showPage('home');
-  }
+  }else{currentUser=null;showPage('home');}
 });
 
 async function registerUser(){
-  var fname=document.getElementById('reg-fname').value.trim();
-  var lname=document.getElementById('reg-lname').value.trim();
-  var phone=document.getElementById('reg-phone').value.trim();
-  var email=document.getElementById('reg-email').value.trim();
-  var curAddr=document.getElementById('reg-current-addr').value.trim();
-  var permAddr=document.getElementById('reg-permanent-addr').value.trim();
-  var pass=document.getElementById('reg-pass').value;
-  var cpass=document.getElementById('reg-cpass').value;
-  var t1=document.getElementById('reg-terms1').checked;
-  var t2=document.getElementById('reg-terms2').checked;
-  if(!fname||!lname||!phone||!email||!curAddr||!permAddr||!pass||!cpass) return showToast('সকল তথ্য পূরণ করুন!','error');
-  if(pass!==cpass) return showToast('পাসওয়ার্ড মিলছে না!','error');
-  if(pass.length<6) return showToast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!','error');
-  if(!t1||!t2) return showToast('Terms & Privacy Policy সম্মত হতে হবে!','warning');
-  var btn = document.getElementById('signup-submit-btn');
-  btn.disabled=true; btn.textContent='অপেক্ষা করুন...';
-  try {
-    var cred = await auth.createUserWithEmailAndPassword(email, pass);
-    var uid = cred.user.uid;
-    var merchantId = 'TM' + Date.now().toString().slice(-8);
-    await db.collection('merchants').doc(uid).set({
-      uid, firstName:fname, lastName:lname,
-      fullName:fname+' '+lname,
-      phone, email,
-      currentAddress:curAddr, permanentAddress:permAddr,
-      merchantId, status:'pending',
-      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
-      balance:0
-    });
-    closeModal('signup-modal');
-    showToast('নিবন্ধন সফল! অ্যাপ্রুভালের জন্য অপেক্ষা করুন।','success');
-  } catch(e) {
-    var msg='নিবন্ধন ব্যর্থ হয়েছে!';
-    if(e.code==='auth/email-already-in-use') msg='এই ইমেইল ইতিমধ্যে নিবন্ধিত!';
-    if(e.code==='auth/invalid-email') msg='ইমেইল ঠিকানা সঠিক নয়!';
-    showToast(msg,'error');
+  var fn=document.getElementById('reg-fname').value.trim(),ln=document.getElementById('reg-lname').value.trim();
+  var phone=document.getElementById('reg-phone').value.trim(),email=document.getElementById('reg-email').value.trim();
+  var shop=document.getElementById('reg-shop').value.trim();
+  var ca=document.getElementById('reg-current-addr').value.trim(),pa=document.getElementById('reg-permanent-addr').value.trim();
+  var pass=document.getElementById('reg-pass').value,cpass=document.getElementById('reg-cpass').value;
+  var t1=document.getElementById('reg-terms1').checked,t2=document.getElementById('reg-terms2').checked;
+  showErr('signup-error','');
+  if(!fn||!ln||!phone||!email||!shop||!ca||!pa||!pass||!cpass)return showErr('signup-error','Please fill in all fields!');
+  if(pass!==cpass)return showErr('signup-error','Passwords do not match!');
+  if(pass.length<6)return showErr('signup-error','Password must be at least 6 characters!');
+  if(!t1||!t2)return showErr('signup-error','Please agree to Terms & Privacy Policy!');
+  var btn=document.getElementById('signup-submit-btn');btn.disabled=true;btn.textContent='Please wait...';
+  try{
+    var shopSnap=await db.collection('merchants').where('shopName','==',shop).get();
+    if(!shopSnap.empty){showErr('signup-error','This shop name is already taken! Please choose a different name.');btn.disabled=false;btn.innerHTML='<i class="fas fa-user-plus"></i> Sign Up';return;}
+    var cred=await auth.createUserWithEmailAndPassword(email,pass);
+    var uid=cred.user.uid;
+    var mid='TM'+Date.now().toString().slice(-8);
+    await db.collection('merchants').doc(uid).set({uid,firstName:fn,lastName:ln,fullName:fn+' '+ln,phone,email,shopName:shop,currentAddress:ca,permanentAddress:pa,merchantId:mid,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp(),balance:0});
+    closeModal('signup-modal');showToast('Registration successful! Waiting for admin approval.','success');
+  }catch(e){
+    var msg='Registration failed!';
+    if(e.code==='auth/email-already-in-use')msg='This email is already registered!';
+    if(e.code==='auth/invalid-email')msg='Invalid email address!';
+    showErr('signup-error',msg);
   }
-  btn.disabled=false; btn.innerHTML='<i class="fas fa-user-plus"></i> সাইন আপ করুন';
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-user-plus"></i> Sign Up';
 }
 
 async function loginUser(){
-  var loginId=document.getElementById('login-id').value.trim();
-  var pass=document.getElementById('login-pass').value;
-  var t1=document.getElementById('login-terms1').checked;
-  var t2=document.getElementById('login-terms2').checked;
-  if(!loginId||!pass) return showToast('সকল তথ্য পূরণ করুন!','error');
-  if(!t1||!t2) return showToast('Terms & Privacy Policy সম্মত হতে হবে!','warning');
-  var btn=document.getElementById('login-submit-btn');
-  btn.disabled=true; btn.textContent='লগইন হচ্ছে...';
-  var emailToUse = loginId;
-  try {
-    if(!loginId.includes('@')){
-      var snap = await db.collection('merchants').where('phone','==',loginId).get();
-      if(snap.empty){ showToast('মোবাইল নম্বর দিয়ে কোনো অ্যাকাউন্ট পাওয়া যায়নি!','error'); btn.disabled=false; btn.innerHTML='<i class="fas fa-sign-in-alt"></i> লগইন'; return; }
-      emailToUse = snap.docs[0].data().email;
+  var lid=document.getElementById('login-id').value.trim(),pass=document.getElementById('login-pass').value;
+  var t1=document.getElementById('login-terms1').checked,t2=document.getElementById('login-terms2').checked;
+  showErr('login-error','');
+  if(!lid||!pass)return showErr('login-error','Please fill in all fields!');
+  if(!t1||!t2)return showErr('login-error','Please agree to Terms & Privacy Policy!');
+  var btn=document.getElementById('login-submit-btn');btn.disabled=true;btn.textContent='Logging in...';
+  var emailToUse=lid;
+  try{
+    if(!lid.includes('@')){
+      var snap=await db.collection('merchants').where('phone','==',lid).get();
+      if(snap.empty){showErr('login-error','No account found with this mobile number!');btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Login';return;}
+      emailToUse=snap.docs[0].data().email;
     }
-    await auth.signInWithEmailAndPassword(emailToUse, pass);
-    closeModal('login-modal');
-  } catch(e){
-    var msg='লগইন ব্যর্থ হয়েছে!';
-    if(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential') msg='ইমেইল বা পাসওয়ার্ড ভুল!';
-    if(e.code==='auth/user-not-found') msg='অ্যাকাউন্ট পাওয়া যায়নি!';
-    showToast(msg,'error');
+    await auth.signInWithEmailAndPassword(emailToUse,pass);closeModal('login-modal');
+  }catch(e){
+    var msg='Login failed!';
+    if(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'||e.code==='auth/invalid-login-credentials')msg='Incorrect email or password!';
+    if(e.code==='auth/user-not-found')msg='Account not found!';
+    showErr('login-error',msg);
   }
-  btn.disabled=false; btn.innerHTML='<i class="fas fa-sign-in-alt"></i> লগইন';
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Login';
 }
 
 async function adminLoginUser(){
-  var email=document.getElementById("admin-login-email").value.trim();
-  var pass=document.getElementById("admin-login-pass").value;
-  if(!email||!pass) return showToast("ইমেইল ও পাসওয়ার্ড দিন!","error");
-  if(email !== ADMIN_EMAIL) return showToast("এই ইমেইল অ্যাডমিন নয়!","error");
-  var btn=document.getElementById("admin-login-submit-btn");
-  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> লগইন হচ্ছে...';
+  var email=document.getElementById('admin-login-email').value.trim(),pass=document.getElementById('admin-login-pass').value;
+  showErr('admin-login-error','');
+  if(!email||!pass)return showErr('admin-login-error','Please enter email and password!');
+  if(email!==ADMIN_EMAIL)return showErr('admin-login-error','This email is not an admin account!');
+  var btn=document.getElementById('admin-login-submit-btn');btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Logging in...';
   try{
-    await auth.signInWithEmailAndPassword(email, pass);
-    closeModal("admin-login-modal");
-    showToast("অ্যাডমিন লগইন সফল!","success");
+    await auth.signInWithEmailAndPassword(email,pass);closeModal('admin-login-modal');showToast('Admin login successful!','success');
   }catch(e){
-    if(e.code==="auth/user-not-found"||e.code==="auth/invalid-credential"||e.code==="auth/invalid-login-credentials"){
-      try{
-        await auth.createUserWithEmailAndPassword(email, pass);
-        closeModal("admin-login-modal");
-        showToast("অ্যাডমিন অ্যাকাউন্ট তৈরি ও লগইন সফল!","success");
-      }catch(e2){ showToast("সমস্যা হয়েছে: "+e2.message,"error"); }
-    } else if(e.code==="auth/wrong-password"||e.code==="auth/invalid-credential"){
-      showToast("পাসওয়ার্ড ভুল!","error");
-    } else {
-      showToast("লগইন ব্যর্থ: "+e.message,"error");
-    }
+    if(e.code==='auth/user-not-found'||e.code==='auth/invalid-credential'||e.code==='auth/invalid-login-credentials'){
+      try{await auth.createUserWithEmailAndPassword(email,pass);closeModal('admin-login-modal');showToast('Admin account created & logged in!','success');}
+      catch(e2){showErr('admin-login-error','Error: '+e2.message);}
+    }else if(e.code==='auth/wrong-password'){showErr('admin-login-error','Incorrect password!');}
+    else{showErr('admin-login-error','Login failed: '+e.message);}
   }
-  btn.disabled=false; btn.innerHTML='<i class="fas fa-crown"></i> Admin হিসেবে লগইন';
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-crown"></i> Login as Admin';
 }
 
-async function logoutUser(){
-  await auth.signOut();
-  currentUser=null;
-  showPage('home');
-}
+async function logoutUser(){await auth.signOut();currentUser=null;showPage('home');}
 
-// ===== USER DASHBOARD =====
 function loadUserDashboard(){
-  var u = currentUser;
-  if(!u) return;
-  document.getElementById('sidebar-username').textContent = u.fullName || 'মার্চেন্ট';
-  document.getElementById('sidebar-uid').textContent = 'ID: '+(u.merchantId||'---');
-  var isApproved = u.status==='active';
-  var isRejected = u.status==='rejected';
-  var banner = document.getElementById('approval-banner');
-  if(isApproved){
-    banner.innerHTML='<div class="status-banner approved"><div class="status-banner-icon">✅</div><div><h3>একাউন্ট সক্রিয়</h3><p>আপনার অ্যাকাউন্ট অ্যাপ্রুভ হয়েছে। সকল ফিচার ব্যবহার করতে পারবেন।</p></div></div>';
-  } else if(isRejected){
-    banner.innerHTML='<div class="status-banner rejected-status"><div class="status-banner-icon">❌</div><div><h3>একাউন্টটি অ্যাপ্রুভাল হয়নি</h3><p>আপনার অ্যাকাউন্ট অ্যাপ্রুভ হয়নি। বিস্তারিত জানতে সাপোর্টে যোগাযোগ করুন।</p></div></div>';
-    document.getElementById('notif-badge').style.display='flex';
-  } else {
-    banner.innerHTML='<div class="status-banner"><div class="status-banner-icon">⏳</div><div><h3>এডমিন এখনো অ্যাপ্রুভাল করেননি</h3><p>অ্যাপ্রুভাল হতে ২-৭২ ঘন্টা সময় লাগবে। অপেক্ষা করুন।</p></div></div>';
-    document.getElementById('notif-badge').style.display='flex';
-  }
+  var u=currentUser;if(!u)return;
+  document.getElementById('sidebar-username').textContent=u.fullName||'Merchant';
+  document.getElementById('sidebar-uid').textContent='ID: '+(u.merchantId||'---');
+  var ok=u.status==='active',rej=u.status==='rejected';
+  var b=document.getElementById('approval-banner');
+  if(ok)b.innerHTML='<div class="status-banner approved"><div class="status-banner-icon">✅</div><div><div class="sb-title">Account Active</div><div class="sb-desc">Your account has been approved. All features are now available.</div></div></div>';
+  else if(rej)b.innerHTML='<div class="status-banner rejected-s"><div class="status-banner-icon">❌</div><div><div class="sb-title">Account Not Approved</div><div class="sb-desc">Your account was not approved. Contact support for details.</div></div></div>';
+  else b.innerHTML='<div class="status-banner"><div class="status-banner-icon">⏳</div><div><div class="sb-title">Admin has not yet approved your account</div><div class="sb-desc">Approval may take 2–72 hours. Please wait.</div></div></div>';
+  if(!ok)document.getElementById('notif-badge').style.display='flex';
   document.getElementById('user-stats-row').innerHTML=
-    '<div class="stat-card"><div class="stat-label">ব্যালেন্স</div><div class="stat-value">৳ '+(u.balance||0)+'</div></div>'+
-    '<div class="stat-card orange"><div class="stat-label">মোট অর্ডার</div><div class="stat-value">০</div></div>'+
-    '<div class="stat-card blue"><div class="stat-label">পাবলিশ পণ্য</div><div class="stat-value" id="prod-count">০</div></div>'+
-    '<div class="stat-card red"><div class="stat-label">রিটার্ন</div><div class="stat-value">০</div></div>';
-  var locked=!isApproved;
-  var cards=[
-    {id:'add-product',icon:'fa-plus-circle',bg:'bg-green',title:'পণ্য যোগ করুন',locked:locked},
-    {id:'my-products',icon:'fa-boxes',bg:'bg-blue',title:'পাবলিশ করা পণ্য',locked:locked},
-    {id:'orders',icon:'fa-shopping-bag',bg:'bg-orange',title:'অর্ডার',locked:locked},
-    {id:'track-parcel',icon:'fa-map-marker-alt',bg:'bg-purple',title:'পার্সেল ট্র্যাক',locked:false},
-    {id:'withdraw',icon:'fa-wallet',bg:'bg-teal',title:'উত্তোলন',locked:locked},
-    {id:'add-money',icon:'fa-plus',bg:'bg-yellow',title:'এড মানি',locked:locked},
-    {id:'pickup',icon:'fa-map-pin',bg:'bg-pink',title:'পিকআপ এড্রেস',locked:locked},
-    {id:'delivery',icon:'fa-truck',bg:'bg-indigo',title:'নিজে ডেলিভারি',locked:locked},
-    {id:'returns',icon:'fa-undo',bg:'bg-red',title:'রিটার্ন',locked:locked},
-    {id:'support',icon:'fa-headset',bg:'bg-gray',title:'সাপোর্ট',locked:false},
-  ];
-  document.getElementById('user-dash-grid').innerHTML=cards.map(function(c){
-    return '<div class="dash-card'+(c.locked?' locked':'')+'" data-user-nav="'+(c.locked?'locked':c.id)+'">'+
-      '<div class="dash-card-icon '+c.bg+'"><i class="fas '+c.icon+'"></i></div>'+
-      '<h4>'+c.title+'</h4>'+
-      (c.locked?'<div class="lock-icon"><i class="fas fa-lock"></i> লক</div>':'')+
-      '</div>';
-  }).join('');
-  document.querySelectorAll('[data-user-nav]').forEach(function(el){
-    el.onclick=function(){
-      var nav=el.getAttribute('data-user-nav');
-      if(nav==='locked') showToast('অ্যাপ্রুভালের পর ব্যবহার করা যাবে!','warning');
-      else showUserSection(nav);
-    };
-  });
+    '<div class="stat-card"><div class="stat-label">Balance</div><div class="stat-value">৳'+(u.balance||0)+'</div></div>'+
+    '<div class="stat-card orange"><div class="stat-label">Total Orders</div><div class="stat-value">0</div></div>'+
+    '<div class="stat-card blue"><div class="stat-label">Published Products</div><div class="stat-value" id="prod-count">0</div></div>'+
+    '<div class="stat-card red"><div class="stat-label">Returns</div><div class="stat-value">0</div></div>';
+  var locked=!ok;
+  var cards=[{id:'add-product',icon:'fa-plus-circle',bg:'bg-green',title:'Add Product',locked:locked},{id:'my-products',icon:'fa-boxes',bg:'bg-blue',title:'Published Products',locked:locked},{id:'orders',icon:'fa-shopping-bag',bg:'bg-orange',title:'Orders',locked:locked},{id:'track-parcel',icon:'fa-map-marker-alt',bg:'bg-purple',title:'Track Parcel',locked:false},{id:'withdraw',icon:'fa-wallet',bg:'bg-teal',title:'Withdraw',locked:locked},{id:'add-money',icon:'fa-plus',bg:'bg-yellow',title:'Add Money',locked:locked},{id:'pickup',icon:'fa-map-pin',bg:'bg-pink',title:'Pickup Address',locked:locked},{id:'delivery',icon:'fa-truck',bg:'bg-indigo',title:'Self Delivery',locked:locked},{id:'returns',icon:'fa-undo',bg:'bg-red',title:'Return',locked:locked},{id:'support',icon:'fa-headset',bg:'bg-gray',title:'Support',locked:false}];
+  document.getElementById('user-dash-grid').innerHTML=cards.map(c=>'<div class="dash-card'+(c.locked?' locked':'')+'" data-nav="'+(c.locked?'locked':c.id)+'"><div class="dash-card-icon '+c.bg+'"><i class="fas '+c.icon+'"></i></div><h4>'+c.title+'</h4>'+(c.locked?'<div class="lock-icon"><i class="fas fa-lock"></i> Locked</div>':'')+' </div>').join('');
+  document.querySelectorAll('[data-nav]').forEach(el=>el.onclick=()=>{var n=el.getAttribute('data-nav');if(n==='locked')showToast('Available after account approval!','warning');else showUserSection(n);});
 }
 
 async function loadUserProducts(){
-  var u=currentUser;
-  var container=document.getElementById('products-table-body');
-  container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>লোড হচ্ছে...</div>';
+  var u=currentUser,container=document.getElementById('products-table-body');
+  container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
   try{
-    var snap=await db.collection('products').where('merchantId','==',u.uid).get();
-    if(snap.empty){container.innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>কোনো পণ্য পাবলিশ করা হয়নি।</p></div>';return;}
-    var html='<table><thead><tr><th>#</th><th>পণ্যের নাম</th><th>মূল্য</th><th>ক্যাটাগরি</th><th>স্টক</th></tr></thead><tbody>';
+    var snap=await db.collection('products').where('merchantUid','==',u.uid).get();
+    if(snap.empty){container.innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>No products published yet.</p></div>';return;}
+    var html='<table><thead><tr><th>#</th><th>Image</th><th>SKS ID</th><th>Product</th><th>Price</th><th>Category</th><th>Stock</th><th>Status</th><th>Action</th></tr></thead><tbody>';
     var i=1;
-    snap.forEach(function(d){var p=d.data();html+='<tr><td>'+i+'</td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.category||'-')+'</td><td>'+(p.stock||0)+'</td></tr>';i++;});
-    html+='</tbody></table>';
-    container.innerHTML=html;
-    var pc=document.getElementById('prod-count');
-    if(pc) pc.textContent=snap.size;
-  }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড করতে সমস্যা হয়েছে।</p></div>';}
+    snap.forEach(d=>{var p=d.data();html+='<tr><td>'+i+'</td><td>'+(p.imageUrl?'<img src="'+p.imageUrl+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-')+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.category||'-')+'</td><td>'+(p.stock||0)+'</td><td><span class="status-badge s-published">'+p.status+'</span></td><td><button class="btn btn-sm btn-danger" onclick="deleteProduct(\''+d.id+'\')"><i class="fas fa-trash"></i></button></td></tr>';i++;});
+    html+='</tbody></table>';container.innerHTML=html;
+    var pc=document.getElementById('prod-count');if(pc)pc.textContent=snap.size;
+  }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
 }
 
 async function addProduct(){
-  var u=currentUser;
-  if(!u||u.status!=='active') return showToast('অ্যাপ্রুভালের পর পণ্য যোগ করা যাবে!','warning');
+  var u=currentUser;if(!u||u.status!=='active')return showToast('Available after account approval!','warning');
+  var sks=document.getElementById('prod-sks').value;
   var name=document.getElementById('prod-name').value.trim();
   var price=document.getElementById('prod-price').value;
-  var desc=document.getElementById('prod-desc').value.trim();
-  var cat=document.getElementById('prod-cat').value.trim();
+  var cat=document.getElementById('prod-cat').value;
   var stock=document.getElementById('prod-stock').value;
-  if(!name||!price) return showToast('নাম ও মূল্য দিন!','error');
+  if(!name||!price||!cat||!stock)return showToast('Name, price, category and stock are required!','error');
+  var sksSnap=await db.collection('products').where('sksId','==',sks).get();
+  if(!sksSnap.empty){refreshSKS();return showToast('SKS ID conflict, refreshed! Try again.','warning');}
   try{
-    var pid='prod_'+Date.now();
-    await db.collection('products').doc(pid).set({
-      name,price:parseFloat(price),description:desc,category:cat,stock:parseInt(stock)||0,
-      merchantId:u.uid,merchantName:u.fullName,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:'active'
+    await db.collection('products').doc('prod_'+Date.now()).set({
+      sksId:sks,name,price:parseFloat(price),category:cat,stock:parseInt(stock)||0,
+      description:document.getElementById('prod-desc').value.trim(),
+      imageUrl:document.getElementById('prod-img-url').value.trim(),
+      tags:document.getElementById('prod-tags').value.trim(),
+      titleType:document.getElementById('prod-title-type').value,
+      discount:parseFloat(document.getElementById('prod-discount').value)||0,
+      deliveryMethod:document.getElementById('prod-delivery').value,
+      deliveryCharge:parseFloat(document.getElementById('prod-del-charge').value)||0,
+      specs:{type:document.getElementById('prod-type').value.trim(),size:document.getElementById('prod-size').value.trim(),material:document.getElementById('prod-material').value.trim(),features:document.getElementById('prod-features').value.trim()},
+      merchantUid:u.uid,merchantName:u.fullName,merchantId:u.merchantId,shopName:u.shopName||'',
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:'published'
     });
-    showToast('পণ্য সফলভাবে পাবলিশ হয়েছে!','success');
-    document.getElementById('prod-name').value='';
-    document.getElementById('prod-price').value='';
-    document.getElementById('prod-desc').value='';
-    document.getElementById('prod-cat').value='';
-    document.getElementById('prod-stock').value='';
-  }catch(e){showToast('পণ্য যোগ করতে সমস্যা হয়েছে!','error');}
+    showToast('Product published successfully!','success');
+    ['prod-name','prod-price','prod-desc','prod-img-url','prod-tags','prod-discount','prod-del-charge','prod-type','prod-size','prod-material','prod-features','prod-stock'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('prod-cat').value='';document.getElementById('prod-title-type').value='';document.getElementById('prod-delivery').value='our';document.getElementById('prod-img-preview').style.display='none';
+    refreshSKS();
+  }catch(e){showToast('Failed to publish product!','error');}
 }
 
-// ===== ADMIN DASHBOARD =====
+async function deleteProduct(pid){if(!confirm('Delete this product?'))return;await db.collection('products').doc(pid).delete();showToast('Product deleted!','success');loadUserProducts();}
+
+function trackParcel(){
+  var input=document.getElementById('track-input').value.trim();
+  var result=document.getElementById('track-result');
+  if(!input)return showToast('Enter tracking number!','warning');
+  var steps=['Pending','Delivery Pickup','At Hub','At Shop','With Delivery Man','Delivered','Payment Processing','Payment Success'];
+  result.innerHTML='<div style="background:var(--primary-light);border-radius:12px;padding:20px"><div style="font-weight:700;color:var(--primary);margin-bottom:16px"><i class="fas fa-map-marker-alt"></i> Tracking: '+input+'</div>'+steps.map((s,i)=>'<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:white;border-radius:8px;margin-bottom:8px;border-left:4px solid '+(i<2?'var(--primary)':'var(--border)')+'"><div style="width:28px;height:28px;border-radius:50%;background:'+(i<2?'var(--primary)':'var(--border)')+';color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">'+(i<2?'✓':(i+1))+'</div><span style="font-size:14px;font-weight:'+(i<2?'600':'400')+';color:'+(i<2?'var(--dark)':'var(--gray)')+'">'+s+'</span></div>').join('')+'</div>';
+}
+
 async function loadAdminDashboard(){
   try{
-    var allSnap=await db.collection('merchants').get();
-    var pendingSnap=await db.collection('merchants').where('status','==','pending').get();
-    var activeSnap=await db.collection('merchants').where('status','==','active').get();
-    var prodSnap=await db.collection('products').get();
-    document.getElementById('new-merchant-count').textContent=pendingSnap.size;
-    document.getElementById('admin-notif-badge').textContent=pendingSnap.size;
+    var all=await db.collection('merchants').get();
+    var pending=await db.collection('merchants').where('status','==','pending').get();
+    var active=await db.collection('merchants').where('status','==','active').get();
+    var prods=await db.collection('products').get();
+    document.getElementById('new-merchant-count').textContent=pending.size;
+    document.getElementById('admin-notif-badge').textContent=pending.size;
     document.getElementById('admin-stats-row').innerHTML=
-      '<div class="admin-stat"><div class="admin-stat-icon bg-blue"><i class="fas fa-users"></i></div><div class="admin-stat-info"><div class="admin-stat-value">'+allSnap.size+'</div><div class="admin-stat-label">মোট মার্চেন্ট</div></div></div>'+
-      '<div class="admin-stat"><div class="admin-stat-icon bg-green"><i class="fas fa-check-circle"></i></div><div class="admin-stat-info"><div class="admin-stat-value">'+activeSnap.size+'</div><div class="admin-stat-label">সক্রিয় মার্চেন্ট</div></div></div>'+
-      '<div class="admin-stat"><div class="admin-stat-icon bg-yellow"><i class="fas fa-clock"></i></div><div class="admin-stat-info"><div class="admin-stat-value">'+pendingSnap.size+'</div><div class="admin-stat-label">অপেক্ষায় আছেন</div></div></div>'+
-      '<div class="admin-stat"><div class="admin-stat-icon bg-orange"><i class="fas fa-boxes"></i></div><div class="admin-stat-info"><div class="admin-stat-value">'+prodSnap.size+'</div><div class="admin-stat-label">মোট পণ্য</div></div></div>';
+      '<div class="admin-stat"><div class="admin-stat-icon bg-blue"><i class="fas fa-users"></i></div><div><div class="admin-stat-value">'+all.size+'</div><div class="admin-stat-label">Total Merchants</div></div></div>'+
+      '<div class="admin-stat"><div class="admin-stat-icon bg-green"><i class="fas fa-check-circle"></i></div><div><div class="admin-stat-value">'+active.size+'</div><div class="admin-stat-label">Active Merchants</div></div></div>'+
+      '<div class="admin-stat"><div class="admin-stat-icon bg-yellow"><i class="fas fa-clock"></i></div><div><div class="admin-stat-value">'+pending.size+'</div><div class="admin-stat-label">Pending Approval</div></div></div>'+
+      '<div class="admin-stat"><div class="admin-stat-icon bg-orange"><i class="fas fa-boxes"></i></div><div><div class="admin-stat-value">'+prods.size+'</div><div class="admin-stat-label">Total Products</div></div></div>';
   }catch(e){}
 }
 
 async function loadNewMerchants(){
-  var container=document.getElementById('new-merchants-list');
-  container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>লোড হচ্ছে...</div>';
+  var c=document.getElementById('new-merchants-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
   try{
     var snap=await db.collection('merchants').where('status','==','pending').get();
-    if(snap.empty){container.innerHTML='<div class="empty-state"><i class="fas fa-user-check"></i><p>নতুন কোনো আবেদন নেই।</p></div>';return;}
-    var html='<table><thead><tr><th>#</th><th>নাম</th><th>ইমেইল</th><th>মোবাইল</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody>';
-    var i=1;
-    snap.forEach(function(d){
-      var m=d.data();
-      html+='<tr><td>'+i+'</td><td>'+m.fullName+'</td><td>'+m.email+'</td><td>'+m.phone+'</td><td><span class="status-badge status-pending">অপেক্ষায়</span></td><td><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+d.id+'\')"><i class="fas fa-eye"></i> দেখুন</button></td></tr>';
-      i++;
-    });
-    html+='</tbody></table>';
-    container.innerHTML=html;
-  }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড করতে সমস্যা।</p></div>';}
+    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-user-check"></i><p>No new applications.</p></div>';return;}
+    var html='<table><thead><tr><th>#</th><th>Name</th><th>Shop</th><th>Email</th><th>Mobile</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+    var i=1;snap.forEach(d=>{var m=d.data();html+='<tr><td>'+i+'</td><td>'+m.fullName+'</td><td>'+(m.shopName||'-')+'</td><td>'+m.email+'</td><td>'+m.phone+'</td><td><span class="status-badge s-pending">Pending</span></td><td><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+d.id+'\')"><i class="fas fa-eye"></i> View</button></td></tr>';i++;});
+    html+='</tbody></table>';c.innerHTML=html;
+  }catch(e){c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
 }
 
 async function loadActiveMerchants(){
-  var container=document.getElementById('active-merchants-list');
-  container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>লোড হচ্ছে...</div>';
+  var c=document.getElementById('active-merchants-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  allActiveMerchants=[];
   try{
     var snap=await db.collection('merchants').where('status','==','active').get();
-    if(snap.empty){container.innerHTML='<div class="empty-state"><i class="fas fa-users"></i><p>কোনো সক্রিয় মার্চেন্ট নেই।</p></div>';return;}
-    var html='<table><thead><tr><th>#</th><th>নাম</th><th>ID</th><th>ইমেইল</th><th>মোবাইল</th><th>অ্যাকশন</th></tr></thead><tbody>';
-    var i=1;
-    snap.forEach(function(d){
-      var m=d.data();
-      html+='<tr><td>'+i+'</td><td>'+m.fullName+'</td><td><span class="status-badge status-active">'+m.merchantId+'</span></td><td>'+m.email+'</td><td>'+m.phone+'</td><td><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+d.id+'\')"><i class="fas fa-eye"></i> দেখুন</button></td></tr>';
-      i++;
-    });
-    html+='</tbody></table>';
-    container.innerHTML=html;
-  }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড করতে সমস্যা।</p></div>';}
+    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-users"></i><p>No active merchants.</p></div>';return;}
+    snap.forEach(d=>allActiveMerchants.push({id:d.id,...d.data()}));
+    renderActiveMerchants(allActiveMerchants);
+  }catch(e){c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
+}
+
+function renderActiveMerchants(list){
+  var html='<table><thead><tr><th>#</th><th>Name</th><th>Shop</th><th>Merchant ID</th><th>Email</th><th>Mobile</th><th>Action</th></tr></thead><tbody>';
+  list.forEach((m,i)=>{html+='<tr><td>'+(i+1)+'</td><td>'+m.fullName+'</td><td>'+(m.shopName||'-')+'</td><td><span class="sks-badge">'+m.merchantId+'</span></td><td>'+m.email+'</td><td>'+m.phone+'</td><td><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+m.id+'\')"><i class="fas fa-eye"></i> View</button></td></tr>';});
+  html+='</tbody></table>';document.getElementById('active-merchants-list').innerHTML=html;
+}
+
+function filterMerchants(q){
+  if(!q)return renderActiveMerchants(allActiveMerchants);
+  renderActiveMerchants(allActiveMerchants.filter(m=>(m.fullName||'').toLowerCase().includes(q.toLowerCase())||(m.shopName||'').toLowerCase().includes(q.toLowerCase())||(m.email||'').toLowerCase().includes(q.toLowerCase())||(m.phone||'').includes(q)));
 }
 
 async function loadAllProducts(){
-  var container=document.getElementById('all-products-list');
-  container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>লোড হচ্ছে...</div>';
+  var c=document.getElementById('all-products-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
   try{
     var snap=await db.collection('products').get();
-    if(snap.empty){container.innerHTML='<div class="empty-state"><i class="fas fa-boxes"></i><p>কোনো পণ্য নেই।</p></div>';return;}
-    var html='<table><thead><tr><th>#</th><th>পণ্য</th><th>মূল্য</th><th>মার্চেন্ট</th><th>স্টক</th></tr></thead><tbody>';
+    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-boxes"></i><p>No products.</p></div>';return;}
+    var html='<table><thead><tr><th>#</th><th>Img</th><th>SKS ID</th><th>Product</th><th>Price</th><th>Merchant</th><th>Category</th><th>Status</th><th>Action</th></tr></thead><tbody>';
     var i=1;
-    snap.forEach(function(d){var p=d.data();html+='<tr><td>'+i+'</td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.stock||0)+'</td></tr>';i++;});
-    html+='</tbody></table>';
-    container.innerHTML=html;
+    snap.forEach(d=>{var p=d.data();html+='<tr><td>'+i+'</td><td>'+(p.imageUrl?'<img src="'+p.imageUrl+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-')+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.category||'-')+'</td><td><span class="status-badge s-'+p.status+'">'+p.status+'</span></td><td style="white-space:nowrap"><button class="btn btn-sm btn-primary" onclick="viewProduct(\''+d.id+'\')"><i class="fas fa-eye"></i></button> <button class="btn btn-sm btn-danger" onclick="adminDeleteProduct(\''+d.id+'\')"><i class="fas fa-trash"></i></button></td></tr>';i++;});
+    html+='</tbody></table>';c.innerHTML=html;
   }catch(e){}
 }
 
+async function viewProduct(pid){
+  var d=await db.collection('products').doc(pid).get();if(!d.exists)return;var p=d.data();
+  document.getElementById('product-detail-content').innerHTML=
+    '<h2 style="margin-bottom:16px">'+p.name+'</h2>'+
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;max-height:200px;object-fit:contain;border-radius:10px;border:1px solid var(--border);margin-bottom:16px" onerror="this.style.display=\'none\'">':'')+
+    '<div class="detail-row"><span class="detail-label">SKS ID:</span><span class="detail-value"><span class="sks-badge">'+p.sksId+'</span></span></div>'+
+    '<div class="detail-row"><span class="detail-label">Price:</span><span class="detail-value">৳'+p.price+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">Category:</span><span class="detail-value">'+(p.category||'-')+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">Stock:</span><span class="detail-value">'+(p.stock||0)+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">Merchant:</span><span class="detail-value">'+(p.merchantName||'-')+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">Shop:</span><span class="detail-value">'+(p.shopName||'-')+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">Delivery:</span><span class="detail-value">'+(p.deliveryMethod==='self'?'Self Delivery':'Via Our Courier')+'</span></div>'+
+    (p.description?'<div class="detail-row"><span class="detail-label">Description:</span><span class="detail-value">'+p.description+'</span></div>':'')+
+    '<div class="action-row"><button class="btn btn-success btn-sm" onclick="confirmProduct(\''+pid+'\')"><i class="fas fa-check"></i> Confirm</button><button class="btn btn-warning btn-sm" onclick="rejectProduct(\''+pid+'\')"><i class="fas fa-ban"></i> Reject</button><button class="btn btn-danger btn-sm" onclick="adminDeleteProduct(\''+pid+'\')"><i class="fas fa-trash"></i> Delete</button></div>';
+  openModal('product-detail-modal');
+}
+
+async function confirmProduct(pid){await db.collection('products').doc(pid).update({status:'confirmed'});closeModal('product-detail-modal');showToast('Product confirmed!','success');loadAllProducts();}
+async function rejectProduct(pid){await db.collection('products').doc(pid).update({status:'rejected'});closeModal('product-detail-modal');showToast('Product rejected!','warning');loadAllProducts();}
+async function adminDeleteProduct(pid){if(!confirm('Delete this product?'))return;await db.collection('products').doc(pid).delete();closeModal('product-detail-modal');showToast('Deleted!','success');loadAllProducts();}
+
 async function viewMerchant(uid){
   try{
-    var d=await db.collection('merchants').doc(uid).get();
-    if(!d.exists) return;
-    var m=d.data();
-    var statusMap={pending:'status-pending',active:'status-active',rejected:'status-rejected'};
-    var statusLabel={pending:'অপেক্ষায়',active:'সক্রিয়',rejected:'বাতিল'};
+    var d=await db.collection('merchants').doc(uid).get();if(!d.exists)return;var m=d.data();
+    var sMap={pending:'s-pending',active:'s-active',rejected:'s-rejected'};
+    var sLabel={pending:'Pending',active:'Active',rejected:'Rejected'};
     document.getElementById('merchant-detail-content').innerHTML=
-      '<div class="detail-row"><span class="detail-label">পূর্ণ নাম:</span><span class="detail-value">'+m.fullName+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">মার্চেন্ট ID:</span><span class="detail-value">'+m.merchantId+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">ইমেইল:</span><span class="detail-value">'+m.email+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+m.phone+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">বর্তমান ঠিকানা:</span><span class="detail-value">'+m.currentAddress+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">স্থায়ী ঠিকানা:</span><span class="detail-value">'+m.permanentAddress+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">স্ট্যাটাস:</span><span class="detail-value"><span class="status-badge '+(statusMap[m.status]||'')+'">'+( statusLabel[m.status]||m.status)+'</span></span></div>'+
+      '<div class="detail-row"><span class="detail-label">Full Name:</span><span class="detail-value">'+m.fullName+'</span></div>'+
+      '<div class="detail-row"><span class="detail-label">Shop Name:</span><span class="detail-value">'+(m.shopName||'-')+'</span></div>'+
+      '<div class="detail-row"><span class="detail-label">Merchant ID:</span><span class="detail-value"><span class="sks-badge">'+m.merchantId+'</span></span></div>'+
+      '<div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">'+m.email+'</span></div>'+
+      '<div class="detail-row"><span class="detail-label">Mobile:</span><span class="detail-value">'+m.phone+'</span></div>'+
+      '<div class="detail-row"><span class="detail-label">Current Address:</span><span class="detail-value">'+m.currentAddress+'</span></div>'+
+      '<div class="detail-row"><span class="detail-label">Permanent Address:</span><span class="detail-value">'+m.permanentAddress+'</span></div>'+
+      '<div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value"><span class="status-badge '+(sMap[m.status]||'')+'">'+( sLabel[m.status]||m.status)+'</span></span></div>'+
       '<div class="action-row">'+
-      (m.status!=='active'?'<button class="btn btn-primary btn-sm" onclick="approveMerchant(\''+uid+'\')"><i class="fas fa-check"></i> সক্রিয় করুন</button>':'')+
-      (m.status==='pending'?'<button class="btn btn-warning btn-sm" onclick="rejectMerchant(\''+uid+'\')"><i class="fas fa-ban"></i> বাতিল করুন</button>':'')+
-      '<button class="btn btn-danger btn-sm" onclick="deleteMerchant(\''+uid+'\')"><i class="fas fa-trash"></i> ডিলিট</button>'+
+      (m.status!=='active'?'<button class="btn btn-primary btn-sm" onclick="approveMerchant(\''+uid+'\')"><i class="fas fa-check"></i> Activate</button>':'')+
+      (m.status==='pending'?'<button class="btn btn-warning btn-sm" onclick="rejectMerchant(\''+uid+'\')"><i class="fas fa-ban"></i> Reject</button>':'')+
+      '<button class="btn btn-danger btn-sm" onclick="deleteMerchant(\''+uid+'\')"><i class="fas fa-trash"></i> Delete</button>'+
       '</div>';
     openModal('merchant-detail-modal');
-  }catch(e){showToast('তথ্য লোড করতে সমস্যা!','error');}
+  }catch(e){showToast('Failed to load details!','error');}
 }
 
-async function approveMerchant(uid){
-  try{
-    await db.collection('merchants').doc(uid).update({status:'active'});
-    closeModal('merchant-detail-modal');
-    showToast('মার্চেন্ট সফলভাবে সক্রিয় করা হয়েছে!','success');
-    loadNewMerchants(); loadAdminDashboard();
-  }catch(e){showToast('সমস্যা হয়েছে!','error');}
-}
-
-async function rejectMerchant(uid){
-  try{
-    await db.collection('merchants').doc(uid).update({status:'rejected'});
-    closeModal('merchant-detail-modal');
-    showToast('মার্চেন্ট বাতিল করা হয়েছে। ২৪ ঘন্টা পরে অটো ডিলিট হবে।','warning');
-    loadNewMerchants(); loadAdminDashboard();
-    setTimeout(async function(){
-      try{ await db.collection('merchants').doc(uid).delete(); }catch(e){}
-    }, 86400000);
-  }catch(e){showToast('সমস্যা হয়েছে!','error');}
-}
-
-async function deleteMerchant(uid){
-  if(!confirm('এই মার্চেন্ট সম্পূর্ণ ডিলিট করবেন?')) return;
-  try{
-    await db.collection('merchants').doc(uid).delete();
-    closeModal('merchant-detail-modal');
-    showToast('মার্চেন্ট ডিলিট করা হয়েছে!','success');
-    loadNewMerchants(); loadActiveMerchants(); loadAdminDashboard();
-  }catch(e){showToast('ডিলিট করতে সমস্যা হয়েছে!','error');}
-}
+async function approveMerchant(uid){await db.collection('merchants').doc(uid).update({status:'active'});closeModal('merchant-detail-modal');showToast('Merchant activated!','success');loadNewMerchants();loadAdminDashboard();}
+async function rejectMerchant(uid){await db.collection('merchants').doc(uid).update({status:'rejected'});closeModal('merchant-detail-modal');showToast('Merchant rejected. Auto-delete in 24 hours.','warning');loadNewMerchants();loadAdminDashboard();setTimeout(async()=>{try{await db.collection('merchants').doc(uid).delete();}catch(e){}},86400000);}
+async function deleteMerchant(uid){if(!confirm('Permanently delete this merchant?'))return;await db.collection('merchants').doc(uid).delete();closeModal('merchant-detail-modal');showToast('Merchant deleted!','success');loadNewMerchants();loadActiveMerchants();loadAdminDashboard();}
 </script>
 </body>
 </html>
