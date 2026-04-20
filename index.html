@@ -47,6 +47,8 @@ body{font-family:'Hind Siliguri',sans-serif;background:#f8fafb;color:var(--dark)
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.active{display:flex}
 .modal{background:white;border-radius:16px;padding:32px;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;position:relative;animation:modalIn 0.3s ease}
+#signup-modal .modal{scrollbar-width:none;-ms-overflow-style:none}
+#signup-modal .modal::-webkit-scrollbar{display:none}
 @keyframes modalIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
 .modal-close{position:absolute;top:16px;right:16px;background:var(--light-gray);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
 .modal-icon{width:64px;height:64px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--primary)}
@@ -179,14 +181,10 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
   </nav>
   <div class="hero">
     <img src="orjo.png" class="hero-banner-img" alt="Banner" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#0f172a,#052e16)';this.parentElement.style.minHeight='400px'">
-    <div class="hero-overlay">
-      <div class="hero-text">
-        <h1>Grow Your Business<br>with <span>Digital Shop TM</span></h1>
-        <p>Reach millions of buyers. Publish your products and manage orders easily from one dashboard.</p>
-        <div class="hero-btns">
-          <button class="btn-white" id="hero-signup-btn"><i class="fas fa-rocket"></i> Start Now</button>
-          <button class="btn-ghost" id="hero-login-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
-        </div>
+    <div class="hero-overlay" style="background:none">
+      <div style="opacity:0;pointer-events:none">
+        <button id="hero-signup-btn" style="display:none"></button>
+        <button id="hero-login-btn" style="display:none"></button>
       </div>
     </div>
   </div>
@@ -324,8 +322,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       </div>
 
       <div id="section-orders" class="content-section">
-        <div class="sec-heading">Orders</div>
-        <div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet.</p></div>
+        <div class="sec-heading">My Orders</div>
+        <div id="user-orders-list"><div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet.</p></div></div>
       </div>
 
       <div id="section-track-parcel" class="content-section">
@@ -398,6 +396,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="sidebar-item" data-admin-section="parcels"><i class="fas fa-box"></i> Add Parcel</div>
       <div class="sidebar-item" data-admin-section="edit-parcel"><i class="fas fa-edit"></i> Edit/New Parcel</div>
       <div class="sidebar-item" data-admin-section="order-details"><i class="fas fa-list-alt"></i> User Order Details</div>
+      <div class="sidebar-item" data-admin-section="deleted-products"><i class="fas fa-trash-alt" style="color:#ef4444"></i> ডিলিট কৃত পণ্য</div>
       <div class="sidebar-label">Account</div>
       <div class="sidebar-item" id="admin-logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</div>
     </div>
@@ -426,6 +425,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
           <div class="dash-card" onclick="showAdminSection('parcels')"><div class="dash-card-icon bg-purple"><i class="fas fa-box"></i></div><h4>Add Parcel</h4></div>
           <div class="dash-card" onclick="showAdminSection('edit-parcel')"><div class="dash-card-icon bg-teal"><i class="fas fa-edit"></i></div><h4>Edit/New Parcel</h4></div>
           <div class="dash-card" onclick="showAdminSection('order-details')"><div class="dash-card-icon bg-indigo"><i class="fas fa-list-alt"></i></div><h4>User Order Details</h4></div>
+          <div class="dash-card" onclick="showAdminSection('deleted-products')"><div class="dash-card-icon bg-red"><i class="fas fa-trash-alt"></i></div><h4>ডিলিট কৃত পণ্য</h4></div>
         </div>
       </div>
 
@@ -456,8 +456,21 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       </div>
 
       <div id="admin-section-order-details" class="content-section">
-        <div class="sec-heading">User Order Details</div>
-        <div class="table-card"><div id="order-details-list"><div class="empty-state"><i class="fas fa-list-alt"></i><p>No orders yet.</p></div></div></div>
+        <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+          <div class="sec-heading" style="margin-bottom:0;flex:1">User Order Details</div>
+          <button class="btn btn-primary btn-sm" onclick="loadAdminOrders()"><i class="fas fa-sync"></i> Refresh</button>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <div style="background:#dbeafe;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;color:#1d4ed8;cursor:pointer" onclick="filterAdminOrders('self')"><i class="fas fa-motorcycle"></i> নিজে ডেলিভারি</div>
+          <div style="background:#f0fdf4;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;color:#166534;cursor:pointer" onclick="filterAdminOrders('our')"><i class="fas fa-truck"></i> আমাদের মাধ্যমে</div>
+          <div style="background:#f3f4f6;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;color:#374151;cursor:pointer" onclick="filterAdminOrders('all')"><i class="fas fa-list"></i> সব</div>
+        </div>
+        <div id="order-details-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
+      </div>
+
+      <div id="admin-section-deleted-products" class="content-section">
+        <div class="sec-heading">ডিলিট কৃত পণ্য</div>
+        <div id="deleted-products-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
       </div>
 
     </div>
@@ -481,9 +494,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
     <div id="login-error" class="err-box"></div>
     <button class="btn btn-primary btn-block" id="login-submit-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
     <div style="text-align:center;margin-top:16px;font-size:13px">Don't have an account? <span style="color:var(--primary);cursor:pointer;font-weight:600" id="go-signup">Register here</span></div>
-    <div style="text-align:center;margin-top:12px">
-      <span id="go-admin-login" style="font-size:13px;color:#7c3aed;cursor:pointer;font-weight:700;background:#ede9fe;padding:6px 18px;border-radius:20px;display:inline-block"><i class="fas fa-crown"></i> Admin Login</span>
-    </div>
+
   </div>
 </div>
 
@@ -519,6 +530,10 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
         <label>Shop Name *</label>
         <div class="input-wrap"><i class="fas fa-store ico"></i><input type="text" id="reg-shop" placeholder="Your unique shop name" oninput="checkShopName(this.value)"></div>
         <div id="shop-name-msg" style="font-size:12px;margin-top:4px"></div>
+        <div id="shop-suggestions" style="display:none;margin-top:8px;background:#f8fafb;border-radius:8px;padding:10px;border:1px solid var(--border)">
+          <div style="font-size:11px;font-weight:700;color:var(--gray);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px"><i class="fas fa-lightbulb" style="color:var(--warning)"></i> সাজেস্টেড শপ নাম:</div>
+          <div id="shop-suggestions-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+        </div>
       </div>
       <div class="form-group form-full"><label>Current Address *</label><div class="input-wrap"><i class="fas fa-map-marker-alt ico-top"></i><textarea id="reg-current-addr" placeholder="Current address"></textarea></div></div>
       <div class="form-group form-full"><label>Permanent Address *</label><div class="input-wrap"><i class="fas fa-home ico-top"></i><textarea id="reg-permanent-addr" placeholder="Permanent address"></textarea></div></div>
@@ -561,12 +576,885 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
   </div>
 </div>
 
+
+<!-- MERCHANT ORDER ADD MODAL -->
+<div id="merchant-order-modal" class="modal-overlay">
+  <div class="modal" style="max-width:700px;scrollbar-width:none">
+    <button class="modal-close" onclick="closeModal('merchant-order-modal')"><i class="fas fa-times"></i></button>
+    <div class="modal-icon" style="background:#ede9fe"><i class="fas fa-shopping-cart" style="color:#7c3aed"></i></div>
+    <h2 id="merchant-order-modal-title">মার্চেন্টের পণ্য</h2>
+    <div class="search-bar" style="margin-bottom:12px"><i class="fas fa-search"></i><input type="text" id="merchant-prod-search" placeholder="পণ্যের নাম বা SKS কোড লিখুন..." oninput="filterMerchantProducts(this.value)"></div>
+    <div id="merchant-products-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;max-height:400px;overflow-y:auto;scrollbar-width:none"></div>
+  </div>
+</div>
+
+<!-- ORDER DISPATCH MODAL -->
+<div id="order-dispatch-modal" class="modal-overlay">
+  <div class="modal" style="max-width:580px;scrollbar-width:none">
+    <button class="modal-close" onclick="closeModal('order-dispatch-modal')"><i class="fas fa-times"></i></button>
+    <h2 id="dispatch-prod-name" style="margin-bottom:16px"></h2>
+    <div id="dispatch-prod-info"></div>
+    <div style="border-top:2px solid var(--border);margin:16px 0;padding-top:16px">
+      <div style="font-weight:700;margin-bottom:12px;color:var(--dark)"><i class="fas fa-user"></i> ক্রেতার তথ্য:</div>
+      <div class="form-row">
+        <div class="form-group"><label>ক্রেতার নাম *</label><div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="buyer-name" placeholder="ক্রেতার নাম"></div></div>
+        <div class="form-group"><label>মোবাইল নম্বর *</label><div class="input-wrap"><i class="fas fa-phone ico"></i><input type="tel" id="buyer-phone" placeholder="01XXXXXXXXX"></div></div>
+        <div class="form-group form-full"><label>ঠিকানা *</label><div class="input-wrap"><i class="fas fa-map-marker-alt ico-top"></i><textarea id="buyer-address" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা" style="height:70px"></textarea></div></div>
+      </div>
+    </div>
+    <div id="dispatch-error" class="err-box"></div>
+    <button class="btn btn-primary btn-block" onclick="submitDispatchOrder()"><i class="fas fa-paper-plane"></i> পাঠান</button>
+  </div>
+</div>
+
+<!-- ORDER STATUS MODAL (for user/admin) -->
+<div id="order-status-modal" class="modal-overlay">
+  <div class="modal" style="max-width:560px;scrollbar-width:none">
+    <button class="modal-close" onclick="closeModal('order-status-modal')"><i class="fas fa-times"></i></button>
+    <h2 id="order-status-title">অর্ডার ট্র্যাকিং</h2>
+    <div id="order-status-content"></div>
+  </div>
+</div>
+
+<!-- USER DELIVERY CHOICE MODAL -->
+<div id="delivery-choice-modal" class="modal-overlay">
+  <div class="modal" style="max-width:520px;scrollbar-width:none">
+    <button class="modal-close" onclick="closeModal('delivery-choice-modal')"><i class="fas fa-times"></i></button>
+    <h2 id="delivery-choice-title">ডেলিভারি পদ্ধতি বেছে নিন</h2>
+    <div id="delivery-choice-prod-info" style="margin-bottom:16px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">
+      <div id="choice-self-btn" onclick="selectDeliveryChoice('self')" style="border:2px solid var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--info)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:32px;margin-bottom:10px">🏍️</div>
+        <div style="font-weight:700;font-size:14px;color:var(--dark)">নিজে ডেলিভারি দিন</div>
+        <div style="font-size:12px;color:var(--gray);margin-top:6px">৳৩০ কমিশন কাটা হবে</div>
+      </div>
+      <div id="choice-our-btn" onclick="selectDeliveryChoice('our')" style="border:2px solid var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="font-size:32px;margin-bottom:10px">🚚</div>
+        <div style="font-weight:700;font-size:14px;color:var(--dark)">আমাদের মাধ্যমে</div>
+        <div style="font-size:12px;color:var(--gray);margin-top:6px">পিকআপ এড্রেস সিলেক্ট করুন</div>
+      </div>
+    </div>
+    <div id="self-delivery-panel" style="display:none;margin-top:16px;background:#dbeafe;border-radius:10px;padding:14px">
+      <div style="font-weight:700;color:#1d4ed8;margin-bottom:8px"><i class="fas fa-info-circle"></i> নিজে ডেলিভারি</div>
+      <div style="font-size:13px;color:#1e40af">আপনার একাউন্ট থেকে কমিশন বাবদ <strong>৳৩০</strong> কাটা হবে। পণ্য পাঠানোর পর Publish করুন।</div>
+      <button class="btn btn-primary" style="margin-top:12px;width:100%;justify-content:center" onclick="publishSelfDelivery()"><i class="fas fa-check"></i> নিশ্চিত করুন ও Publish করুন</button>
+    </div>
+    <div id="our-delivery-panel" style="display:none;margin-top:16px;background:#f0fdf4;border-radius:10px;padding:14px">
+      <div style="font-weight:700;color:#166534;margin-bottom:8px"><i class="fas fa-truck"></i> আমাদের মাধ্যমে ডেলিভারি</div>
+      <div style="font-size:13px;color:#166534;margin-bottom:12px">পণ্যের দাম: <strong id="our-delivery-price"></strong></div>
+      <div class="form-group"><label>পিকআপ এড্রেস সিলেক্ট করুন</label>
+        <div class="input-wrap"><i class="fas fa-map-marker-alt ico"></i>
+          <select id="pickup-addr-select" style="padding-left:36px">
+            <option value="">-- পিকআপ এড্রেস বেছে নিন --</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:8px;width:100%;justify-content:center" onclick="publishOurDelivery()"><i class="fas fa-check"></i> নিশ্চিত করুন ও Publish করুন</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg">Success!</span></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
+
+// ======================== MERCHANT ORDER SYSTEM ========================
+var currentMerchantOrderUid='',currentMerchantOrderName='',allMerchantProds=[],currentDispatchProd=null,currentDeliveryOrderId='';
+
+async function openMerchantOrderAdd(uid,name){
+  currentMerchantOrderUid=uid;currentMerchantOrderName=name;
+  document.getElementById('merchant-order-modal-title').textContent=name+' এর পণ্য সমূহ';
+  document.getElementById('merchant-products-grid').innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  document.getElementById('merchant-prod-search').value='';
+  openModal('merchant-order-modal');
+  try{
+    var snap=await db.collection('products').where('merchantUid','==',uid).get();
+    allMerchantProds=[];
+    snap.forEach(d=>{if(!d.data().deleted)allMerchantProds.push({id:d.id,...d.data()});});
+    renderMerchantProds(allMerchantProds);
+  }catch(e){document.getElementById('merchant-products-grid').innerHTML='<div class="empty-state"><p>Failed to load.</p></div>';}
+}
+
+function renderMerchantProds(list){
+  if(!list.length){document.getElementById('merchant-products-grid').innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>কোনো পণ্য নেই।</p></div>';return;}
+  document.getElementById('merchant-products-grid').innerHTML=list.map(p=>
+    '<div onclick="openDispatch(\''+p.id+'\')" style="background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.08);overflow:hidden;cursor:pointer;transition:transform 0.2s;border:2px solid transparent" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">'+
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;height:110px;object-fit:cover">':'<div style="height:110px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:28px;color:#d1d5db"><i class="fas fa-image"></i></div>')+
+    '<div style="padding:8px"><div style="font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.name+'</div><div style="color:var(--primary);font-weight:700;font-size:14px">৳'+p.price+'</div><div style="font-size:11px;color:var(--gray)">SKS: '+p.sksId+'</div></div></div>'
+  ).join('');
+}
+
+function filterMerchantProducts(q){
+  if(!q)return renderMerchantProds(allMerchantProds);
+  renderMerchantProds(allMerchantProds.filter(p=>(p.name||'').toLowerCase().includes(q.toLowerCase())||(p.sksId||'').toLowerCase().includes(q.toLowerCase())));
+}
+
+async function openDispatch(pid){
+  var p=allMerchantProds.find(x=>x.id===pid);if(!p)return;
+  currentDispatchProd=p;
+  document.getElementById('dispatch-prod-name').textContent=p.name+' - ৳'+p.price;
+  document.getElementById('dispatch-prod-info').innerHTML=
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;max-height:160px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-bottom:12px">':'' )+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px"><span class="sks-badge">'+p.sksId+'</span><span style="background:#f0fdf4;color:#166534;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600">৳'+p.price+'</span></div>';
+  ['buyer-name','buyer-phone','buyer-address'].forEach(id=>document.getElementById(id).value='');
+  showErr('dispatch-error','');
+  closeModal('merchant-order-modal');
+  openModal('order-dispatch-modal');
+}
+
+async function submitDispatchOrder(){
+  var name=document.getElementById('buyer-name').value.trim();
+  var phone=document.getElementById('buyer-phone').value.trim();
+  var addr=document.getElementById('buyer-address').value.trim();
+  if(!name||!phone||!addr)return showErr('dispatch-error','সকল তথ্য পূরণ করুন!');
+  var p=currentDispatchProd;
+  var orderId='ORD-'+Date.now();
+  try{
+    await db.collection('orders').doc(orderId).set({
+      orderId,productId:p.id,productName:p.name,productPrice:p.price,productImage:p.imageUrl||''
+      ,sksId:p.sksId,merchantUid:p.merchantUid,merchantName:p.merchantName,shopName:p.shopName||''
+      ,buyerName:name,buyerPhone:phone,buyerAddress:addr
+      ,deliveryType:'',status:'pending'
+      ,createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      ,adminCreated:true,statusHistory:[{status:'pending',time:new Date().toISOString()}]
+    });
+    closeModal('order-dispatch-modal');
+    showToast('অর্ডার তৈরি হয়েছে! মার্চেন্টের Orders এ দেখা যাবে।','success');
+  }catch(e){showErr('dispatch-error','Failed: '+e.message);}
+}
+
+// ======================== USER ORDERS ========================
+async function loadUserOrders(){
+  var u=currentUser;if(!u)return;
+  var c=document.getElementById('user-orders-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('orders').where('merchantUid','==',u.uid).get();
+    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet.</p></div>';return;}
+    var orders=[];snap.forEach(d=>orders.push({id:d.id,...d.data()}));
+    c.innerHTML='<div style="display:flex;flex-direction:column;gap:14px">'+orders.map(o=>{
+      var hasChoice=o.deliveryType;
+      var statusColors={pending:'#fef9c3,#854d0e',processing:'#dbeafe,#1d4ed8',shipped:'#f0fdf4,#166534',delivered:'#dcfce7,#14532d',cancelled:'#fee2e2,#991b1b'};
+      var sc=statusColors[o.status]?statusColors[o.status].split(','):['#f3f4f6','#374151'];
+      return '<div style="background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.06);overflow:hidden">'+
+        '<div style="display:flex;gap:12px;padding:14px">'+
+        (o.productImage?'<img src="'+o.productImage+'" style="width:70px;height:70px;object-fit:cover;border-radius:8px;flex-shrink:0">':'' )+
+        '<div style="flex:1"><div style="font-weight:700;font-size:14px">'+o.productName+'</div>'+
+        '<div style="color:var(--primary);font-weight:700">৳'+o.productPrice+'</div>'+
+        '<div style="font-size:12px;color:var(--gray)">ক্রেতা: '+o.buyerName+' | '+o.buyerPhone+'</div>'+
+        '<div style="margin-top:6px;font-size:12px;background:'+sc[0]+';color:'+sc[1]+';padding:3px 10px;border-radius:20px;display:inline-block;font-weight:600">'+o.status+'</div></div></div>'+
+        (!hasChoice?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border)">'+
+          '<button onclick="chooseDelivery(\'self\',\''+o.id+'\')" style="padding:12px;background:#eff6ff;border:none;border-right:1px solid var(--border);cursor:pointer;font-weight:600;color:#1d4ed8;font-family:inherit;font-size:13px"><i class="fas fa-motorcycle"></i> নিজে ডেলিভারি</button>'+
+          '<button onclick="chooseDelivery(\'our\',\''+o.id+'\')" style="padding:12px;background:#f0fdf4;border:none;cursor:pointer;font-weight:600;color:#166534;font-family:inherit;font-size:13px"><i class="fas fa-truck"></i> আমাদের মাধ্যমে</button>'+
+          '</div>':
+          '<div style="display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border)">'+
+          '<button onclick="viewOrderAddress(\'"+o.id+"\')" style="flex:1;padding:8px;background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-map-marker-alt"></i> ক্রেতার ঠিকানা</button>'+
+          '<button onclick="viewOrderTracking(\'"+o.id+"\')" style="flex:1;padding:8px;background:var(--primary-light);border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;color:var(--primary);font-family:inherit"><i class="fas fa-route"></i> ট্র্যাকিং</button>'+
+          '</div>'
+        )+'</div>';
+    }).join('')+'</div>';
+  }catch(e){c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
+}
+
+async function chooseDelivery(type,orderId){
+  if(type==='self'){
+    if(!confirm('নিজে ডেলিভারি দিলে আপনার একাউন্ট থেকে কমিশন বাবদ ৳৩০ কাটা হবে। নিশ্চিত করুন?'))return;
+    var u=currentUser;
+    var newBal=(u.balance||0)-30;
+    await db.collection('merchants').doc(u.uid).update({balance:newBal});
+    await db.collection('orders').doc(orderId).update({deliveryType:'self',status:'processing',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'processing-self',time:new Date().toISOString()})});
+    currentUser.balance=newBal;
+    showToast('৳৩০ কমিশন কাটা হয়েছে। Balance: ৳'+newBal,'warning');
+    loadUserOrders();loadUserDashboard();
+  }else{
+    // Our delivery - show pickup selection
+    currentDeliveryOrderId=orderId;
+    var ord=(await db.collection('orders').doc(orderId).get()).data();
+    var ua=currentUser;
+    document.getElementById('delivery-choice-title').textContent='ডেলিভারি পদ্ধতি - '+ord.productName;
+    document.getElementById('delivery-choice-prod-info').innerHTML=
+      (ord.productImage?'<img src="'+ord.productImage+'" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid var(--border)">':'' );
+    document.getElementById('our-delivery-price').textContent='৳'+ord.productPrice;
+    document.getElementById('self-delivery-panel').style.display='none';
+    document.getElementById('our-delivery-panel').style.display='block';
+    // Load pickup addresses
+    var sel=document.getElementById('pickup-addr-select');
+    sel.innerHTML='<option value="">-- পিকআপ এড্রেস বেছে নিন --</option>';
+    if(ua.pickupAddresses&&ua.pickupAddresses.length){ua.pickupAddresses.forEach((a,i)=>sel.innerHTML+='<option value="'+i+'">'+a+'</option>');}
+    else{sel.innerHTML+='<option value="current">'+ua.currentAddress+'</option><option value="permanent">'+ua.permanentAddress+'</option>';}
+    openModal('delivery-choice-modal');
+  }
+}
+
+function selectDeliveryChoice(type){
+  document.getElementById('self-delivery-panel').style.display=type==='self'?'block':'none';
+  document.getElementById('our-delivery-panel').style.display=type==='our'?'block':'none';
+}
+
+async function publishSelfDelivery(){
+  if(!currentDeliveryOrderId)return;
+  await db.collection('orders').doc(currentDeliveryOrderId).update({deliveryType:'self',status:'processing',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'processing-self',time:new Date().toISOString()})});
+  var newBal=(currentUser.balance||0)-30;
+  await db.collection('merchants').doc(currentUser.uid).update({balance:newBal});
+  currentUser.balance=newBal;
+  closeModal('delivery-choice-modal');showToast('৳৩০ কমিশন কাটা হয়েছে!','warning');loadUserOrders();
+}
+
+async function publishOurDelivery(){
+  var sel=document.getElementById('pickup-addr-select');
+  if(!sel.value)return showToast('পিকআপ এড্রেস সিলেক্ট করুন!','warning');
+  if(!currentDeliveryOrderId)return;
+  var u=currentUser;
+  var addr=sel.value==='current'?u.currentAddress:sel.value==='permanent'?u.permanentAddress:(u.pickupAddresses&&u.pickupAddresses[parseInt(sel.value)])||'Unknown';
+  await db.collection('orders').doc(currentDeliveryOrderId).update({deliveryType:'our',pickupAddress:addr,status:'pending',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'pending-courier',time:new Date().toISOString()})});
+  closeModal('delivery-choice-modal');showToast('অর্ডার কুরিয়ারে পাঠানো হয়েছে!','success');loadUserOrders();
+}
+
+async function viewOrderAddress(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent='ক্রেতার তথ্য';
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="background:#f8fafb;border-radius:10px;padding:16px">'+
+    '<div class="detail-row"><span class="detail-label">নাম:</span><span class="detail-value">'+o.buyerName+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+o.buyerPhone+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ঠিকানা:</span><span class="detail-value">'+o.buyerAddress+'</span></div></div>';
+  openModal('order-status-modal');
+}
+
+var TRACKING_STEPS=['pending','processing','at-hub','at-shop','with-delivery-man','delivered','payment-processing','payment-success'];
+var TRACKING_LABELS=['পেন্ডিং','ডেলিভারি পিকআপ','হাবে আছে','শপে আছে','ডেলিভারি ম্যানের কাছে','ডেলিভারি হয়েছে','পেমেন্টের কাজ চলছে','পেমেন্ট সফল'];
+var TRACKING_ICONS=['clock','motorcycle','warehouse','store','person-biking','check-double','credit-card','star'];
+
+async function viewOrderTracking(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent=o.productName+' - ট্র্যাকিং';
+  var curStep=TRACKING_STEPS.indexOf(o.status);if(curStep<0)curStep=0;
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="margin-bottom:16px">'+
+    TRACKING_STEPS.map((s,i)=>
+      '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:'+
+      (i<=curStep?'white':'#f9fafb')+';border-radius:8px;margin-bottom:6px;border-left:4px solid '+
+      (i<curStep?'var(--primary)':i===curStep?'var(--warning)':'var(--border)')+'">'+
+      '<div style="width:32px;height:32px;border-radius:50%;background:'+
+      (i<curStep?'var(--primary)':i===curStep?'var(--warning)':'var(--border)')+
+      ';color:white;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">'+
+      (i<curStep?'<i class="fas fa-check"></i>':'<i class="fas fa-'+TRACKING_ICONS[i]+'"></i>')+'</div>'+
+      '<span style="font-size:14px;font-weight:'+(i<=curStep?'700':'400')+';color:'+(i<=curStep?'var(--dark)':'var(--gray)')+'">'+TRACKING_LABELS[i]+'</span></div>'
+    ).join('')+ '</div>';
+  openModal('order-status-modal');
+}
+
+// ======================== ADMIN ORDERS ========================
+var allAdminOrders=[];
+
+async function loadAdminOrders(){
+  var c=document.getElementById('order-details-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('orders').get();
+    allAdminOrders=[];snap.forEach(d=>allAdminOrders.push({id:d.id,...d.data()}));
+    renderAdminOrders(allAdminOrders);
+  }catch(e){c.innerHTML='<div class="empty-state"><p>Failed to load.</p></div>';}
+}
+
+function filterAdminOrders(type){
+  if(type==='all')return renderAdminOrders(allAdminOrders);
+  renderAdminOrders(allAdminOrders.filter(o=>o.deliveryType===type));
+}
+
+function renderAdminOrders(list){
+  if(!list.length){document.getElementById('order-details-list').innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>কোনো অর্ডার নেই।</p></div>';return;}
+  document.getElementById('order-details-list').innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">'+list.map(o=>{
+    var typeLabel=o.deliveryType==='self'?'<span style="background:#dbeafe;color:#1d4ed8;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-motorcycle"></i> নিজে ডেলিভারি</span>':
+      o.deliveryType==='our'?'<span style="background:#f0fdf4;color:#166534;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-truck"></i> আমাদের মাধ্যমে</span>':
+      '<span style="background:#fef9c3;color:#854d0e;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-clock"></i> পদ্ধতি নির্বাচনের অপেক্ষায়</span>';
+    return '<div style="background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.07);overflow:hidden">'+
+      (o.productImage?'<img src="'+o.productImage+'" style="width:100%;height:130px;object-fit:cover">':'' )+
+      '<div style="padding:12px">'+
+      '<div style="font-weight:700;font-size:14px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+o.productName+'</div>'+
+      '<div style="color:var(--primary);font-weight:700">৳'+o.productPrice+'</div>'+
+      '<div style="font-size:12px;color:var(--gray);margin-top:4px">মার্চেন্ট: '+o.merchantName+'</div>'+
+      '<div style="margin:8px 0">'+typeLabel+'</div>'+
+      (o.deliveryType==='our'?
+        '<button onclick="adminUpdateOrderStatus(\'"'+o.id+'"\')" style="width:100%;padding:8px;background:var(--primary);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-edit"></i> স্ট্যাটাস আপডেট</button>':
+        o.deliveryType==='self'?
+        '<button onclick="viewSelfDeliveryStatus(\'"'+o.id+'"\')" style="width:100%;padding:8px;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-eye"></i> বিস্তারিত দেখুন</button>':''
+      )+'</div></div>';
+  }).join('')+'</div>';
+}
+
+async function adminUpdateOrderStatus(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  var curStep=TRACKING_STEPS.indexOf(o.status);if(curStep<0)curStep=0;
+  document.getElementById('order-status-title').textContent='স্ট্যাটাস আপডেট করুন';
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="margin-bottom:8px;font-size:13px;color:var(--gray)">পণ্য: <strong>'+o.productName+'</strong><br>ক্রেতা: <strong>'+o.buyerName+'</strong></div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px">'+
+    TRACKING_STEPS.map((s,i)=>
+      '<button onclick="setOrderStatus(\'"'+orderId+"\',\'"+s+"\')" style='display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid '+
+      (i===curStep?'var(--primary)':'var(--border)')+';border-radius:8px;background:'+
+      (i===curStep?'var(--primary-light)':'white')+';cursor:pointer;font-family:inherit;font-weight:'+
+      (i===curStep?'700':'400')+';color:'+
+      (i===curStep?'var(--primary-dark)':'var(--dark)')+''>'+
+      '<i class="fas fa-'+TRACKING_ICONS[i]+'" style="width:18px"></i>'+TRACKING_LABELS[i]+
+      (i===curStep?' <span style="margin-left:auto;font-size:11px;background:var(--primary);color:white;padding:2px 8px;border-radius:20px">বর্তমান</span>':'')
+      +'</button>'
+    ).join('')+'</div>';
+  openModal('order-status-modal');
+}
+
+async function setOrderStatus(orderId,status){
+  await db.collection('orders').doc(orderId).update({status,statusHistory:firebase.firestore.FieldValue.arrayUnion({status,time:new Date().toISOString(),updatedBy:'admin'})});
+  closeModal('order-status-modal');showToast('স্ট্যাটাস আপডেট হয়েছে!','success');loadAdminOrders();
+}
+
+async function viewSelfDeliveryStatus(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent=o.productName+' - বিস্তারিত';
+  var history=o.statusHistory||[];
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="background:#f8fafb;border-radius:10px;padding:14px;margin-bottom:12px">'+
+    '<div class="detail-row"><span class="detail-label">ক্রেতার নাম:</span><span class="detail-value">'+o.buyerName+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+o.buyerPhone+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ঠিকানা:</span><span class="detail-value">'+o.buyerAddress+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মার্চেন্ট:</span><span class="detail-value">'+o.merchantName+'</span></div></div>'+
+    '<div style="font-weight:700;margin-bottom:8px">স্ট্যাটাস ইতিহাস:</div>'+
+    history.map(h=>'<div style="padding:8px 12px;background:white;border-radius:8px;border-left:3px solid var(--primary);margin-bottom:6px;font-size:13px"><i class="fas fa-circle" style="color:var(--primary);font-size:8px;margin-right:6px"></i>'+h.status+' <span style="float:right;color:var(--gray);font-size:11px">'+h.time.slice(0,16).replace('T',' ')+'</span></div>').join('');
+  openModal('order-status-modal');
+}
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
+
+// ======================== MERCHANT ORDER SYSTEM ========================
+var currentMerchantOrderUid='',currentMerchantOrderName='',allMerchantProds=[],currentDispatchProd=null,currentDeliveryOrderId='';
+
+async function openMerchantOrderAdd(uid,name){
+  currentMerchantOrderUid=uid;currentMerchantOrderName=name;
+  document.getElementById('merchant-order-modal-title').textContent=name+' এর পণ্য সমূহ';
+  document.getElementById('merchant-products-grid').innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  document.getElementById('merchant-prod-search').value='';
+  openModal('merchant-order-modal');
+  try{
+    var snap=await db.collection('products').where('merchantUid','==',uid).get();
+    allMerchantProds=[];
+    snap.forEach(d=>{if(!d.data().deleted)allMerchantProds.push({id:d.id,...d.data()});});
+    renderMerchantProds(allMerchantProds);
+  }catch(e){document.getElementById('merchant-products-grid').innerHTML='<div class="empty-state"><p>Failed to load.</p></div>';}
+}
+
+function renderMerchantProds(list){
+  if(!list.length){document.getElementById('merchant-products-grid').innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>কোনো পণ্য নেই।</p></div>';return;}
+  document.getElementById('merchant-products-grid').innerHTML=list.map(p=>
+    '<div onclick="openDispatch(\''+p.id+'\')" style="background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.08);overflow:hidden;cursor:pointer;transition:transform 0.2s;border:2px solid transparent" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">'+
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;height:110px;object-fit:cover">':'<div style="height:110px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:28px;color:#d1d5db"><i class="fas fa-image"></i></div>')+
+    '<div style="padding:8px"><div style="font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.name+'</div><div style="color:var(--primary);font-weight:700;font-size:14px">৳'+p.price+'</div><div style="font-size:11px;color:var(--gray)">SKS: '+p.sksId+'</div></div></div>'
+  ).join('');
+}
+
+function filterMerchantProducts(q){
+  if(!q)return renderMerchantProds(allMerchantProds);
+  renderMerchantProds(allMerchantProds.filter(p=>(p.name||'').toLowerCase().includes(q.toLowerCase())||(p.sksId||'').toLowerCase().includes(q.toLowerCase())));
+}
+
+async function openDispatch(pid){
+  var p=allMerchantProds.find(x=>x.id===pid);if(!p)return;
+  currentDispatchProd=p;
+  document.getElementById('dispatch-prod-name').textContent=p.name+' - ৳'+p.price;
+  document.getElementById('dispatch-prod-info').innerHTML=
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;max-height:160px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-bottom:12px">':'' )+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px"><span class="sks-badge">'+p.sksId+'</span><span style="background:#f0fdf4;color:#166534;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600">৳'+p.price+'</span></div>';
+  ['buyer-name','buyer-phone','buyer-address'].forEach(id=>document.getElementById(id).value='');
+  showErr('dispatch-error','');
+  closeModal('merchant-order-modal');
+  openModal('order-dispatch-modal');
+}
+
+async function submitDispatchOrder(){
+  var name=document.getElementById('buyer-name').value.trim();
+  var phone=document.getElementById('buyer-phone').value.trim();
+  var addr=document.getElementById('buyer-address').value.trim();
+  if(!name||!phone||!addr)return showErr('dispatch-error','সকল তথ্য পূরণ করুন!');
+  var p=currentDispatchProd;
+  var orderId='ORD-'+Date.now();
+  try{
+    await db.collection('orders').doc(orderId).set({
+      orderId,productId:p.id,productName:p.name,productPrice:p.price,productImage:p.imageUrl||''
+      ,sksId:p.sksId,merchantUid:p.merchantUid,merchantName:p.merchantName,shopName:p.shopName||''
+      ,buyerName:name,buyerPhone:phone,buyerAddress:addr
+      ,deliveryType:'',status:'pending'
+      ,createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      ,adminCreated:true,statusHistory:[{status:'pending',time:new Date().toISOString()}]
+    });
+    closeModal('order-dispatch-modal');
+    showToast('অর্ডার তৈরি হয়েছে! মার্চেন্টের Orders এ দেখা যাবে।','success');
+  }catch(e){showErr('dispatch-error','Failed: '+e.message);}
+}
+
+// ======================== USER ORDERS ========================
+async function loadUserOrders(){
+  var u=currentUser;if(!u)return;
+  var c=document.getElementById('user-orders-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('orders').where('merchantUid','==',u.uid).get();
+    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet.</p></div>';return;}
+    var orders=[];snap.forEach(d=>orders.push({id:d.id,...d.data()}));
+    c.innerHTML='<div style="display:flex;flex-direction:column;gap:14px">'+orders.map(o=>{
+      var hasChoice=o.deliveryType;
+      var statusColors={pending:'#fef9c3,#854d0e',processing:'#dbeafe,#1d4ed8',shipped:'#f0fdf4,#166534',delivered:'#dcfce7,#14532d',cancelled:'#fee2e2,#991b1b'};
+      var sc=statusColors[o.status]?statusColors[o.status].split(','):['#f3f4f6','#374151'];
+      return '<div style="background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.06);overflow:hidden">'+
+        '<div style="display:flex;gap:12px;padding:14px">'+
+        (o.productImage?'<img src="'+o.productImage+'" style="width:70px;height:70px;object-fit:cover;border-radius:8px;flex-shrink:0">':'' )+
+        '<div style="flex:1"><div style="font-weight:700;font-size:14px">'+o.productName+'</div>'+
+        '<div style="color:var(--primary);font-weight:700">৳'+o.productPrice+'</div>'+
+        '<div style="font-size:12px;color:var(--gray)">ক্রেতা: '+o.buyerName+' | '+o.buyerPhone+'</div>'+
+        '<div style="margin-top:6px;font-size:12px;background:'+sc[0]+';color:'+sc[1]+';padding:3px 10px;border-radius:20px;display:inline-block;font-weight:600">'+o.status+'</div></div></div>'+
+        (!hasChoice?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border)">'+
+          '<button onclick="chooseDelivery(\'self\',\''+o.id+'\')" style="padding:12px;background:#eff6ff;border:none;border-right:1px solid var(--border);cursor:pointer;font-weight:600;color:#1d4ed8;font-family:inherit;font-size:13px"><i class="fas fa-motorcycle"></i> নিজে ডেলিভারি</button>'+
+          '<button onclick="chooseDelivery(\'our\',\''+o.id+'\')" style="padding:12px;background:#f0fdf4;border:none;cursor:pointer;font-weight:600;color:#166534;font-family:inherit;font-size:13px"><i class="fas fa-truck"></i> আমাদের মাধ্যমে</button>'+
+          '</div>':
+          '<div style="display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border)">'+
+          '<button onclick="viewOrderAddress(\'"+o.id+"\')" style="flex:1;padding:8px;background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-map-marker-alt"></i> ক্রেতার ঠিকানা</button>'+
+          '<button onclick="viewOrderTracking(\'"+o.id+"\')" style="flex:1;padding:8px;background:var(--primary-light);border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;color:var(--primary);font-family:inherit"><i class="fas fa-route"></i> ট্র্যাকিং</button>'+
+          '</div>'
+        )+'</div>';
+    }).join('')+'</div>';
+  }catch(e){c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
+}
+
+async function chooseDelivery(type,orderId){
+  if(type==='self'){
+    if(!confirm('নিজে ডেলিভারি দিলে আপনার একাউন্ট থেকে কমিশন বাবদ ৳৩০ কাটা হবে। নিশ্চিত করুন?'))return;
+    var u=currentUser;
+    var newBal=(u.balance||0)-30;
+    await db.collection('merchants').doc(u.uid).update({balance:newBal});
+    await db.collection('orders').doc(orderId).update({deliveryType:'self',status:'processing',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'processing-self',time:new Date().toISOString()})});
+    currentUser.balance=newBal;
+    showToast('৳৩০ কমিশন কাটা হয়েছে। Balance: ৳'+newBal,'warning');
+    loadUserOrders();loadUserDashboard();
+  }else{
+    // Our delivery - show pickup selection
+    currentDeliveryOrderId=orderId;
+    var ord=(await db.collection('orders').doc(orderId).get()).data();
+    var ua=currentUser;
+    document.getElementById('delivery-choice-title').textContent='ডেলিভারি পদ্ধতি - '+ord.productName;
+    document.getElementById('delivery-choice-prod-info').innerHTML=
+      (ord.productImage?'<img src="'+ord.productImage+'" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid var(--border)">':'' );
+    document.getElementById('our-delivery-price').textContent='৳'+ord.productPrice;
+    document.getElementById('self-delivery-panel').style.display='none';
+    document.getElementById('our-delivery-panel').style.display='block';
+    // Load pickup addresses
+    var sel=document.getElementById('pickup-addr-select');
+    sel.innerHTML='<option value="">-- পিকআপ এড্রেস বেছে নিন --</option>';
+    if(ua.pickupAddresses&&ua.pickupAddresses.length){ua.pickupAddresses.forEach((a,i)=>sel.innerHTML+='<option value="'+i+'">'+a+'</option>');}
+    else{sel.innerHTML+='<option value="current">'+ua.currentAddress+'</option><option value="permanent">'+ua.permanentAddress+'</option>';}
+    openModal('delivery-choice-modal');
+  }
+}
+
+function selectDeliveryChoice(type){
+  document.getElementById('self-delivery-panel').style.display=type==='self'?'block':'none';
+  document.getElementById('our-delivery-panel').style.display=type==='our'?'block':'none';
+}
+
+async function publishSelfDelivery(){
+  if(!currentDeliveryOrderId)return;
+  await db.collection('orders').doc(currentDeliveryOrderId).update({deliveryType:'self',status:'processing',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'processing-self',time:new Date().toISOString()})});
+  var newBal=(currentUser.balance||0)-30;
+  await db.collection('merchants').doc(currentUser.uid).update({balance:newBal});
+  currentUser.balance=newBal;
+  closeModal('delivery-choice-modal');showToast('৳৩০ কমিশন কাটা হয়েছে!','warning');loadUserOrders();
+}
+
+async function publishOurDelivery(){
+  var sel=document.getElementById('pickup-addr-select');
+  if(!sel.value)return showToast('পিকআপ এড্রেস সিলেক্ট করুন!','warning');
+  if(!currentDeliveryOrderId)return;
+  var u=currentUser;
+  var addr=sel.value==='current'?u.currentAddress:sel.value==='permanent'?u.permanentAddress:(u.pickupAddresses&&u.pickupAddresses[parseInt(sel.value)])||'Unknown';
+  await db.collection('orders').doc(currentDeliveryOrderId).update({deliveryType:'our',pickupAddress:addr,status:'pending',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'pending-courier',time:new Date().toISOString()})});
+  closeModal('delivery-choice-modal');showToast('অর্ডার কুরিয়ারে পাঠানো হয়েছে!','success');loadUserOrders();
+}
+
+async function viewOrderAddress(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent='ক্রেতার তথ্য';
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="background:#f8fafb;border-radius:10px;padding:16px">'+
+    '<div class="detail-row"><span class="detail-label">নাম:</span><span class="detail-value">'+o.buyerName+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+o.buyerPhone+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ঠিকানা:</span><span class="detail-value">'+o.buyerAddress+'</span></div></div>';
+  openModal('order-status-modal');
+}
+
+var TRACKING_STEPS=['pending','processing','at-hub','at-shop','with-delivery-man','delivered','payment-processing','payment-success'];
+var TRACKING_LABELS=['পেন্ডিং','ডেলিভারি পিকআপ','হাবে আছে','শপে আছে','ডেলিভারি ম্যানের কাছে','ডেলিভারি হয়েছে','পেমেন্টের কাজ চলছে','পেমেন্ট সফল'];
+var TRACKING_ICONS=['clock','motorcycle','warehouse','store','person-biking','check-double','credit-card','star'];
+
+async function viewOrderTracking(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent=o.productName+' - ট্র্যাকিং';
+  var curStep=TRACKING_STEPS.indexOf(o.status);if(curStep<0)curStep=0;
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="margin-bottom:16px">'+
+    TRACKING_STEPS.map((s,i)=>
+      '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:'+
+      (i<=curStep?'white':'#f9fafb')+';border-radius:8px;margin-bottom:6px;border-left:4px solid '+
+      (i<curStep?'var(--primary)':i===curStep?'var(--warning)':'var(--border)')+'">'+
+      '<div style="width:32px;height:32px;border-radius:50%;background:'+
+      (i<curStep?'var(--primary)':i===curStep?'var(--warning)':'var(--border)')+
+      ';color:white;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">'+
+      (i<curStep?'<i class="fas fa-check"></i>':'<i class="fas fa-'+TRACKING_ICONS[i]+'"></i>')+'</div>'+
+      '<span style="font-size:14px;font-weight:'+(i<=curStep?'700':'400')+';color:'+(i<=curStep?'var(--dark)':'var(--gray)')+'">'+TRACKING_LABELS[i]+'</span></div>'
+    ).join('')+ '</div>';
+  openModal('order-status-modal');
+}
+
+// ======================== ADMIN ORDERS ========================
+var allAdminOrders=[];
+
+async function loadAdminOrders(){
+  var c=document.getElementById('order-details-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('orders').get();
+    allAdminOrders=[];snap.forEach(d=>allAdminOrders.push({id:d.id,...d.data()}));
+    renderAdminOrders(allAdminOrders);
+  }catch(e){c.innerHTML='<div class="empty-state"><p>Failed to load.</p></div>';}
+}
+
+function filterAdminOrders(type){
+  if(type==='all')return renderAdminOrders(allAdminOrders);
+  renderAdminOrders(allAdminOrders.filter(o=>o.deliveryType===type));
+}
+
+function renderAdminOrders(list){
+  if(!list.length){document.getElementById('order-details-list').innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>কোনো অর্ডার নেই।</p></div>';return;}
+  document.getElementById('order-details-list').innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">'+list.map(o=>{
+    var typeLabel=o.deliveryType==='self'?'<span style="background:#dbeafe;color:#1d4ed8;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-motorcycle"></i> নিজে ডেলিভারি</span>':
+      o.deliveryType==='our'?'<span style="background:#f0fdf4;color:#166534;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-truck"></i> আমাদের মাধ্যমে</span>':
+      '<span style="background:#fef9c3;color:#854d0e;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-clock"></i> পদ্ধতি নির্বাচনের অপেক্ষায়</span>';
+    return '<div style="background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.07);overflow:hidden">'+
+      (o.productImage?'<img src="'+o.productImage+'" style="width:100%;height:130px;object-fit:cover">':'' )+
+      '<div style="padding:12px">'+
+      '<div style="font-weight:700;font-size:14px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+o.productName+'</div>'+
+      '<div style="color:var(--primary);font-weight:700">৳'+o.productPrice+'</div>'+
+      '<div style="font-size:12px;color:var(--gray);margin-top:4px">মার্চেন্ট: '+o.merchantName+'</div>'+
+      '<div style="margin:8px 0">'+typeLabel+'</div>'+
+      (o.deliveryType==='our'?
+        '<button onclick="adminUpdateOrderStatus(\'"'+o.id+'"\')" style="width:100%;padding:8px;background:var(--primary);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-edit"></i> স্ট্যাটাস আপডেট</button>':
+        o.deliveryType==='self'?
+        '<button onclick="viewSelfDeliveryStatus(\'"'+o.id+'"\')" style="width:100%;padding:8px;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-eye"></i> বিস্তারিত দেখুন</button>':''
+      )+'</div></div>';
+  }).join('')+'</div>';
+}
+
+async function adminUpdateOrderStatus(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  var curStep=TRACKING_STEPS.indexOf(o.status);if(curStep<0)curStep=0;
+  document.getElementById('order-status-title').textContent='স্ট্যাটাস আপডেট করুন';
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="margin-bottom:8px;font-size:13px;color:var(--gray)">পণ্য: <strong>'+o.productName+'</strong><br>ক্রেতা: <strong>'+o.buyerName+'</strong></div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px">'+
+    TRACKING_STEPS.map((s,i)=>
+      '<button onclick="setOrderStatus(\'"'+orderId+"\',\'"+s+"\')" style='display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid '+
+      (i===curStep?'var(--primary)':'var(--border)')+';border-radius:8px;background:'+
+      (i===curStep?'var(--primary-light)':'white')+';cursor:pointer;font-family:inherit;font-weight:'+
+      (i===curStep?'700':'400')+';color:'+
+      (i===curStep?'var(--primary-dark)':'var(--dark)')+''>'+
+      '<i class="fas fa-'+TRACKING_ICONS[i]+'" style="width:18px"></i>'+TRACKING_LABELS[i]+
+      (i===curStep?' <span style="margin-left:auto;font-size:11px;background:var(--primary);color:white;padding:2px 8px;border-radius:20px">বর্তমান</span>':'')
+      +'</button>'
+    ).join('')+'</div>';
+  openModal('order-status-modal');
+}
+
+async function setOrderStatus(orderId,status){
+  await db.collection('orders').doc(orderId).update({status,statusHistory:firebase.firestore.FieldValue.arrayUnion({status,time:new Date().toISOString(),updatedBy:'admin'})});
+  closeModal('order-status-modal');showToast('স্ট্যাটাস আপডেট হয়েছে!','success');loadAdminOrders();
+}
+
+async function viewSelfDeliveryStatus(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent=o.productName+' - বিস্তারিত';
+  var history=o.statusHistory||[];
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="background:#f8fafb;border-radius:10px;padding:14px;margin-bottom:12px">'+
+    '<div class="detail-row"><span class="detail-label">ক্রেতার নাম:</span><span class="detail-value">'+o.buyerName+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+o.buyerPhone+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ঠিকানা:</span><span class="detail-value">'+o.buyerAddress+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মার্চেন্ট:</span><span class="detail-value">'+o.merchantName+'</span></div></div>'+
+    '<div style="font-weight:700;margin-bottom:8px">স্ট্যাটাস ইতিহাস:</div>'+
+    history.map(h=>'<div style="padding:8px 12px;background:white;border-radius:8px;border-left:3px solid var(--primary);margin-bottom:6px;font-size:13px"><i class="fas fa-circle" style="color:var(--primary);font-size:8px;margin-right:6px"></i>'+h.status+' <span style="float:right;color:var(--gray);font-size:11px">'+h.time.slice(0,16).replace('T',' ')+'</span></div>').join('');
+  openModal('order-status-modal');
+}
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
+
+// ======================== MERCHANT ORDER SYSTEM ========================
+var currentMerchantOrderUid='',currentMerchantOrderName='',allMerchantProds=[],currentDispatchProd=null,currentDeliveryOrderId='';
+
+async function openMerchantOrderAdd(uid,name){
+  currentMerchantOrderUid=uid;currentMerchantOrderName=name;
+  document.getElementById('merchant-order-modal-title').textContent=name+' এর পণ্য সমূহ';
+  document.getElementById('merchant-products-grid').innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  document.getElementById('merchant-prod-search').value='';
+  openModal('merchant-order-modal');
+  try{
+    var snap=await db.collection('products').where('merchantUid','==',uid).get();
+    allMerchantProds=[];
+    snap.forEach(d=>{if(!d.data().deleted)allMerchantProds.push({id:d.id,...d.data()});});
+    renderMerchantProds(allMerchantProds);
+  }catch(e){document.getElementById('merchant-products-grid').innerHTML='<div class="empty-state"><p>Failed to load.</p></div>';}
+}
+
+function renderMerchantProds(list){
+  if(!list.length){document.getElementById('merchant-products-grid').innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>কোনো পণ্য নেই।</p></div>';return;}
+  document.getElementById('merchant-products-grid').innerHTML=list.map(p=>
+    '<div onclick="openDispatch(\''+p.id+'\')" style="background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.08);overflow:hidden;cursor:pointer;transition:transform 0.2s;border:2px solid transparent" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">'+
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;height:110px;object-fit:cover">':'<div style="height:110px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:28px;color:#d1d5db"><i class="fas fa-image"></i></div>')+
+    '<div style="padding:8px"><div style="font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.name+'</div><div style="color:var(--primary);font-weight:700;font-size:14px">৳'+p.price+'</div><div style="font-size:11px;color:var(--gray)">SKS: '+p.sksId+'</div></div></div>'
+  ).join('');
+}
+
+function filterMerchantProducts(q){
+  if(!q)return renderMerchantProds(allMerchantProds);
+  renderMerchantProds(allMerchantProds.filter(p=>(p.name||'').toLowerCase().includes(q.toLowerCase())||(p.sksId||'').toLowerCase().includes(q.toLowerCase())));
+}
+
+async function openDispatch(pid){
+  var p=allMerchantProds.find(x=>x.id===pid);if(!p)return;
+  currentDispatchProd=p;
+  document.getElementById('dispatch-prod-name').textContent=p.name+' - ৳'+p.price;
+  document.getElementById('dispatch-prod-info').innerHTML=
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;max-height:160px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-bottom:12px">':'' )+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px"><span class="sks-badge">'+p.sksId+'</span><span style="background:#f0fdf4;color:#166534;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600">৳'+p.price+'</span></div>';
+  ['buyer-name','buyer-phone','buyer-address'].forEach(id=>document.getElementById(id).value='');
+  showErr('dispatch-error','');
+  closeModal('merchant-order-modal');
+  openModal('order-dispatch-modal');
+}
+
+async function submitDispatchOrder(){
+  var name=document.getElementById('buyer-name').value.trim();
+  var phone=document.getElementById('buyer-phone').value.trim();
+  var addr=document.getElementById('buyer-address').value.trim();
+  if(!name||!phone||!addr)return showErr('dispatch-error','সকল তথ্য পূরণ করুন!');
+  var p=currentDispatchProd;
+  var orderId='ORD-'+Date.now();
+  try{
+    await db.collection('orders').doc(orderId).set({
+      orderId,productId:p.id,productName:p.name,productPrice:p.price,productImage:p.imageUrl||''
+      ,sksId:p.sksId,merchantUid:p.merchantUid,merchantName:p.merchantName,shopName:p.shopName||''
+      ,buyerName:name,buyerPhone:phone,buyerAddress:addr
+      ,deliveryType:'',status:'pending'
+      ,createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      ,adminCreated:true,statusHistory:[{status:'pending',time:new Date().toISOString()}]
+    });
+    closeModal('order-dispatch-modal');
+    showToast('অর্ডার তৈরি হয়েছে! মার্চেন্টের Orders এ দেখা যাবে।','success');
+  }catch(e){showErr('dispatch-error','Failed: '+e.message);}
+}
+
+// ======================== USER ORDERS ========================
+async function loadUserOrders(){
+  var u=currentUser;if(!u)return;
+  var c=document.getElementById('user-orders-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('orders').where('merchantUid','==',u.uid).get();
+    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet.</p></div>';return;}
+    var orders=[];snap.forEach(d=>orders.push({id:d.id,...d.data()}));
+    c.innerHTML='<div style="display:flex;flex-direction:column;gap:14px">'+orders.map(o=>{
+      var hasChoice=o.deliveryType;
+      var statusColors={pending:'#fef9c3,#854d0e',processing:'#dbeafe,#1d4ed8',shipped:'#f0fdf4,#166534',delivered:'#dcfce7,#14532d',cancelled:'#fee2e2,#991b1b'};
+      var sc=statusColors[o.status]?statusColors[o.status].split(','):['#f3f4f6','#374151'];
+      return '<div style="background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.06);overflow:hidden">'+
+        '<div style="display:flex;gap:12px;padding:14px">'+
+        (o.productImage?'<img src="'+o.productImage+'" style="width:70px;height:70px;object-fit:cover;border-radius:8px;flex-shrink:0">':'' )+
+        '<div style="flex:1"><div style="font-weight:700;font-size:14px">'+o.productName+'</div>'+
+        '<div style="color:var(--primary);font-weight:700">৳'+o.productPrice+'</div>'+
+        '<div style="font-size:12px;color:var(--gray)">ক্রেতা: '+o.buyerName+' | '+o.buyerPhone+'</div>'+
+        '<div style="margin-top:6px;font-size:12px;background:'+sc[0]+';color:'+sc[1]+';padding:3px 10px;border-radius:20px;display:inline-block;font-weight:600">'+o.status+'</div></div></div>'+
+        (!hasChoice?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border)">'+
+          '<button onclick="chooseDelivery(\'self\',\''+o.id+'\')" style="padding:12px;background:#eff6ff;border:none;border-right:1px solid var(--border);cursor:pointer;font-weight:600;color:#1d4ed8;font-family:inherit;font-size:13px"><i class="fas fa-motorcycle"></i> নিজে ডেলিভারি</button>'+
+          '<button onclick="chooseDelivery(\'our\',\''+o.id+'\')" style="padding:12px;background:#f0fdf4;border:none;cursor:pointer;font-weight:600;color:#166534;font-family:inherit;font-size:13px"><i class="fas fa-truck"></i> আমাদের মাধ্যমে</button>'+
+          '</div>':
+          '<div style="display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border)">'+
+          '<button onclick="viewOrderAddress(\'"+o.id+"\')" style="flex:1;padding:8px;background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-map-marker-alt"></i> ক্রেতার ঠিকানা</button>'+
+          '<button onclick="viewOrderTracking(\'"+o.id+"\')" style="flex:1;padding:8px;background:var(--primary-light);border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;color:var(--primary);font-family:inherit"><i class="fas fa-route"></i> ট্র্যাকিং</button>'+
+          '</div>'
+        )+'</div>';
+    }).join('')+'</div>';
+  }catch(e){c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
+}
+
+async function chooseDelivery(type,orderId){
+  if(type==='self'){
+    if(!confirm('নিজে ডেলিভারি দিলে আপনার একাউন্ট থেকে কমিশন বাবদ ৳৩০ কাটা হবে। নিশ্চিত করুন?'))return;
+    var u=currentUser;
+    var newBal=(u.balance||0)-30;
+    await db.collection('merchants').doc(u.uid).update({balance:newBal});
+    await db.collection('orders').doc(orderId).update({deliveryType:'self',status:'processing',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'processing-self',time:new Date().toISOString()})});
+    currentUser.balance=newBal;
+    showToast('৳৩০ কমিশন কাটা হয়েছে। Balance: ৳'+newBal,'warning');
+    loadUserOrders();loadUserDashboard();
+  }else{
+    // Our delivery - show pickup selection
+    currentDeliveryOrderId=orderId;
+    var ord=(await db.collection('orders').doc(orderId).get()).data();
+    var ua=currentUser;
+    document.getElementById('delivery-choice-title').textContent='ডেলিভারি পদ্ধতি - '+ord.productName;
+    document.getElementById('delivery-choice-prod-info').innerHTML=
+      (ord.productImage?'<img src="'+ord.productImage+'" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid var(--border)">':'' );
+    document.getElementById('our-delivery-price').textContent='৳'+ord.productPrice;
+    document.getElementById('self-delivery-panel').style.display='none';
+    document.getElementById('our-delivery-panel').style.display='block';
+    // Load pickup addresses
+    var sel=document.getElementById('pickup-addr-select');
+    sel.innerHTML='<option value="">-- পিকআপ এড্রেস বেছে নিন --</option>';
+    if(ua.pickupAddresses&&ua.pickupAddresses.length){ua.pickupAddresses.forEach((a,i)=>sel.innerHTML+='<option value="'+i+'">'+a+'</option>');}
+    else{sel.innerHTML+='<option value="current">'+ua.currentAddress+'</option><option value="permanent">'+ua.permanentAddress+'</option>';}
+    openModal('delivery-choice-modal');
+  }
+}
+
+function selectDeliveryChoice(type){
+  document.getElementById('self-delivery-panel').style.display=type==='self'?'block':'none';
+  document.getElementById('our-delivery-panel').style.display=type==='our'?'block':'none';
+}
+
+async function publishSelfDelivery(){
+  if(!currentDeliveryOrderId)return;
+  await db.collection('orders').doc(currentDeliveryOrderId).update({deliveryType:'self',status:'processing',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'processing-self',time:new Date().toISOString()})});
+  var newBal=(currentUser.balance||0)-30;
+  await db.collection('merchants').doc(currentUser.uid).update({balance:newBal});
+  currentUser.balance=newBal;
+  closeModal('delivery-choice-modal');showToast('৳৩০ কমিশন কাটা হয়েছে!','warning');loadUserOrders();
+}
+
+async function publishOurDelivery(){
+  var sel=document.getElementById('pickup-addr-select');
+  if(!sel.value)return showToast('পিকআপ এড্রেস সিলেক্ট করুন!','warning');
+  if(!currentDeliveryOrderId)return;
+  var u=currentUser;
+  var addr=sel.value==='current'?u.currentAddress:sel.value==='permanent'?u.permanentAddress:(u.pickupAddresses&&u.pickupAddresses[parseInt(sel.value)])||'Unknown';
+  await db.collection('orders').doc(currentDeliveryOrderId).update({deliveryType:'our',pickupAddress:addr,status:'pending',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'pending-courier',time:new Date().toISOString()})});
+  closeModal('delivery-choice-modal');showToast('অর্ডার কুরিয়ারে পাঠানো হয়েছে!','success');loadUserOrders();
+}
+
+async function viewOrderAddress(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent='ক্রেতার তথ্য';
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="background:#f8fafb;border-radius:10px;padding:16px">'+
+    '<div class="detail-row"><span class="detail-label">নাম:</span><span class="detail-value">'+o.buyerName+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+o.buyerPhone+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ঠিকানা:</span><span class="detail-value">'+o.buyerAddress+'</span></div></div>';
+  openModal('order-status-modal');
+}
+
+var TRACKING_STEPS=['pending','processing','at-hub','at-shop','with-delivery-man','delivered','payment-processing','payment-success'];
+var TRACKING_LABELS=['পেন্ডিং','ডেলিভারি পিকআপ','হাবে আছে','শপে আছে','ডেলিভারি ম্যানের কাছে','ডেলিভারি হয়েছে','পেমেন্টের কাজ চলছে','পেমেন্ট সফল'];
+var TRACKING_ICONS=['clock','motorcycle','warehouse','store','person-biking','check-double','credit-card','star'];
+
+async function viewOrderTracking(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent=o.productName+' - ট্র্যাকিং';
+  var curStep=TRACKING_STEPS.indexOf(o.status);if(curStep<0)curStep=0;
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="margin-bottom:16px">'+
+    TRACKING_STEPS.map((s,i)=>
+      '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:'+
+      (i<=curStep?'white':'#f9fafb')+';border-radius:8px;margin-bottom:6px;border-left:4px solid '+
+      (i<curStep?'var(--primary)':i===curStep?'var(--warning)':'var(--border)')+'">'+
+      '<div style="width:32px;height:32px;border-radius:50%;background:'+
+      (i<curStep?'var(--primary)':i===curStep?'var(--warning)':'var(--border)')+
+      ';color:white;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">'+
+      (i<curStep?'<i class="fas fa-check"></i>':'<i class="fas fa-'+TRACKING_ICONS[i]+'"></i>')+'</div>'+
+      '<span style="font-size:14px;font-weight:'+(i<=curStep?'700':'400')+';color:'+(i<=curStep?'var(--dark)':'var(--gray)')+'">'+TRACKING_LABELS[i]+'</span></div>'
+    ).join('')+ '</div>';
+  openModal('order-status-modal');
+}
+
+// ======================== ADMIN ORDERS ========================
+var allAdminOrders=[];
+
+async function loadAdminOrders(){
+  var c=document.getElementById('order-details-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('orders').get();
+    allAdminOrders=[];snap.forEach(d=>allAdminOrders.push({id:d.id,...d.data()}));
+    renderAdminOrders(allAdminOrders);
+  }catch(e){c.innerHTML='<div class="empty-state"><p>Failed to load.</p></div>';}
+}
+
+function filterAdminOrders(type){
+  if(type==='all')return renderAdminOrders(allAdminOrders);
+  renderAdminOrders(allAdminOrders.filter(o=>o.deliveryType===type));
+}
+
+function renderAdminOrders(list){
+  if(!list.length){document.getElementById('order-details-list').innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>কোনো অর্ডার নেই।</p></div>';return;}
+  document.getElementById('order-details-list').innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">'+list.map(o=>{
+    var typeLabel=o.deliveryType==='self'?'<span style="background:#dbeafe;color:#1d4ed8;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-motorcycle"></i> নিজে ডেলিভারি</span>':
+      o.deliveryType==='our'?'<span style="background:#f0fdf4;color:#166534;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-truck"></i> আমাদের মাধ্যমে</span>':
+      '<span style="background:#fef9c3;color:#854d0e;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-clock"></i> পদ্ধতি নির্বাচনের অপেক্ষায়</span>';
+    return '<div style="background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.07);overflow:hidden">'+
+      (o.productImage?'<img src="'+o.productImage+'" style="width:100%;height:130px;object-fit:cover">':'' )+
+      '<div style="padding:12px">'+
+      '<div style="font-weight:700;font-size:14px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+o.productName+'</div>'+
+      '<div style="color:var(--primary);font-weight:700">৳'+o.productPrice+'</div>'+
+      '<div style="font-size:12px;color:var(--gray);margin-top:4px">মার্চেন্ট: '+o.merchantName+'</div>'+
+      '<div style="margin:8px 0">'+typeLabel+'</div>'+
+      (o.deliveryType==='our'?
+        '<button onclick="adminUpdateOrderStatus(\'"'+o.id+'"\')" style="width:100%;padding:8px;background:var(--primary);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-edit"></i> স্ট্যাটাস আপডেট</button>':
+        o.deliveryType==='self'?
+        '<button onclick="viewSelfDeliveryStatus(\'"'+o.id+'"\')" style="width:100%;padding:8px;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-eye"></i> বিস্তারিত দেখুন</button>':''
+      )+'</div></div>';
+  }).join('')+'</div>';
+}
+
+async function adminUpdateOrderStatus(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  var curStep=TRACKING_STEPS.indexOf(o.status);if(curStep<0)curStep=0;
+  document.getElementById('order-status-title').textContent='স্ট্যাটাস আপডেট করুন';
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="margin-bottom:8px;font-size:13px;color:var(--gray)">পণ্য: <strong>'+o.productName+'</strong><br>ক্রেতা: <strong>'+o.buyerName+'</strong></div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px">'+
+    TRACKING_STEPS.map((s,i)=>
+      '<button onclick="setOrderStatus(\'"'+orderId+"\',\'"+s+"\')" style='display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid '+
+      (i===curStep?'var(--primary)':'var(--border)')+';border-radius:8px;background:'+
+      (i===curStep?'var(--primary-light)':'white')+';cursor:pointer;font-family:inherit;font-weight:'+
+      (i===curStep?'700':'400')+';color:'+
+      (i===curStep?'var(--primary-dark)':'var(--dark)')+''>'+
+      '<i class="fas fa-'+TRACKING_ICONS[i]+'" style="width:18px"></i>'+TRACKING_LABELS[i]+
+      (i===curStep?' <span style="margin-left:auto;font-size:11px;background:var(--primary);color:white;padding:2px 8px;border-radius:20px">বর্তমান</span>':'')
+      +'</button>'
+    ).join('')+'</div>';
+  openModal('order-status-modal');
+}
+
+async function setOrderStatus(orderId,status){
+  await db.collection('orders').doc(orderId).update({status,statusHistory:firebase.firestore.FieldValue.arrayUnion({status,time:new Date().toISOString(),updatedBy:'admin'})});
+  closeModal('order-status-modal');showToast('স্ট্যাটাস আপডেট হয়েছে!','success');loadAdminOrders();
+}
+
+async function viewSelfDeliveryStatus(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent=o.productName+' - বিস্তারিত';
+  var history=o.statusHistory||[];
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="background:#f8fafb;border-radius:10px;padding:14px;margin-bottom:12px">'+
+    '<div class="detail-row"><span class="detail-label">ক্রেতার নাম:</span><span class="detail-value">'+o.buyerName+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+o.buyerPhone+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ঠিকানা:</span><span class="detail-value">'+o.buyerAddress+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মার্চেন্ট:</span><span class="detail-value">'+o.merchantName+'</span></div></div>'+
+    '<div style="font-weight:700;margin-bottom:8px">স্ট্যাটাস ইতিহাস:</div>'+
+    history.map(h=>'<div style="padding:8px 12px;background:white;border-radius:8px;border-left:3px solid var(--primary);margin-bottom:6px;font-size:13px"><i class="fas fa-circle" style="color:var(--primary);font-size:8px;margin-right:6px"></i>'+h.status+' <span style="float:right;color:var(--gray);font-size:11px">'+h.time.slice(0,16).replace('T',' ')+'</span></div>').join('');
+  openModal('order-status-modal');
+}
+
+</script>
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBygH_x7ATAHpLarDhx9_piWPRbg8l704Q",authDomain:"digitalshoptm-1.firebaseapp.com",projectId:"digitalshoptm-1",storageBucket:"digitalshoptm-1.firebasestorage.app",messagingSenderId:"934689228128",appId:"1:934689228128:web:95d930d4ebe491db84ca05"});
 const auth=firebase.auth();
@@ -589,14 +1477,27 @@ function refreshSKS(){var el=document.getElementById('prod-sks');if(el)el.value=
 var shopCheckTimer=null;
 async function checkShopName(val){
   var msg=document.getElementById('shop-name-msg');
-  if(!val||val.length<2){msg.innerHTML='';return;}
+  var sug=document.getElementById('shop-suggestions');
+  var sugList=document.getElementById('shop-suggestions-list');
+  if(!val||val.length<2){msg.innerHTML='';if(sug)sug.style.display='none';return;}
   clearTimeout(shopCheckTimer);
   shopCheckTimer=setTimeout(async()=>{
-    msg.innerHTML='<span style="color:var(--gray)"><i class="fas fa-spinner fa-spin"></i> Checking availability...</span>';
+    msg.innerHTML='<span style="color:var(--gray)"><i class="fas fa-spinner fa-spin"></i> Checking...</span>';
     try{
       var snap=await db.collection('merchants').where('shopName','==',val.trim()).get();
-      if(snap.empty)msg.innerHTML='<span style="color:var(--primary)"><i class="fas fa-check-circle"></i> Shop name available!</span>';
-      else msg.innerHTML='<span style="color:var(--danger)"><i class="fas fa-times-circle"></i> Shop name already taken!</span>';
+      if(snap.empty){
+        msg.innerHTML='<span style="color:var(--primary)"><i class="fas fa-check-circle"></i> Shop name available!</span>';
+        if(sug)sug.style.display='none';
+      }else{
+        msg.innerHTML='<span style="color:var(--danger)"><i class="fas fa-times-circle"></i> এই শপ নামটি ইতিমধ্যে ব্যবহার হয়েছে!</span>';
+        var fn=document.getElementById('reg-fname').value.trim();
+        var ln=document.getElementById('reg-lname').value.trim();
+        var base=val.trim().replace(/\s+/g,'');
+        var fn2=(fn+ln).replace(/\s+/g,'');
+        var suggs=[base+'Shop',base+'Store',fn2+'Mart',base+'BD',fn2+'Zone',base+'Hub',fn2+'Online',base+'Center'];
+        if(sugList)sugList.innerHTML=suggs.slice(0,6).map(function(s){return '<span onclick="document.getElementById(\'reg-shop\').value=\''+s+'\';checkShopName(\''+s+'\')" style="background:white;border:1.5px solid var(--primary);color:var(--primary);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer">'+s+'</span>';}).join('');
+        if(sug)sug.style.display='block';
+      }
     }catch(e){msg.innerHTML='';}
   },600);
 }
@@ -634,10 +1535,11 @@ function showUserSection(name){
   var a=document.querySelector('#user-sidebar [data-section="'+name+'"]');if(a)a.classList.add('active');
   document.getElementById('user-sidebar').classList.remove('open');document.getElementById('sidebar-backdrop').classList.remove('show');
   if(name==='my-products')loadUserProducts();
+  if(name==='orders')loadUserOrders();
   if(name==='add-product'){var ok=currentUser&&currentUser.status==='active';document.getElementById('add-product-locked').style.display=ok?'none':'block';document.getElementById('add-product-form').style.display=ok?'block':'none';if(ok)refreshSKS();}
 }
 
-var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','parcels':'Add Parcel','edit-parcel':'Edit/New Parcel','order-details':'User Order Details'};
+var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','parcels':'Add Parcel','edit-parcel':'Edit/New Parcel','order-details':'User Order Details','deleted-products':'ডিলিট কৃত পণ্য'};
 function showAdminSection(name){
   document.querySelectorAll('#page-admin-dashboard .content-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#admin-sidebar .sidebar-item').forEach(s=>s.classList.remove('active'));
@@ -648,6 +1550,8 @@ function showAdminSection(name){
   if(name==='new-merchants')loadNewMerchants();
   if(name==='merchant-details')loadActiveMerchants();
   if(name==='published-products')loadAllProducts();
+  if(name==='deleted-products')loadDeletedProducts();
+  if(name==='order-details')loadAdminOrders();
 }
 
 auth.onAuthStateChanged(async function(user){
@@ -793,16 +1697,24 @@ async function addProduct(){
       deliveryCharge:parseFloat(document.getElementById('prod-del-charge').value)||0,
       specs:{type:document.getElementById('prod-type').value.trim(),size:document.getElementById('prod-size').value.trim(),material:document.getElementById('prod-material').value.trim(),features:document.getElementById('prod-features').value.trim()},
       merchantUid:u.uid,merchantName:u.fullName,merchantId:u.merchantId,shopName:u.shopName||'',
-      createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:'published'
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'
     });
     showToast('Product published successfully!','success');
     ['prod-name','prod-price','prod-desc','prod-img-url','prod-tags','prod-discount','prod-del-charge','prod-type','prod-size','prod-material','prod-features','prod-stock'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
     document.getElementById('prod-cat').value='';document.getElementById('prod-title-type').value='';document.getElementById('prod-delivery').value='our';document.getElementById('prod-img-preview').style.display='none';
     refreshSKS();
+    showUserSection('my-products');
   }catch(e){showToast('Failed to publish product!','error');}
 }
 
-async function deleteProduct(pid){if(!confirm('Delete this product?'))return;await db.collection('products').doc(pid).delete();showToast('Product deleted!','success');loadUserProducts();}
+async function softDeleteProduct(pid){
+  if(!confirm('পণ্যটি ডিলিট করবেন? এটি Deleted Products বক্সে চলে যাবে।'))return;
+  await db.collection('products').doc(pid).update({deleted:true,deletedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  showToast('Product deleted!','success');loadUserProducts();
+}
+async function editProductUser(pid){
+  showToast('Edit feature coming soon!','warning');
+}
 
 function trackParcel(){
   var input=document.getElementById('track-input').value.trim();
@@ -875,24 +1787,102 @@ async function loadAllProducts(){
 
 async function viewProduct(pid){
   var d=await db.collection('products').doc(pid).get();if(!d.exists)return;var p=d.data();
+  var merchantInfo='';
+  try{
+    if(p.merchantUid){
+      var md=await db.collection('merchants').doc(p.merchantUid).get();
+      if(md.exists){var m=md.data();
+        merchantInfo='<div style="background:#f0fdf4;border-radius:10px;padding:14px;margin:12px 0;border-left:4px solid var(--primary)">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:1px">MERCHANT INFO</div>'+
+          '<div class="detail-row"><span class="detail-label">মার্চেন্ট নাম:</span><span class="detail-value">'+m.fullName+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">শপের নাম:</span><span class="detail-value">'+(m.shopName||'-')+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+m.phone+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">ইমেইল:</span><span class="detail-value">'+m.email+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">বর্তমান ঠিকানা:</span><span class="detail-value">'+(m.currentAddress||'-')+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">স্থায়ী ঠিকানা:</span><span class="detail-value">'+(m.permanentAddress||'-')+'</span></div>'+
+          '</div>';
+      }
+    }
+  }catch(ex){}
+  var statusClasses={pending:'s-pending',published:'s-pending',confirmed:'s-confirmed',rejected:'s-rejected'};
+  var statusLabels={pending:'Pending',published:'Pending',confirmed:'Confirmed',rejected:'Rejected'};
+  var sc=statusClasses[p.status]||'s-pending';var sl=statusLabels[p.status]||p.status;
   document.getElementById('product-detail-content').innerHTML=
     '<h2 style="margin-bottom:16px">'+p.name+'</h2>'+
-    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;max-height:200px;object-fit:contain;border-radius:10px;border:1px solid var(--border);margin-bottom:16px" onerror="this.style.display=\'none\'">':'')+
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;max-height:220px;object-fit:contain;border-radius:10px;border:1px solid var(--border);margin-bottom:16px" onerror="this.style.display=\'none\'">':'')+
+    '<div style="background:#f8fafb;border-radius:10px;padding:14px;margin-bottom:12px;border-left:4px solid var(--info)">'+
+    '<div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:1px">PRODUCT INFO</div>'+
     '<div class="detail-row"><span class="detail-label">SKS ID:</span><span class="detail-value"><span class="sks-badge">'+p.sksId+'</span></span></div>'+
-    '<div class="detail-row"><span class="detail-label">Price:</span><span class="detail-value">৳'+p.price+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Category:</span><span class="detail-value">'+(p.category||'-')+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Stock:</span><span class="detail-value">'+(p.stock||0)+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Merchant:</span><span class="detail-value">'+(p.merchantName||'-')+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Shop:</span><span class="detail-value">'+(p.shopName||'-')+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Delivery:</span><span class="detail-value">'+(p.deliveryMethod==='self'?'Self Delivery':'Via Our Courier')+'</span></div>'+
-    (p.description?'<div class="detail-row"><span class="detail-label">Description:</span><span class="detail-value">'+p.description+'</span></div>':'')+
-    '<div class="action-row"><button class="btn btn-success btn-sm" onclick="confirmProduct(\''+pid+'\')"><i class="fas fa-check"></i> Confirm</button><button class="btn btn-warning btn-sm" onclick="rejectProduct(\''+pid+'\')"><i class="fas fa-ban"></i> Reject</button><button class="btn btn-danger btn-sm" onclick="adminDeleteProduct(\''+pid+'\')"><i class="fas fa-trash"></i> Delete</button></div>';
+    '<div class="detail-row"><span class="detail-label">দাম:</span><span class="detail-value" style="font-weight:700;color:var(--primary)">৳'+p.price+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ক্যাটাগরি:</span><span class="detail-value">'+(p.category||'-')+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">স্টক:</span><span class="detail-value">'+(p.stock||0)+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ডেলিভারি:</span><span class="detail-value">'+(p.deliveryMethod===\'self\'?\'Self Delivery\':\'Via Our Courier\')+'</span></div>'+
+    (p.discount?'<div class="detail-row"><span class="detail-label">ডিসকাউন্ট:</span><span class="detail-value">'+p.discount+'%</span></div>':'')+
+    (p.tags?'<div class="detail-row"><span class="detail-label">Tags:</span><span class="detail-value">'+p.tags+'</span></div>':'')+
+    (p.description?'<div class="detail-row"><span class="detail-label">বিবরণ:</span><span class="detail-value">'+p.description+'</span></div>':'')+
+    '<div class="detail-row"><span class="detail-label">স্ট্যাটাস:</span><span class="detail-value"><span class="status-badge '+sc+'">'+sl+'</span></span></div></div>'+
+    merchantInfo+
+    '<div class="action-row" style="flex-wrap:wrap">'+
+    '<button class="btn btn-primary btn-sm" onclick="setProductStatus(\''+pid+'\',\'published\')"><i class="fas fa-upload"></i> Publish</button>'+
+    '<button class="btn btn-success btn-sm" onclick="setProductStatus(\''+pid+'\',\'confirmed\')"><i class="fas fa-check"></i> Confirm</button>'+
+    '<button class="btn btn-warning btn-sm" onclick="setProductStatus(\''+pid+'\',\'pending\')"><i class="fas fa-clock"></i> Pending</button>'+
+    '<button class="btn btn-sm" style="background:#f59e0b;color:white" onclick="setProductStatus(\''+pid+'\',\'rejected\')"><i class="fas fa-ban"></i> Reject</button>'+
+    '<button class="btn btn-danger btn-sm" onclick="adminDeleteProduct(\''+pid+'\')"><i class="fas fa-trash"></i> Delete</button>'+
+    '</div>';
   openModal('product-detail-modal');
 }
 
-async function confirmProduct(pid){await db.collection('products').doc(pid).update({status:'confirmed'});closeModal('product-detail-modal');showToast('Product confirmed!','success');loadAllProducts();}
-async function rejectProduct(pid){await db.collection('products').doc(pid).update({status:'rejected'});closeModal('product-detail-modal');showToast('Product rejected!','warning');loadAllProducts();}
-async function adminDeleteProduct(pid){if(!confirm('Delete this product?'))return;await db.collection('products').doc(pid).delete();closeModal('product-detail-modal');showToast('Deleted!','success');loadAllProducts();}
+async function viewDeletedProduct(pid){
+  var d=await db.collection('products').doc(pid).get();if(!d.exists)return;var p=d.data();
+  var merchantInfo='';
+  try{
+    if(p.merchantUid){
+      var md=await db.collection('merchants').doc(p.merchantUid).get();
+      if(md.exists){var m=md.data();
+        merchantInfo='<div style="background:#fef2f2;border-radius:10px;padding:14px;margin:12px 0;border-left:4px solid var(--danger)">'+
+          '<div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px;letter-spacing:1px">MERCHANT INFO</div>'+
+          '<div class="detail-row"><span class="detail-label">মার্চেন্ট নাম:</span><span class="detail-value">'+m.fullName+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">শপের নাম:</span><span class="detail-value">'+(m.shopName||'-')+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+m.phone+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">ইমেইল:</span><span class="detail-value">'+m.email+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">বর্তমান ঠিকানা:</span><span class="detail-value">'+(m.currentAddress||'-')+'</span></div>'+
+          '<div class="detail-row"><span class="detail-label">স্থায়ী ঠিকানা:</span><span class="detail-value">'+(m.permanentAddress||'-')+'</span></div>'+
+          '</div>';
+      }
+    }
+  }catch(ex){}
+  document.getElementById('product-detail-content').innerHTML=
+    '<h2 style="margin-bottom:8px;color:var(--danger)"><i class="fas fa-trash-alt"></i> '+p.name+'</h2>'+
+    '<div style="background:#fee2e2;border-radius:8px;padding:8px 14px;margin-bottom:16px;font-size:13px;color:#991b1b">এই পণ্যটি ডিলিট করা হয়েছে</div>'+
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;max-height:200px;object-fit:contain;border-radius:10px;border:1px solid var(--border);margin-bottom:16px;filter:grayscale(30%)" onerror="this.style.display=\'none\'">':'')+
+    '<div style="background:#f8fafb;border-radius:10px;padding:14px;margin-bottom:12px;border-left:4px solid var(--danger)">'+
+    '<div class="detail-row"><span class="detail-label">SKS ID:</span><span class="detail-value"><span class="sks-badge">'+p.sksId+'</span></span></div>'+
+    '<div class="detail-row"><span class="detail-label">দাম:</span><span class="detail-value" style="font-weight:700">৳'+p.price+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ক্যাটাগরি:</span><span class="detail-value">'+(p.category||'-')+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">স্টক:</span><span class="detail-value">'+(p.stock||0)+'</span></div>'+
+    (p.description?'<div class="detail-row"><span class="detail-label">বিবরণ:</span><span class="detail-value">'+p.description+'</span></div>':'')+
+    '</div>'+
+    merchantInfo+
+    '<div class="action-row"><button class="btn btn-danger" onclick="adminHardDeleteProduct(\''+pid+'\')"><i class="fas fa-trash"></i> পুরোপুরি ডিলিট করুন</button></div>';
+  openModal('product-detail-modal');
+}
+
+
+async function setProductStatus(pid,status){
+  var labels={published:'Published',confirmed:'Confirmed',pending:'Pending',rejected:'Rejected'};
+  await db.collection('products').doc(pid).update({status:status});
+  closeModal('product-detail-modal');showToast('Status: '+labels[status],'success');loadAllProducts();
+}
+async function adminDeleteProduct(pid){
+  if(!confirm('পণ্যটি ডিলিট করবেন? Deleted Products এ চলে যাবে।'))return;
+  await db.collection('products').doc(pid).update({deleted:true,deletedAt:firebase.firestore.FieldValue.serverTimestamp()});
+  closeModal('product-detail-modal');showToast('Deleted!','success');loadAllProducts();
+}
+async function adminHardDeleteProduct(pid){
+  if(!confirm('পণ্যটি পুরোপুরি মুছে ফেলবেন? এটি আর ফিরে আসবে না!'))return;
+  await db.collection('products').doc(pid).delete();
+  closeModal('product-detail-modal');showToast('Permanently deleted!','success');loadDeletedProducts();
+}
 
 async function viewMerchant(uid){
   try{
@@ -920,6 +1910,271 @@ async function viewMerchant(uid){
 async function approveMerchant(uid){await db.collection('merchants').doc(uid).update({status:'active'});closeModal('merchant-detail-modal');showToast('Merchant activated!','success');loadNewMerchants();loadAdminDashboard();}
 async function rejectMerchant(uid){await db.collection('merchants').doc(uid).update({status:'rejected'});closeModal('merchant-detail-modal');showToast('Merchant rejected. Auto-delete in 24 hours.','warning');loadNewMerchants();loadAdminDashboard();setTimeout(async()=>{try{await db.collection('merchants').doc(uid).delete();}catch(e){}},86400000);}
 async function deleteMerchant(uid){if(!confirm('Permanently delete this merchant?'))return;await db.collection('merchants').doc(uid).delete();closeModal('merchant-detail-modal');showToast('Merchant deleted!','success');loadNewMerchants();loadActiveMerchants();loadAdminDashboard();}
+
+
+// ======================== MERCHANT ORDER SYSTEM ========================
+var currentMerchantOrderUid='',currentMerchantOrderName='',allMerchantProds=[],currentDispatchProd=null,currentDeliveryOrderId='';
+
+async function openMerchantOrderAdd(uid,name){
+  currentMerchantOrderUid=uid;currentMerchantOrderName=name;
+  document.getElementById('merchant-order-modal-title').textContent=name+' এর পণ্য সমূহ';
+  document.getElementById('merchant-products-grid').innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  document.getElementById('merchant-prod-search').value='';
+  openModal('merchant-order-modal');
+  try{
+    var snap=await db.collection('products').where('merchantUid','==',uid).get();
+    allMerchantProds=[];
+    snap.forEach(d=>{if(!d.data().deleted)allMerchantProds.push({id:d.id,...d.data()});});
+    renderMerchantProds(allMerchantProds);
+  }catch(e){document.getElementById('merchant-products-grid').innerHTML='<div class="empty-state"><p>Failed to load.</p></div>';}
+}
+
+function renderMerchantProds(list){
+  if(!list.length){document.getElementById('merchant-products-grid').innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>কোনো পণ্য নেই।</p></div>';return;}
+  document.getElementById('merchant-products-grid').innerHTML=list.map(p=>
+    '<div onclick="openDispatch(\''+p.id+'\')" style="background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.08);overflow:hidden;cursor:pointer;transition:transform 0.2s;border:2px solid transparent" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">'+
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;height:110px;object-fit:cover">':'<div style="height:110px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:28px;color:#d1d5db"><i class="fas fa-image"></i></div>')+
+    '<div style="padding:8px"><div style="font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+p.name+'</div><div style="color:var(--primary);font-weight:700;font-size:14px">৳'+p.price+'</div><div style="font-size:11px;color:var(--gray)">SKS: '+p.sksId+'</div></div></div>'
+  ).join('');
+}
+
+function filterMerchantProducts(q){
+  if(!q)return renderMerchantProds(allMerchantProds);
+  renderMerchantProds(allMerchantProds.filter(p=>(p.name||'').toLowerCase().includes(q.toLowerCase())||(p.sksId||'').toLowerCase().includes(q.toLowerCase())));
+}
+
+async function openDispatch(pid){
+  var p=allMerchantProds.find(x=>x.id===pid);if(!p)return;
+  currentDispatchProd=p;
+  document.getElementById('dispatch-prod-name').textContent=p.name+' - ৳'+p.price;
+  document.getElementById('dispatch-prod-info').innerHTML=
+    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;max-height:160px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-bottom:12px">':'' )+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px"><span class="sks-badge">'+p.sksId+'</span><span style="background:#f0fdf4;color:#166534;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600">৳'+p.price+'</span></div>';
+  ['buyer-name','buyer-phone','buyer-address'].forEach(id=>document.getElementById(id).value='');
+  showErr('dispatch-error','');
+  closeModal('merchant-order-modal');
+  openModal('order-dispatch-modal');
+}
+
+async function submitDispatchOrder(){
+  var name=document.getElementById('buyer-name').value.trim();
+  var phone=document.getElementById('buyer-phone').value.trim();
+  var addr=document.getElementById('buyer-address').value.trim();
+  if(!name||!phone||!addr)return showErr('dispatch-error','সকল তথ্য পূরণ করুন!');
+  var p=currentDispatchProd;
+  var orderId='ORD-'+Date.now();
+  try{
+    await db.collection('orders').doc(orderId).set({
+      orderId,productId:p.id,productName:p.name,productPrice:p.price,productImage:p.imageUrl||''
+      ,sksId:p.sksId,merchantUid:p.merchantUid,merchantName:p.merchantName,shopName:p.shopName||''
+      ,buyerName:name,buyerPhone:phone,buyerAddress:addr
+      ,deliveryType:'',status:'pending'
+      ,createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      ,adminCreated:true,statusHistory:[{status:'pending',time:new Date().toISOString()}]
+    });
+    closeModal('order-dispatch-modal');
+    showToast('অর্ডার তৈরি হয়েছে! মার্চেন্টের Orders এ দেখা যাবে।','success');
+  }catch(e){showErr('dispatch-error','Failed: '+e.message);}
+}
+
+// ======================== USER ORDERS ========================
+async function loadUserOrders(){
+  var u=currentUser;if(!u)return;
+  var c=document.getElementById('user-orders-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('orders').where('merchantUid','==',u.uid).get();
+    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet.</p></div>';return;}
+    var orders=[];snap.forEach(d=>orders.push({id:d.id,...d.data()}));
+    c.innerHTML='<div style="display:flex;flex-direction:column;gap:14px">'+orders.map(o=>{
+      var hasChoice=o.deliveryType;
+      var statusColors={pending:'#fef9c3,#854d0e',processing:'#dbeafe,#1d4ed8',shipped:'#f0fdf4,#166534',delivered:'#dcfce7,#14532d',cancelled:'#fee2e2,#991b1b'};
+      var sc=statusColors[o.status]?statusColors[o.status].split(','):['#f3f4f6','#374151'];
+      return '<div style="background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.06);overflow:hidden">'+
+        '<div style="display:flex;gap:12px;padding:14px">'+
+        (o.productImage?'<img src="'+o.productImage+'" style="width:70px;height:70px;object-fit:cover;border-radius:8px;flex-shrink:0">':'' )+
+        '<div style="flex:1"><div style="font-weight:700;font-size:14px">'+o.productName+'</div>'+
+        '<div style="color:var(--primary);font-weight:700">৳'+o.productPrice+'</div>'+
+        '<div style="font-size:12px;color:var(--gray)">ক্রেতা: '+o.buyerName+' | '+o.buyerPhone+'</div>'+
+        '<div style="margin-top:6px;font-size:12px;background:'+sc[0]+';color:'+sc[1]+';padding:3px 10px;border-radius:20px;display:inline-block;font-weight:600">'+o.status+'</div></div></div>'+
+        (!hasChoice?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border)">'+
+          '<button onclick="chooseDelivery(\'self\',\''+o.id+'\')" style="padding:12px;background:#eff6ff;border:none;border-right:1px solid var(--border);cursor:pointer;font-weight:600;color:#1d4ed8;font-family:inherit;font-size:13px"><i class="fas fa-motorcycle"></i> নিজে ডেলিভারি</button>'+
+          '<button onclick="chooseDelivery(\'our\',\''+o.id+'\')" style="padding:12px;background:#f0fdf4;border:none;cursor:pointer;font-weight:600;color:#166534;font-family:inherit;font-size:13px"><i class="fas fa-truck"></i> আমাদের মাধ্যমে</button>'+
+          '</div>':
+          '<div style="display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--border)">'+
+          '<button onclick="viewOrderAddress(\'"+o.id+"\')" style="flex:1;padding:8px;background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-map-marker-alt"></i> ক্রেতার ঠিকানা</button>'+
+          '<button onclick="viewOrderTracking(\'"+o.id+"\')" style="flex:1;padding:8px;background:var(--primary-light);border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;color:var(--primary);font-family:inherit"><i class="fas fa-route"></i> ট্র্যাকিং</button>'+
+          '</div>'
+        )+'</div>';
+    }).join('')+'</div>';
+  }catch(e){c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
+}
+
+async function chooseDelivery(type,orderId){
+  if(type==='self'){
+    if(!confirm('নিজে ডেলিভারি দিলে আপনার একাউন্ট থেকে কমিশন বাবদ ৳৩০ কাটা হবে। নিশ্চিত করুন?'))return;
+    var u=currentUser;
+    var newBal=(u.balance||0)-30;
+    await db.collection('merchants').doc(u.uid).update({balance:newBal});
+    await db.collection('orders').doc(orderId).update({deliveryType:'self',status:'processing',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'processing-self',time:new Date().toISOString()})});
+    currentUser.balance=newBal;
+    showToast('৳৩০ কমিশন কাটা হয়েছে। Balance: ৳'+newBal,'warning');
+    loadUserOrders();loadUserDashboard();
+  }else{
+    // Our delivery - show pickup selection
+    currentDeliveryOrderId=orderId;
+    var ord=(await db.collection('orders').doc(orderId).get()).data();
+    var ua=currentUser;
+    document.getElementById('delivery-choice-title').textContent='ডেলিভারি পদ্ধতি - '+ord.productName;
+    document.getElementById('delivery-choice-prod-info').innerHTML=
+      (ord.productImage?'<img src="'+ord.productImage+'" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid var(--border)">':'' );
+    document.getElementById('our-delivery-price').textContent='৳'+ord.productPrice;
+    document.getElementById('self-delivery-panel').style.display='none';
+    document.getElementById('our-delivery-panel').style.display='block';
+    // Load pickup addresses
+    var sel=document.getElementById('pickup-addr-select');
+    sel.innerHTML='<option value="">-- পিকআপ এড্রেস বেছে নিন --</option>';
+    if(ua.pickupAddresses&&ua.pickupAddresses.length){ua.pickupAddresses.forEach((a,i)=>sel.innerHTML+='<option value="'+i+'">'+a+'</option>');}
+    else{sel.innerHTML+='<option value="current">'+ua.currentAddress+'</option><option value="permanent">'+ua.permanentAddress+'</option>';}
+    openModal('delivery-choice-modal');
+  }
+}
+
+function selectDeliveryChoice(type){
+  document.getElementById('self-delivery-panel').style.display=type==='self'?'block':'none';
+  document.getElementById('our-delivery-panel').style.display=type==='our'?'block':'none';
+}
+
+async function publishSelfDelivery(){
+  if(!currentDeliveryOrderId)return;
+  await db.collection('orders').doc(currentDeliveryOrderId).update({deliveryType:'self',status:'processing',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'processing-self',time:new Date().toISOString()})});
+  var newBal=(currentUser.balance||0)-30;
+  await db.collection('merchants').doc(currentUser.uid).update({balance:newBal});
+  currentUser.balance=newBal;
+  closeModal('delivery-choice-modal');showToast('৳৩০ কমিশন কাটা হয়েছে!','warning');loadUserOrders();
+}
+
+async function publishOurDelivery(){
+  var sel=document.getElementById('pickup-addr-select');
+  if(!sel.value)return showToast('পিকআপ এড্রেস সিলেক্ট করুন!','warning');
+  if(!currentDeliveryOrderId)return;
+  var u=currentUser;
+  var addr=sel.value==='current'?u.currentAddress:sel.value==='permanent'?u.permanentAddress:(u.pickupAddresses&&u.pickupAddresses[parseInt(sel.value)])||'Unknown';
+  await db.collection('orders').doc(currentDeliveryOrderId).update({deliveryType:'our',pickupAddress:addr,status:'pending',statusHistory:firebase.firestore.FieldValue.arrayUnion({status:'pending-courier',time:new Date().toISOString()})});
+  closeModal('delivery-choice-modal');showToast('অর্ডার কুরিয়ারে পাঠানো হয়েছে!','success');loadUserOrders();
+}
+
+async function viewOrderAddress(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent='ক্রেতার তথ্য';
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="background:#f8fafb;border-radius:10px;padding:16px">'+
+    '<div class="detail-row"><span class="detail-label">নাম:</span><span class="detail-value">'+o.buyerName+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+o.buyerPhone+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ঠিকানা:</span><span class="detail-value">'+o.buyerAddress+'</span></div></div>';
+  openModal('order-status-modal');
+}
+
+var TRACKING_STEPS=['pending','processing','at-hub','at-shop','with-delivery-man','delivered','payment-processing','payment-success'];
+var TRACKING_LABELS=['পেন্ডিং','ডেলিভারি পিকআপ','হাবে আছে','শপে আছে','ডেলিভারি ম্যানের কাছে','ডেলিভারি হয়েছে','পেমেন্টের কাজ চলছে','পেমেন্ট সফল'];
+var TRACKING_ICONS=['clock','motorcycle','warehouse','store','person-biking','check-double','credit-card','star'];
+
+async function viewOrderTracking(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent=o.productName+' - ট্র্যাকিং';
+  var curStep=TRACKING_STEPS.indexOf(o.status);if(curStep<0)curStep=0;
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="margin-bottom:16px">'+
+    TRACKING_STEPS.map((s,i)=>
+      '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:'+
+      (i<=curStep?'white':'#f9fafb')+';border-radius:8px;margin-bottom:6px;border-left:4px solid '+
+      (i<curStep?'var(--primary)':i===curStep?'var(--warning)':'var(--border)')+'">'+
+      '<div style="width:32px;height:32px;border-radius:50%;background:'+
+      (i<curStep?'var(--primary)':i===curStep?'var(--warning)':'var(--border)')+
+      ';color:white;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">'+
+      (i<curStep?'<i class="fas fa-check"></i>':'<i class="fas fa-'+TRACKING_ICONS[i]+'"></i>')+'</div>'+
+      '<span style="font-size:14px;font-weight:'+(i<=curStep?'700':'400')+';color:'+(i<=curStep?'var(--dark)':'var(--gray)')+'">'+TRACKING_LABELS[i]+'</span></div>'
+    ).join('')+ '</div>';
+  openModal('order-status-modal');
+}
+
+// ======================== ADMIN ORDERS ========================
+var allAdminOrders=[];
+
+async function loadAdminOrders(){
+  var c=document.getElementById('order-details-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('orders').get();
+    allAdminOrders=[];snap.forEach(d=>allAdminOrders.push({id:d.id,...d.data()}));
+    renderAdminOrders(allAdminOrders);
+  }catch(e){c.innerHTML='<div class="empty-state"><p>Failed to load.</p></div>';}
+}
+
+function filterAdminOrders(type){
+  if(type==='all')return renderAdminOrders(allAdminOrders);
+  renderAdminOrders(allAdminOrders.filter(o=>o.deliveryType===type));
+}
+
+function renderAdminOrders(list){
+  if(!list.length){document.getElementById('order-details-list').innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>কোনো অর্ডার নেই।</p></div>';return;}
+  document.getElementById('order-details-list').innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">'+list.map(o=>{
+    var typeLabel=o.deliveryType==='self'?'<span style="background:#dbeafe;color:#1d4ed8;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-motorcycle"></i> নিজে ডেলিভারি</span>':
+      o.deliveryType==='our'?'<span style="background:#f0fdf4;color:#166534;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-truck"></i> আমাদের মাধ্যমে</span>':
+      '<span style="background:#fef9c3;color:#854d0e;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i class="fas fa-clock"></i> পদ্ধতি নির্বাচনের অপেক্ষায়</span>';
+    return '<div style="background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.07);overflow:hidden">'+
+      (o.productImage?'<img src="'+o.productImage+'" style="width:100%;height:130px;object-fit:cover">':'' )+
+      '<div style="padding:12px">'+
+      '<div style="font-weight:700;font-size:14px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+o.productName+'</div>'+
+      '<div style="color:var(--primary);font-weight:700">৳'+o.productPrice+'</div>'+
+      '<div style="font-size:12px;color:var(--gray);margin-top:4px">মার্চেন্ট: '+o.merchantName+'</div>'+
+      '<div style="margin:8px 0">'+typeLabel+'</div>'+
+      (o.deliveryType==='our'?
+        '<button onclick="adminUpdateOrderStatus(\'"'+o.id+'"\')" style="width:100%;padding:8px;background:var(--primary);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-edit"></i> স্ট্যাটাস আপডেট</button>':
+        o.deliveryType==='self'?
+        '<button onclick="viewSelfDeliveryStatus(\'"'+o.id+'"\')" style="width:100%;padding:8px;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px;font-family:inherit"><i class="fas fa-eye"></i> বিস্তারিত দেখুন</button>':''
+      )+'</div></div>';
+  }).join('')+'</div>';
+}
+
+async function adminUpdateOrderStatus(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  var curStep=TRACKING_STEPS.indexOf(o.status);if(curStep<0)curStep=0;
+  document.getElementById('order-status-title').textContent='স্ট্যাটাস আপডেট করুন';
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="margin-bottom:8px;font-size:13px;color:var(--gray)">পণ্য: <strong>'+o.productName+'</strong><br>ক্রেতা: <strong>'+o.buyerName+'</strong></div>'+
+    '<div style="display:flex;flex-direction:column;gap:8px">'+
+    TRACKING_STEPS.map((s,i)=>
+      '<button onclick="setOrderStatus(\'"'+orderId+"\',\'"+s+"\')" style='display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid '+
+      (i===curStep?'var(--primary)':'var(--border)')+';border-radius:8px;background:'+
+      (i===curStep?'var(--primary-light)':'white')+';cursor:pointer;font-family:inherit;font-weight:'+
+      (i===curStep?'700':'400')+';color:'+
+      (i===curStep?'var(--primary-dark)':'var(--dark)')+''>'+
+      '<i class="fas fa-'+TRACKING_ICONS[i]+'" style="width:18px"></i>'+TRACKING_LABELS[i]+
+      (i===curStep?' <span style="margin-left:auto;font-size:11px;background:var(--primary);color:white;padding:2px 8px;border-radius:20px">বর্তমান</span>':'')
+      +'</button>'
+    ).join('')+'</div>';
+  openModal('order-status-modal');
+}
+
+async function setOrderStatus(orderId,status){
+  await db.collection('orders').doc(orderId).update({status,statusHistory:firebase.firestore.FieldValue.arrayUnion({status,time:new Date().toISOString(),updatedBy:'admin'})});
+  closeModal('order-status-modal');showToast('স্ট্যাটাস আপডেট হয়েছে!','success');loadAdminOrders();
+}
+
+async function viewSelfDeliveryStatus(orderId){
+  var d=await db.collection('orders').doc(orderId).get();if(!d.exists)return;var o=d.data();
+  document.getElementById('order-status-title').textContent=o.productName+' - বিস্তারিত';
+  var history=o.statusHistory||[];
+  document.getElementById('order-status-content').innerHTML=
+    '<div style="background:#f8fafb;border-radius:10px;padding:14px;margin-bottom:12px">'+
+    '<div class="detail-row"><span class="detail-label">ক্রেতার নাম:</span><span class="detail-value">'+o.buyerName+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মোবাইল:</span><span class="detail-value">'+o.buyerPhone+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">ঠিকানা:</span><span class="detail-value">'+o.buyerAddress+'</span></div>'+
+    '<div class="detail-row"><span class="detail-label">মার্চেন্ট:</span><span class="detail-value">'+o.merchantName+'</span></div></div>'+
+    '<div style="font-weight:700;margin-bottom:8px">স্ট্যাটাস ইতিহাস:</div>'+
+    history.map(h=>'<div style="padding:8px 12px;background:white;border-radius:8px;border-left:3px solid var(--primary);margin-bottom:6px;font-size:13px"><i class="fas fa-circle" style="color:var(--primary);font-size:8px;margin-right:6px"></i>'+h.status+' <span style="float:right;color:var(--gray);font-size:11px">'+h.time.slice(0,16).replace('T',' ')+'</span></div>').join('');
+  openModal('order-status-modal');
+}
+
 </script>
 </body>
 </html>
