@@ -46,7 +46,8 @@ body{font-family:'Hind Siliguri',sans-serif;background:#f8fafb;color:var(--dark)
 .feature-card p{font-size:13px;color:var(--gray);line-height:1.6}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.active{display:flex}
-.modal{background:white;border-radius:16px;padding:32px;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;position:relative;animation:modalIn 0.3s ease}
+.modal{background:white;border-radius:16px;padding:32px;width:100%;max-width:500px;max-height:92vh;overflow-y:auto;scrollbar-width:none;position:relative;animation:modalIn 0.3s ease}
+.modal::-webkit-scrollbar{display:none}
 @keyframes modalIn{from{opacity:0;transform:scale(0.9)}to{opacity:1;transform:scale(1)}}
 .modal-close{position:absolute;top:16px;right:16px;background:var(--light-gray);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
 .modal-icon{width:64px;height:64px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:var(--primary)}
@@ -291,8 +292,13 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
               <div class="form-group"><label>Discount (%)</label><div class="input-wrap"><i class="fas fa-percent ico"></i><input type="number" id="prod-discount" placeholder="0"></div></div>
               <div class="form-group form-full">
                 <label>Product Image URL</label>
-                <div class="input-wrap"><i class="fas fa-image ico"></i><input type="url" id="prod-img-url" placeholder="https://..." oninput="previewImg(this.value)"></div>
-                <img id="prod-img-preview" class="img-preview" alt="Preview">
+                <div id="prod-img-fields">
+                  <div class="prod-img-row" style="margin-bottom:8px">
+                    <div class="input-wrap"><i class="fas fa-image ico"></i><input type="url" class="prod-img-input" placeholder="https://..." oninput="previewImgRow(this)"></div>
+                    <img class="img-preview-row" alt="Preview" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-top:6px;display:none">
+                  </div>
+                </div>
+                <button type="button" onclick="addMoreImgField()" style="margin-top:4px;background:var(--primary-light);color:var(--primary);border:2px dashed var(--primary);border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%;font-family:'Hind Siliguri',sans-serif"><i class="fas fa-plus"></i> আরো ছবি দিন</button>
               </div>
               <div class="form-group form-full"><label>Description</label><div class="input-wrap"><i class="fas fa-align-left ico-top"></i><textarea id="prod-desc" placeholder="Product description"></textarea></div></div>
               <div class="form-group form-full"><label>Search Tags (comma separated)</label><div class="input-wrap"><i class="fas fa-hashtag ico"></i><input type="text" id="prod-tags" placeholder="e.g. phone, samsung, mobile"></div></div>
@@ -580,7 +586,34 @@ function closeModal(id){var el=document.getElementById(id);if(el)el.classList.re
 function showToast(msg,type){type=type||'success';var t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;t.className='toast '+type+' show';setTimeout(()=>{t.className='toast';},3200);}
 function showErr(id,msg){var el=document.getElementById(id);if(el){el.textContent=msg;el.style.display=msg?'block':'none';}}
 function generateSKS(){var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';var s='SKS-';for(var i=0;i<8;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
-function previewImg(url){var img=document.getElementById('prod-img-preview');if(url&&url.startsWith('http')){img.src=url;img.style.display='block';}else img.style.display='none';}
+function previewImgRow(input){var img=input.closest('.prod-img-row').querySelector('.img-preview-row');var url=input.value.trim();if(url&&url.startsWith('http')){img.src=url;img.style.display='block';}else img.style.display='none';}
+function addMoreImgField(){
+  var container=document.getElementById('prod-img-fields');
+  var row=document.createElement('div');
+  row.className='prod-img-row';
+  row.style.marginBottom='8px';
+  var wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;gap:8px;align-items:center';
+  var inputWrap=document.createElement('div');
+  inputWrap.className='input-wrap';
+  inputWrap.style.flex='1';
+  inputWrap.innerHTML='<i class="fas fa-image ico"></i><input type="url" class="prod-img-input" placeholder="https://...">';
+  inputWrap.querySelector('input').addEventListener('input',function(){previewImgRow(this);});
+  var removeBtn=document.createElement('button');
+  removeBtn.type='button';
+  removeBtn.style.cssText='background:#fee2e2;color:#dc2626;border:none;border-radius:8px;width:34px;height:38px;cursor:pointer;font-size:14px;flex-shrink:0';
+  removeBtn.innerHTML='<i class="fas fa-times"></i>';
+  removeBtn.onclick=function(){row.remove();};
+  wrap.appendChild(inputWrap);
+  wrap.appendChild(removeBtn);
+  var img=document.createElement('img');
+  img.className='img-preview-row';
+  img.alt='Preview';
+  img.style.cssText='width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid #e5e7eb;margin-top:6px;display:none';
+  row.appendChild(wrap);
+  row.appendChild(img);
+  container.appendChild(row);
+}
 function refreshSKS(){var el=document.getElementById('prod-sks');if(el)el.value=generateSKS();}
 
 var shopCheckTimer=null;
@@ -781,7 +814,7 @@ async function addProduct(){
     await db.collection('products').doc('prod_'+Date.now()).set({
       sksId:sks,name,price:parseFloat(price),category:cat,stock:parseInt(stock)||0,
       description:document.getElementById('prod-desc').value.trim(),
-      imageUrl:document.getElementById('prod-img-url').value.trim(),
+      imageUrl:Array.from(document.querySelectorAll('.prod-img-input')).map(i=>i.value.trim()).filter(Boolean).join(','),
       tags:document.getElementById('prod-tags').value.trim(),
       titleType:document.getElementById('prod-title-type').value,
       discount:parseFloat(document.getElementById('prod-discount').value)||0,
@@ -792,8 +825,8 @@ async function addProduct(){
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:'published'
     });
     showToast('Product published successfully!','success');
-    ['prod-name','prod-price','prod-desc','prod-img-url','prod-tags','prod-discount','prod-del-charge','prod-type','prod-size','prod-material','prod-features','prod-stock'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
-    document.getElementById('prod-cat').value='';document.getElementById('prod-title-type').value='';document.getElementById('prod-delivery').value='our';document.getElementById('prod-img-preview').style.display='none';
+    ['prod-name','prod-price','prod-desc','prod-tags','prod-discount','prod-del-charge','prod-type','prod-size','prod-material','prod-features','prod-stock'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});var pf=document.getElementById('prod-img-fields');if(pf){pf.innerHTML='<div class="prod-img-row" style="margin-bottom:8px"><div class="input-wrap"><i class="fas fa-image ico"></i><input type="url" class="prod-img-input" placeholder="https://..." oninput="previewImgRow(this)"></div><img class="img-preview-row" alt="Preview" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-top:6px;display:none"></div>';}
+    document.getElementById('prod-cat').value='';document.getElementById('prod-title-type').value='';document.getElementById('prod-delivery').value='our';
     refreshSKS();
   }catch(e){showToast('Failed to publish product!','error');}
 }
