@@ -804,7 +804,17 @@ async function loadUserProducts(){
     if(snap.empty){container.innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>No products published yet.</p></div>';return;}
     var html='<table><thead><tr><th>#</th><th>Image</th><th>SKS ID</th><th>Product</th><th>Price</th><th>Category</th><th>Stock</th><th>Status</th><th>Action</th></tr></thead><tbody>';
     var i=1;
-    snap.forEach(d=>{var p=d.data();html+='<tr><td>'+i+'</td><td>'+(p.imageUrl?'<img src="'+p.imageUrl+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-')+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.category||'-')+'</td><td>'+(p.stock||0)+'</td><td><span class="status-badge s-published">'+p.status+'</span></td><td><button class="btn btn-sm btn-danger" onclick="deleteProduct(\''+d.id+'\')"><i class="fas fa-trash"></i></button></td></tr>';i++;});
+    snap.forEach(d=>{
+      var p=d.data();
+      var firstImg=p.imageUrl?(p.imageUrl.split(',')[0].trim()):'';
+      var imgHtml=firstImg?'<img src="'+firstImg+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-';
+      var statusClass=p.status==='confirmed'?'s-active':p.status==='rejected'?'s-rejected':'s-pending';
+      var statusLabel=p.status==='confirmed'?'Confirmed':p.status==='rejected'?'Rejected':'Pending';
+      html+='<tr><td>'+i+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.category||'-')+'</td><td>'+(p.stock||0)+'</td>';
+      html+='<td><span class="status-badge '+statusClass+'">'+statusLabel+'</span></td>';
+      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+d.id+'\',\'merchant\')"><i class="fas fa-info-circle"></i> বিস্তারিত</button></td></tr>';
+      i++;
+    });
     html+='</tbody></table>';container.innerHTML=html;
     var pc=document.getElementById('prod-count');if(pc)pc.textContent=snap.size;
   }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
@@ -832,7 +842,7 @@ async function addProduct(){
       deliveryCharge:parseFloat(document.getElementById('prod-del-charge').value)||0,
       specs:{type:document.getElementById('prod-type').value.trim(),size:document.getElementById('prod-size').value.trim(),material:document.getElementById('prod-material').value.trim(),features:document.getElementById('prod-features').value.trim()},
       merchantUid:u.uid,merchantName:u.fullName,merchantId:u.merchantId,shopName:u.shopName||'',
-      createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:'published'
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'
     });
     showToast('Product published successfully!','success');
     ['prod-name','prod-price','prod-desc','prod-tags','prod-discount','prod-del-charge','prod-type','prod-size','prod-material','prod-features','prod-stock'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});var pf=document.getElementById('prod-img-fields');if(pf){pf.innerHTML='<div class="prod-img-row" style="margin-bottom:8px"><div class="input-wrap"><i class="fas fa-image ico"></i><input type="url" class="prod-img-input" placeholder="https://..." oninput="previewImgRow(this)"></div><img class="img-preview-row" alt="Preview" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-top:6px;display:none"></div>';}
@@ -907,26 +917,22 @@ async function loadAllProducts(){
     if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-boxes"></i><p>No products.</p></div>';return;}
     var html='<table><thead><tr><th>#</th><th>Img</th><th>SKS ID</th><th>Product</th><th>Price</th><th>Merchant</th><th>Category</th><th>Status</th><th>Action</th></tr></thead><tbody>';
     var i=1;
-    snap.forEach(d=>{var p=d.data();html+='<tr><td>'+i+'</td><td>'+(p.imageUrl?'<img src="'+p.imageUrl+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-')+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.category||'-')+'</td><td><span class="status-badge s-'+p.status+'">'+p.status+'</span></td><td style="white-space:nowrap"><button class="btn btn-sm btn-primary" onclick="viewProduct(\''+d.id+'\')"><i class="fas fa-eye"></i></button> <button class="btn btn-sm btn-danger" onclick="adminDeleteProduct(\''+d.id+'\')"><i class="fas fa-trash"></i></button></td></tr>';i++;});
+    snap.forEach(d=>{
+      var p=d.data();
+      var firstImg=p.imageUrl?(p.imageUrl.split(',')[0].trim()):'';
+      var imgHtml=firstImg?'<img src="'+firstImg+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-';
+      var statusClass=p.status==='confirmed'?'s-active':p.status==='rejected'?'s-rejected':'s-pending';
+      var statusLabel=p.status==='confirmed'?'Confirmed':p.status==='rejected'?'Rejected':'Pending';
+      html+='<tr><td>'+i+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.category||'-')+'</td>';
+      html+='<td><span class="status-badge '+statusClass+'">'+statusLabel+'</span></td>';
+      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+d.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button> <button class="btn btn-sm btn-danger" onclick="adminDeleteProduct(\''+d.id+'\')"><i class="fas fa-trash"></i></button></td></tr>';
+      i++;
+    });
     html+='</tbody></table>';c.innerHTML=html;
   }catch(e){}
 }
 
-async function viewProduct(pid){
-  var d=await db.collection('products').doc(pid).get();if(!d.exists)return;var p=d.data();
-  document.getElementById('product-detail-content').innerHTML=
-    '<h2 style="margin-bottom:16px">'+p.name+'</h2>'+
-    (p.imageUrl?'<img src="'+p.imageUrl+'" style="width:100%;max-height:200px;object-fit:contain;border-radius:10px;border:1px solid var(--border);margin-bottom:16px" onerror="this.style.display=\'none\'">':'')+
-    '<div class="detail-row"><span class="detail-label">SKS ID:</span><span class="detail-value"><span class="sks-badge">'+p.sksId+'</span></span></div>'+
-    '<div class="detail-row"><span class="detail-label">Price:</span><span class="detail-value">৳'+p.price+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Category:</span><span class="detail-value">'+(p.category||'-')+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Stock:</span><span class="detail-value">'+(p.stock||0)+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Merchant:</span><span class="detail-value">'+(p.merchantName||'-')+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Shop:</span><span class="detail-value">'+(p.shopName||'-')+'</span></div>'+
-    '<div class="detail-row"><span class="detail-label">Delivery:</span><span class="detail-value">'+(p.deliveryMethod==='self'?'Self Delivery':'Via Our Courier')+'</span></div>'+
-    (p.description?'<div class="detail-row"><span class="detail-label">Description:</span><span class="detail-value">'+p.description+'</span></div>':'')+
-    '<div class="action-row"><button class="btn btn-success btn-sm" onclick="confirmProduct(\''+pid+'\')"><i class="fas fa-check"></i> Confirm</button><button class="btn btn-warning btn-sm" onclick="rejectProduct(\''+pid+'\')"><i class="fas fa-ban"></i> Reject</button><button class="btn btn-danger btn-sm" onclick="adminDeleteProduct(\''+pid+'\')"><i class="fas fa-trash"></i> Delete</button></div>';
-  openModal('product-detail-modal');
+async function viewProduct(pid){ openProductDetail(pid,'admin'); }
 }
 
 async function confirmProduct(pid){await db.collection('products').doc(pid).update({status:'confirmed'});closeModal('product-detail-modal');showToast('Product confirmed!','success');loadAllProducts();}
@@ -959,6 +965,466 @@ async function viewMerchant(uid){
 async function approveMerchant(uid){await db.collection('merchants').doc(uid).update({status:'active'});closeModal('merchant-detail-modal');showToast('Merchant activated!','success');loadNewMerchants();loadAdminDashboard();}
 async function rejectMerchant(uid){await db.collection('merchants').doc(uid).update({status:'rejected'});closeModal('merchant-detail-modal');showToast('Merchant rejected. Auto-delete in 24 hours.','warning');loadNewMerchants();loadAdminDashboard();setTimeout(async()=>{try{await db.collection('merchants').doc(uid).delete();}catch(e){}},86400000);}
 async function deleteMerchant(uid){if(!confirm('Permanently delete this merchant?'))return;await db.collection('merchants').doc(uid).delete();closeModal('merchant-detail-modal');showToast('Merchant deleted!','success');loadNewMerchants();loadActiveMerchants();loadAdminDashboard();}
+
+/* ══════════════════════════════════════════
+   PRODUCT DETAIL MODAL STYLES
+══════════════════════════════════════════ */
+</script>
+<style>
+.pd-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;align-items:center;justify-content:center;padding:16px;}
+.pd-modal-overlay.active{display:flex;}
+.pd-modal{background:#fff;border-radius:16px;width:100%;max-width:780px;max-height:94vh;overflow-y:auto;position:relative;animation:pdIn 0.3s ease;scrollbar-width:none;}
+.pd-modal::-webkit-scrollbar{display:none;}
+@keyframes pdIn{from{opacity:0;transform:scale(0.93)}to{opacity:1;transform:scale(1)}}
+/* Top bar */
+.pd-topbar{position:sticky;top:0;z-index:10;background:#fff;border-bottom:2px solid #f0f0f0;display:flex;align-items:center;padding:12px 16px;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.pd-close-btn{background:#f5f5f5;border:none;width:38px;height:38px;border-radius:50%;font-size:18px;cursor:pointer;color:#333;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s;}
+.pd-close-btn:hover{background:#fee2e2;color:#ef4444;}
+.pd-nav-title{flex:1;font-size:14px;font-weight:700;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pd-topbar-btns{display:flex;gap:8px;}
+/* Body */
+.pd-body{display:flex;gap:0;align-items:flex-start;}
+/* Left: images */
+.pd-img-col{width:300px;flex-shrink:0;padding:20px 16px;}
+.pd-main-img-wrap{border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;background:#f9fafb;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;}
+.pd-main-img-wrap img{width:100%;height:100%;object-fit:contain;display:block;}
+.pd-thumbs{display:flex;gap:7px;margin-top:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.pd-thumbs::-webkit-scrollbar{display:none;}
+.pd-thumb{width:56px;height:56px;border-radius:8px;overflow:hidden;border:2px solid #e5e7eb;cursor:pointer;flex-shrink:0;transition:.2s;}
+.pd-thumb.active{border-color:#f57224;}
+.pd-thumb img{width:100%;height:100%;object-fit:contain;display:block;}
+/* Right: info */
+.pd-info-col{flex:1;padding:20px 20px 20px 16px;border-left:1px solid #f0f0f0;min-width:0;}
+.pd-brand{font-size:11px;color:#888;margin-bottom:5px;}
+.pd-name{font-size:18px;font-weight:700;color:#111;line-height:1.5;margin-bottom:10px;}
+.pd-price-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.pd-price{color:#f57224;font-size:28px;font-weight:900;}
+.pd-old{color:#aaa;font-size:14px;text-decoration:line-through;}
+.pd-disc{background:#f57224;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:4px;}
+.pd-sks{font-size:11px;color:#aaa;margin-bottom:10px;}
+.pd-stock-row{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:9px 13px;margin-bottom:12px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#16a34a;}
+.pd-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.pd-info-item{background:#f9fafb;border-radius:8px;padding:10px 12px;border:1px solid #f0f0f0;}
+.pd-info-label{font-size:10px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.pd-info-val{font-size:13px;color:#111;font-weight:600;}
+.pd-tags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.pd-tag{background:#fff3e0;color:#f57224;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+/* Spec table */
+.pd-spec-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;}
+.pd-spec-table tr:nth-child(even){background:#fafafa;}
+.pd-spec-table td{padding:9px 13px;border-bottom:1px solid #f0f0f0;vertical-align:top;}
+.pd-spec-table td:first-child{color:#666;font-weight:600;width:42%;white-space:nowrap;}
+.pd-spec-table td:last-child{color:#111;}
+/* Sold by */
+.pd-sold-by{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-top:8px;}
+.pd-sold-icon{width:36px;height:36px;background:#f57224;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0;}
+/* Accordion */
+.pd-accord{border:1px solid #f0f0f0;border-radius:10px;overflow:hidden;margin:0 16px 10px;}
+.pd-accord-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:#fafafa;cursor:pointer;font-size:14px;font-weight:700;color:#111;}
+.pd-accord-head:hover{background:#f3f4f6;}
+.pd-accord-body{padding:16px;background:#fff;border-top:1px solid #f0f0f0;}
+.pd-accord-body.hidden{display:none;}
+.pd-accord-arrow{font-size:12px;color:#aaa;transition:transform .3s;}
+.pd-accord-arrow.collapsed{transform:rotate(180deg);}
+/* Edit modal */
+.pe-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:3000;align-items:center;justify-content:center;padding:16px;}
+.pe-modal-overlay.active{display:flex;}
+.pe-modal{background:#fff;border-radius:16px;width:100%;max-width:660px;max-height:94vh;overflow-y:auto;position:relative;animation:pdIn 0.3s ease;scrollbar-width:none;}
+.pe-modal::-webkit-scrollbar{display:none;}
+</style>
+<script>
+
+/* ══ Product Detail Modal ══ */
+var _pdCurrentId=null,_pdRole=null,_pdImgs=[],_pdIdx=0;
+
+async function openProductDetail(pid, role){
+  _pdCurrentId=pid; _pdRole=role;
+  try{
+    var d=await db.collection('products').doc(pid).get();
+    if(!d.exists){showToast('Product not found!','error');return;}
+    var p=d.data();
+    var imgs=p.imageUrl?p.imageUrl.split(',').map(function(s){return s.trim();}).filter(Boolean):[];
+    if(!imgs.length)imgs=[''];
+    _pdImgs=imgs; _pdIdx=0;
+
+    // Top bar
+    document.getElementById('pd-nav-title').textContent=p.name||'Product';
+
+    // Merchant/Admin buttons
+    var merchantBtns=document.getElementById('pd-merchant-btns');
+    var adminBtns=document.getElementById('pd-admin-btns');
+    if(role==='merchant'){
+      merchantBtns.style.display='flex';
+      adminBtns.style.display='none';
+    } else {
+      merchantBtns.style.display='none';
+      adminBtns.style.display='flex';
+    }
+
+    // Main image
+    var mainImg=document.getElementById('pd-main-img');
+    mainImg.src=imgs[0]||'ko.jpeg';
+    mainImg.onerror=function(){mainImg.src='ko.jpeg';};
+
+    // Thumbnails
+    var thumbsEl=document.getElementById('pd-thumbs');
+    if(imgs.length>1){
+      thumbsEl.style.display='flex';
+      thumbsEl.innerHTML=imgs.map(function(src,i){
+        return '<div class="pd-thumb '+(i===0?'active':'')+'" id="pd-thumb-'+i+'" onclick="pdGoTo('+i+')"><img src="'+src+'" onerror="this.src='ko.jpeg'" alt=""></div>';
+      }).join('');
+    } else {
+      thumbsEl.style.display='none';
+    }
+
+    // Info
+    document.getElementById('pd-name').textContent=p.name||'';
+    document.getElementById('pd-price').textContent=p.price||0;
+
+    // Old price & discount
+    var oldEl=document.getElementById('pd-old'),discEl=document.getElementById('pd-disc');
+    if(p.discount && p.discount>0){
+      var oldPrice=Math.round(p.price*100/(100-p.discount));
+      oldEl.textContent='৳'+oldPrice; oldEl.style.display='inline';
+      discEl.textContent='-'+p.discount+'%'; discEl.style.display='inline-block';
+    } else { oldEl.style.display='none'; discEl.style.display='none'; }
+
+    // SKS
+    document.getElementById('pd-sks').textContent='SKS: '+(p.sksId||'—');
+
+    // Stock
+    document.getElementById('pd-stock').textContent=(p.stock||0)+' টি পণ্য In Stock';
+
+    // Info grid
+    var gridHtml='';
+    if(p.category) gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Category</div><div class="pd-info-val">'+p.category+'</div></div>';
+    if(p.titleType) gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Title</div><div class="pd-info-val">'+p.titleType+'</div></div>';
+    var statusLabel=p.status==='confirmed'?'Confirmed':p.status==='rejected'?'Rejected':'Pending';
+    var statusColor=p.status==='confirmed'?'#16a34a':p.status==='rejected'?'#dc2626':'#b45309';
+    gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Status</div><div class="pd-info-val" style="color:'+statusColor+'">'+statusLabel+'</div></div>';
+    gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Delivery</div><div class="pd-info-val">'+(p.deliveryMethod==='self'?'Self Delivery':'Our Courier')+'</div></div>';
+    if(p.deliveryCharge) gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Delivery Charge</div><div class="pd-info-val">৳'+p.deliveryCharge+'</div></div>';
+    document.getElementById('pd-info-grid').innerHTML=gridHtml;
+
+    // Tags
+    var tags=(p.tags||'').split(',').map(function(t){return t.trim();}).filter(Boolean);
+    document.getElementById('pd-tags').innerHTML=tags.length?tags.map(function(t){return '<span class="pd-tag">#'+t+'</span>';}).join(''):'<span style="color:#aaa;font-size:12px;">No tags</span>';
+
+    // Description
+    document.getElementById('pd-desc-text').textContent=p.description||'No description.';
+
+    // Specifications
+    var specs=p.specs||{};
+    var specRows=[['Product Type',specs.type],['Size',specs.size],['Material',specs.material],['Features',specs.features]].filter(function(r){return r[1];});
+    document.getElementById('pd-spec-content').innerHTML=specRows.length
+      ?'<table class="pd-spec-table">'+specRows.map(function(r){return '<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>';}).join('')+'</table>'
+      :'<p style="color:#aaa;font-size:13px;text-align:center;padding:16px;">No specifications.</p>';
+
+    // Sold by
+    document.getElementById('pd-sold-by-name').textContent=p.shopName||p.merchantName||'Digital Shop TM';
+
+    // Admin action row (Confirm/Reject)
+    var adminActionRow=document.getElementById('pd-admin-action-row');
+    if(adminActionRow) adminActionRow.style.display=(role==='admin')?'block':'none';
+
+    openModal('pd-modal');
+  }catch(e){showToast('Failed to load product!','error');console.error(e);}
+}
+
+function pdGoTo(idx){
+  _pdIdx=idx;
+  var mainImg=document.getElementById('pd-main-img');
+  mainImg.src=_pdImgs[idx]||'ko.jpeg';
+  document.querySelectorAll('.pd-thumb').forEach(function(t,i){t.classList.toggle('active',i===idx);});
+}
+
+function pdToggleAccord(key){
+  var body=document.getElementById('pd-accord-'+key);
+  var arrow=document.getElementById('pd-arrow-'+key);
+  if(!body)return;
+  body.classList.toggle('hidden');
+  if(arrow)arrow.classList.toggle('collapsed');
+}
+
+/* P-Delete (merchant) */
+async function merchantDeleteProduct(){
+  if(!confirm('এই পণ্যটি ডিলিট করবেন?'))return;
+  try{
+    await db.collection('products').doc(_pdCurrentId).delete();
+    closeModal('pd-modal');
+    showToast('পণ্য ডিলিট হয়েছে!','success');
+    loadUserProducts();
+  }catch(e){showToast('Failed!','error');}
+}
+
+/* Admin delete from detail modal */
+async function adminDeleteFromDetail(){
+  if(!confirm('Permanently delete this product?'))return;
+  try{
+    await db.collection('products').doc(_pdCurrentId).delete();
+    closeModal('pd-modal');
+    showToast('Product deleted!','success');
+    loadAllProducts();
+  }catch(e){showToast('Failed!','error');}
+}
+
+/* Admin confirm/reject from detail */
+async function adminConfirmFromDetail(){
+  await db.collection('products').doc(_pdCurrentId).update({status:'confirmed'});
+  closeModal('pd-modal');showToast('Product confirmed!','success');loadAllProducts();
+}
+async function adminRejectFromDetail(){
+  await db.collection('products').doc(_pdCurrentId).update({status:'rejected'});
+  closeModal('pd-modal');showToast('Product rejected!','warning');loadAllProducts();
+}
+
+/* ══ Edit Product Modal ══ */
+async function openEditProduct(){
+  try{
+    var d=await db.collection('products').doc(_pdCurrentId).get();
+    if(!d.exists){showToast('Not found!','error');return;}
+    var p=d.data();
+    document.getElementById('ep-sks').value=p.sksId||'';
+    document.getElementById('ep-name').value=p.name||'';
+    document.getElementById('ep-price').value=p.price||'';
+    document.getElementById('ep-cat').value=p.category||'';
+    document.getElementById('ep-title-type').value=p.titleType||'';
+    document.getElementById('ep-stock').value=p.stock||'';
+    document.getElementById('ep-discount').value=p.discount||'';
+    document.getElementById('ep-desc').value=p.description||'';
+    document.getElementById('ep-tags').value=p.tags||'';
+    document.getElementById('ep-delivery').value=p.deliveryMethod||'our';
+    document.getElementById('ep-del-charge').value=p.deliveryCharge||'';
+    var specs=p.specs||{};
+    document.getElementById('ep-type').value=specs.type||'';
+    document.getElementById('ep-size').value=specs.size||'';
+    document.getElementById('ep-material').value=specs.material||'';
+    document.getElementById('ep-features').value=specs.features||'';
+    // Images
+    var imgs=p.imageUrl?p.imageUrl.split(',').map(function(s){return s.trim();}).filter(Boolean):[''];
+    var imgFieldsEl=document.getElementById('ep-img-fields');
+    imgFieldsEl.innerHTML='';
+    imgs.forEach(function(url,i){
+      var row=document.createElement('div');
+      row.className='prod-img-row';row.style.marginBottom='8px';
+      var wrapD=document.createElement('div');
+      if(i>0){
+        wrapD.style.cssText='display:flex;gap:8px;align-items:center';
+        var iw=document.createElement('div');iw.className='input-wrap';iw.style.flex='1';
+        iw.innerHTML='<i class="fas fa-image ico"></i><input type="url" class="ep-img-input" value="'+url+'" placeholder="https://...">';
+        var rmBtn=document.createElement('button');rmBtn.type='button';
+        rmBtn.style.cssText='background:#fee2e2;color:#dc2626;border:none;border-radius:8px;width:34px;height:38px;cursor:pointer;font-size:14px;flex-shrink:0';
+        rmBtn.innerHTML='<i class="fas fa-times"></i>';rmBtn.onclick=function(){row.remove();};
+        wrapD.appendChild(iw);wrapD.appendChild(rmBtn);
+      } else {
+        wrapD.className='input-wrap';
+        wrapD.innerHTML='<i class="fas fa-image ico"></i><input type="url" class="ep-img-input" value="'+url+'" placeholder="https://...">';
+      }
+      row.appendChild(wrapD);
+      imgFieldsEl.appendChild(row);
+    });
+    openModal('pe-modal');
+  }catch(e){showToast('Failed to load!','error');}
+}
+
+function addMoreEpImgField(){
+  var container=document.getElementById('ep-img-fields');
+  var row=document.createElement('div');row.className='prod-img-row';row.style.marginBottom='8px';
+  var wrap=document.createElement('div');wrap.style.cssText='display:flex;gap:8px;align-items:center';
+  var iw=document.createElement('div');iw.className='input-wrap';iw.style.flex='1';
+  iw.innerHTML='<i class="fas fa-image ico"></i><input type="url" class="ep-img-input" placeholder="https://...">';
+  var rmBtn=document.createElement('button');rmBtn.type='button';
+  rmBtn.style.cssText='background:#fee2e2;color:#dc2626;border:none;border-radius:8px;width:34px;height:38px;cursor:pointer;font-size:14px;flex-shrink:0';
+  rmBtn.innerHTML='<i class="fas fa-times"></i>';rmBtn.onclick=function(){row.remove();};
+  wrap.appendChild(iw);wrap.appendChild(rmBtn);row.appendChild(wrap);container.appendChild(row);
+}
+
+async function saveEditProduct(){
+  var name=document.getElementById('ep-name').value.trim();
+  var price=document.getElementById('ep-price').value;
+  var cat=document.getElementById('ep-cat').value;
+  var stock=document.getElementById('ep-stock').value;
+  if(!name||!price||!cat||!stock){showToast('Name, price, category, stock required!','error');return;}
+  try{
+    await db.collection('products').doc(_pdCurrentId).update({
+      name:name,price:parseFloat(price),category:cat,stock:parseInt(stock)||0,
+      titleType:document.getElementById('ep-title-type').value,
+      discount:parseFloat(document.getElementById('ep-discount').value)||0,
+      description:document.getElementById('ep-desc').value.trim(),
+      tags:document.getElementById('ep-tags').value.trim(),
+      imageUrl:Array.from(document.querySelectorAll('.ep-img-input')).map(function(i){return i.value.trim();}).filter(Boolean).join(','),
+      deliveryMethod:document.getElementById('ep-delivery').value,
+      deliveryCharge:parseFloat(document.getElementById('ep-del-charge').value)||0,
+      specs:{type:document.getElementById('ep-type').value.trim(),size:document.getElementById('ep-size').value.trim(),material:document.getElementById('ep-material').value.trim(),features:document.getElementById('ep-features').value.trim()},
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    closeModal('pe-modal');
+    showToast('Product updated!','success');
+    // Reload correct list
+    if(_pdRole==='merchant')loadUserProducts(); else loadAllProducts();
+    // Re-open detail with updated data
+    openProductDetail(_pdCurrentId,_pdRole);
+  }catch(e){showToast('Update failed!','error');}
+}
+</script>
+
+<!-- ══ PRODUCT DETAIL MODAL ══ -->
+<div id="pd-modal" class="modal-overlay pd-modal-overlay">
+  <div class="pd-modal">
+    <!-- Top Bar -->
+    <div class="pd-topbar">
+      <button class="pd-close-btn" onclick="closeModal('pd-modal')">✕</button>
+      <div class="pd-nav-title" id="pd-nav-title"></div>
+      <div class="pd-topbar-btns" id="pd-merchant-btns" style="display:none;">
+        <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;font-weight:700;font-size:13px;" onclick="merchantDeleteProduct()"><i class="fas fa-trash"></i> P-Delete</button>
+        <button class="btn btn-sm" style="background:#e0e7ff;color:#4338ca;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;font-weight:700;font-size:13px;" onclick="openEditProduct()"><i class="fas fa-edit"></i> P-Edit</button>
+      </div>
+      <div class="pd-topbar-btns" id="pd-admin-btns" style="display:none;">
+        <button class="btn btn-sm" style="background:#e0e7ff;color:#4338ca;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;font-weight:700;font-size:13px;" onclick="openEditProduct()"><i class="fas fa-edit"></i> Edit</button>
+        <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;font-weight:700;font-size:13px;" onclick="adminDeleteFromDetail()"><i class="fas fa-trash"></i> Delete</button>
+      </div>
+    </div>
+
+    <!-- Body: image left + info right -->
+    <div class="pd-body">
+      <!-- Images -->
+      <div class="pd-img-col">
+        <div class="pd-main-img-wrap">
+          <img id="pd-main-img" src="" alt="" onerror="this.src='ko.jpeg'">
+        </div>
+        <div class="pd-thumbs" id="pd-thumbs"></div>
+      </div>
+      <!-- Info -->
+      <div class="pd-info-col">
+        <div class="pd-brand">Brand: Digital Shop TM</div>
+        <div class="pd-name" id="pd-name"></div>
+        <div class="pd-price-row">
+          <span style="color:#f57224;font-size:14px;font-weight:700;">৳</span>
+          <span class="pd-price" id="pd-price"></span>
+          <span class="pd-old" id="pd-old" style="display:none;"></span>
+          <span class="pd-disc" id="pd-disc" style="display:none;"></span>
+        </div>
+        <div class="pd-sks" id="pd-sks"></div>
+        <div class="pd-stock-row"><i class="fas fa-check-circle"></i><span id="pd-stock"></span></div>
+        <div class="pd-info-grid" id="pd-info-grid"></div>
+        <div style="font-size:11px;color:#888;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">Search Tags</div>
+        <div class="pd-tags-wrap" id="pd-tags"></div>
+        <div class="pd-sold-by">
+          <div class="pd-sold-icon"><i class="fas fa-store"></i></div>
+          <div>
+            <div style="font-size:10px;color:#b45309;font-weight:700;text-transform:uppercase;margin-bottom:2px;">Sold By</div>
+            <div style="font-size:14px;font-weight:800;color:#111;" id="pd-sold-by-name"></div>
+          </div>
+        </div>
+        <!-- Admin Actions -->
+        <div id="pd-admin-action-row" style="display:none;margin-top:14px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-success" onclick="adminConfirmFromDetail()"><i class="fas fa-check"></i> Confirm</button>
+            <button class="btn btn-sm btn-warning" onclick="adminRejectFromDetail()"><i class="fas fa-ban"></i> Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accordion Sections -->
+    <div style="padding:8px 0 12px;">
+      <!-- Specifications -->
+      <div class="pd-accord">
+        <div class="pd-accord-head" onclick="pdToggleAccord('spec')">
+          <span>📋 Specifications</span>
+          <span class="pd-accord-arrow" id="pd-arrow-spec">▲</span>
+        </div>
+        <div class="pd-accord-body" id="pd-accord-spec">
+          <div id="pd-spec-content"></div>
+        </div>
+      </div>
+      <!-- Product Details -->
+      <div class="pd-accord">
+        <div class="pd-accord-head" onclick="pdToggleAccord('desc')">
+          <span>📄 Product Details</span>
+          <span class="pd-accord-arrow" id="pd-arrow-desc">▲</span>
+        </div>
+        <div class="pd-accord-body" id="pd-accord-desc">
+          <div id="pd-desc-text" style="font-size:13px;color:#555;line-height:1.8;white-space:pre-wrap;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT PRODUCT MODAL ══ -->
+<div id="pe-modal" class="modal-overlay pe-modal-overlay">
+  <div class="pe-modal">
+    <div class="pd-topbar">
+      <button class="pd-close-btn" onclick="closeModal('pe-modal')">✕</button>
+      <div style="flex:1;font-size:15px;font-weight:700;color:#111;"><i class="fas fa-edit" style="color:#4338ca;margin-right:6px;"></i>Edit Product</div>
+    </div>
+    <div style="padding:20px 24px 28px;">
+      <div class="form-row">
+        <div class="form-group form-full">
+          <label>SKS ID</label>
+          <div class="input-wrap"><i class="fas fa-barcode ico"></i><input type="text" id="ep-sks" readonly style="background:#f3f4f6;color:#7c3aed;font-weight:700"></div>
+        </div>
+        <div class="form-group"><label>Product Name *</label><div class="input-wrap"><i class="fas fa-tag ico"></i><input type="text" id="ep-name" placeholder="Product name"></div></div>
+        <div class="form-group"><label>Price (৳) *</label><div class="input-wrap"><i class="fas fa-coins ico"></i><input type="number" id="ep-price" placeholder="0.00"></div></div>
+        <div class="form-group form-full">
+          <label>Category *</label>
+          <div class="input-wrap"><i class="fas fa-list ico"></i>
+            <select id="ep-cat">
+              <option value="">-- Select Category --</option>
+              <option>Men Fashion</option><option>Women Fashion</option>
+              <option>Electronics</option><option>Shoes</option>
+              <option>HouseHold</option><option>SKIN CARE &amp; BEAUTY</option>
+              <option>Digital Products</option><option>Child Fashion</option>
+              <option>Toy</option><option>Vehicel</option>
+              <option>Furniture</option><option>Book</option>
+              <option>Sport</option><option>Medicine</option>
+              <option>Watches</option><option>Musical Instruments</option>
+              <option>Others</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group form-full">
+          <label>Title / Headline</label>
+          <div class="input-wrap"><i class="fas fa-heading ico"></i>
+            <select id="ep-title-type">
+              <option value="">-- Select Title --</option>
+              <option>New Arrival</option><option>Best Seller</option>
+              <option>Limited Edition</option><option>Hot Deal</option>
+              <option>Featured</option><option>Exclusive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Stock *</label><div class="input-wrap"><i class="fas fa-cubes ico"></i><input type="number" id="ep-stock" placeholder="Qty"></div></div>
+        <div class="form-group"><label>Discount (%)</label><div class="input-wrap"><i class="fas fa-percent ico"></i><input type="number" id="ep-discount" placeholder="0"></div></div>
+        <div class="form-group form-full">
+          <label>Product Images (URL)</label>
+          <div id="ep-img-fields"></div>
+          <button type="button" onclick="addMoreEpImgField()" style="margin-top:4px;background:var(--primary-light);color:var(--primary);border:2px dashed var(--primary);border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%;font-family:'Hind Siliguri',sans-serif"><i class="fas fa-plus"></i> আরো ছবি দিন</button>
+        </div>
+        <div class="form-group form-full"><label>Description</label><div class="input-wrap"><i class="fas fa-align-left ico-top"></i><textarea id="ep-desc" placeholder="Product description" style="height:70px;resize:none;"></textarea></div></div>
+        <div class="form-group form-full"><label>Search Tags (comma separated)</label><div class="input-wrap"><i class="fas fa-hashtag ico"></i><input type="text" id="ep-tags" placeholder="e.g. phone, samsung, mobile"></div></div>
+        <div class="specs-label">SPECIFICATIONS</div>
+        <div class="form-group"><label>Product Type</label><div class="input-wrap"><i class="fas fa-info-circle ico"></i><input type="text" id="ep-type" placeholder="e.g. Smartphone"></div></div>
+        <div class="form-group"><label>Size / Dimension</label><div class="input-wrap"><i class="fas fa-ruler ico"></i><input type="text" id="ep-size" placeholder="e.g. 6.1 inch"></div></div>
+        <div class="form-group"><label>Material</label><div class="input-wrap"><i class="fas fa-layer-group ico"></i><input type="text" id="ep-material" placeholder="e.g. Aluminum"></div></div>
+        <div class="form-group"><label>Features</label><div class="input-wrap"><i class="fas fa-star ico"></i><input type="text" id="ep-features" placeholder="e.g. Waterproof, 5G"></div></div>
+        <div class="specs-label">DELIVERY</div>
+        <div class="form-group form-full">
+          <label>Delivery Method</label>
+          <div class="input-wrap"><i class="fas fa-truck ico"></i>
+            <select id="ep-delivery">
+              <option value="our">Via Our Courier (Standard)</option>
+              <option value="self">Self Delivery (৳30 commission deducted)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Delivery Charge (৳)</label><div class="input-wrap"><i class="fas fa-money-bill ico"></i><input type="number" id="ep-del-charge" placeholder="60"></div></div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:12px;padding:13px;font-size:15px;justify-content:center;" onclick="saveEditProduct()"><i class="fas fa-save"></i> Save Changes</button>
+    </div>
+  </div>
+</div>
 </script>
 </body>
 </html>
