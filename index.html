@@ -268,12 +268,15 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
                 <div class="input-wrap"><i class="fas fa-list ico"></i>
                   <select id="prod-cat">
                     <option value="">-- Select Category --</option>
-                    <option>Electronics</option><option>Mobile &amp; Accessories</option>
-                    <option>Computers &amp; Laptops</option><option>Gaming</option>
-                    <option>Clothing &amp; Fashion</option><option>Home &amp; Kitchen</option>
-                    <option>Sports &amp; Fitness</option><option>Books &amp; Education</option>
-                    <option>Health &amp; Beauty</option><option>Toys &amp; Baby</option>
-                    <option>Food &amp; Grocery</option><option>Automotive</option><option>Others</option>
+                    <option>Men Fashion</option><option>Women Fashion</option>
+                    <option>Electronics</option><option>Shoes</option>
+                    <option>HouseHold</option><option>SKIN CARE &amp; BEAUTY</option>
+                    <option>Digital Products</option><option>Child Fashion</option>
+                    <option>Toy</option><option>Vehicel</option>
+                    <option>Furniture</option><option>Book</option>
+                    <option>Sport</option><option>Medicine</option>
+                    <option>Watches</option><option>Musical Instruments</option>
+                    <option>Others</option>
                   </select>
                 </div>
               </div>
@@ -586,7 +589,14 @@ function closeModal(id){var el=document.getElementById(id);if(el)el.classList.re
 function showToast(msg,type){type=type||'success';var t=document.getElementById('toast');document.getElementById('toast-msg').textContent=msg;t.className='toast '+type+' show';setTimeout(()=>{t.className='toast';},3200);}
 function showErr(id,msg){var el=document.getElementById(id);if(el){el.textContent=msg;el.style.display=msg?'block':'none';}}
 function generateSKS(){var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';var s='SKS-';for(var i=0;i<8;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
-function previewImgRow(input){var img=input.closest('.prod-img-row').querySelector('.img-preview-row');var url=input.value.trim();if(url&&url.startsWith('http')){img.src=url;img.style.display='block';}else img.style.display='none';}
+function previewImgRow(input){
+  var row=input.closest('.prod-img-row');
+  var img=row?row.querySelector('.img-preview-row'):null;
+  if(!img)return;
+  var url=input.value.trim();
+  if(url){img.src=url;img.style.display='block';img.onerror=function(){img.style.display='none';};}
+  else{img.style.display='none';}
+}
 function addMoreImgField(){
   var container=document.getElementById('prod-img-fields');
   var row=document.createElement('div');
