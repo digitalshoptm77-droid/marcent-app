@@ -421,7 +421,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="topbar-right">
         <button class="topbar-icon-btn"><i class="fas fa-bell"></i><span class="badge" id="admin-notif-badge">0</span></button>
         <span style="font-size:13px;color:var(--gray);font-weight:600">Admin</span>
-        <button class="btn btn-sm btn-danger" id="admin-logout-btn2"><i class="fas fa-sign-out-alt"></i> Logout</button>
+
       </div>
     </div>
     <div class="content-area">
@@ -655,7 +655,7 @@ document.getElementById('admin-login-submit-btn').onclick=adminLoginUser;
 document.getElementById('add-product-btn').onclick=addProduct;
 document.getElementById('user-logout-btn').onclick=logoutUser;
 document.getElementById('admin-logout-btn').onclick=logoutUser;
-document.getElementById('admin-logout-btn2').onclick=logoutUser;
+
 document.getElementById('sidebar-backdrop').onclick=()=>{document.getElementById('user-sidebar').classList.remove('open');document.getElementById('sidebar-backdrop').classList.remove('show');};
 document.getElementById('admin-sidebar-backdrop').onclick=()=>{document.getElementById('admin-sidebar').classList.remove('open');document.getElementById('admin-sidebar-backdrop').classList.remove('show');};
 document.getElementById('sidebar-toggle').onclick=()=>{document.getElementById('user-sidebar').classList.toggle('open');document.getElementById('sidebar-backdrop').classList.toggle('show');};
@@ -926,7 +926,7 @@ async function loadAllProducts(){
       var statusLabel=p.status==='confirmed'?'Confirmed':p.status==='rejected'?'Rejected':'Pending';
       html+='<tr><td>'+i+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.category||'-')+'</td>';
       html+='<td><span class="status-badge '+statusClass+'">'+statusLabel+'</span></td>';
-      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+d.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button> <button class="btn btn-sm btn-danger" onclick="adminDeleteProduct(\''+d.id+'\')"><i class="fas fa-trash"></i></button></td></tr>';
+      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+d.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button></td></tr>';
       i++;
     });
     html+='</tbody></table>';c.innerHTML=html;
