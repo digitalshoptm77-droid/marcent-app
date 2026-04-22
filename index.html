@@ -218,6 +218,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="sidebar-item active" data-section="dashboard"><i class="fas fa-th-large"></i> Dashboard</div>
       <div class="sidebar-item" data-section="add-product"><i class="fas fa-plus-circle"></i> Add Product</div>
       <div class="sidebar-item" data-section="my-products"><i class="fas fa-boxes"></i> Published Products</div>
+      <div class="sidebar-item" data-section="approval-products"><i class="fas fa-clipboard-check"></i> Approval Products</div>
       <div class="sidebar-item" data-section="orders"><i class="fas fa-shopping-bag"></i> Orders</div>
       <div class="sidebar-item" data-section="track-parcel"><i class="fas fa-map-marker-alt"></i> Track Parcel</div>
       <div class="sidebar-label">Financial</div>
@@ -333,6 +334,11 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
         <div class="table-card"><div id="products-table-body"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
 
+      <div id="section-approval-products" class="content-section">
+        <div class="sec-heading">Approval Products</div>
+        <div class="empty-state"><i class="fas fa-clipboard-check"></i><p>Coming soon.</p></div>
+      </div>
+
       <div id="section-orders" class="content-section">
         <div class="sec-heading">Orders</div>
         <div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet.</p></div>
@@ -405,6 +411,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="sidebar-item" data-admin-section="new-merchants"><i class="fas fa-user-plus"></i> New Merchants <span id="new-merchant-count" style="background:var(--danger);color:white;border-radius:12px;padding:2px 8px;font-size:11px;margin-left:auto">0</span></div>
       <div class="sidebar-item" data-admin-section="merchant-details"><i class="fas fa-users"></i> Merchant Details</div>
       <div class="sidebar-item" data-admin-section="published-products"><i class="fas fa-boxes"></i> Published Products</div>
+      <div class="sidebar-item" data-admin-section="approval-products"><i class="fas fa-clipboard-check"></i> Approval Products</div>
       <div class="sidebar-item" data-admin-section="parcels"><i class="fas fa-box"></i> Add Parcel</div>
       <div class="sidebar-item" data-admin-section="edit-parcel"><i class="fas fa-edit"></i> Edit/New Parcel</div>
       <div class="sidebar-item" data-admin-section="order-details"><i class="fas fa-list-alt"></i> User Order Details</div>
@@ -433,6 +440,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
           <div class="dash-card" onclick="showAdminSection('new-merchants')"><div class="dash-card-icon bg-green"><i class="fas fa-user-plus"></i></div><h4>New Merchants</h4></div>
           <div class="dash-card" onclick="showAdminSection('merchant-details')"><div class="dash-card-icon bg-blue"><i class="fas fa-users"></i></div><h4>Merchant Details</h4></div>
           <div class="dash-card" onclick="showAdminSection('published-products')"><div class="dash-card-icon bg-orange"><i class="fas fa-boxes"></i></div><h4>Published Products</h4></div>
+          <div class="dash-card" onclick="showAdminSection('approval-products')"><div class="dash-card-icon bg-indigo"><i class="fas fa-clipboard-check"></i></div><h4>Approval Products</h4></div>
           <div class="dash-card" onclick="showAdminSection('parcels')"><div class="dash-card-icon bg-purple"><i class="fas fa-box"></i></div><h4>Add Parcel</h4></div>
           <div class="dash-card" onclick="showAdminSection('edit-parcel')"><div class="dash-card-icon bg-teal"><i class="fas fa-edit"></i></div><h4>Edit/New Parcel</h4></div>
           <div class="dash-card" onclick="showAdminSection('order-details')"><div class="dash-card-icon bg-indigo"><i class="fas fa-list-alt"></i></div><h4>User Order Details</h4></div>
@@ -453,6 +461,11 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div id="admin-section-published-products" class="content-section">
         <div class="sec-heading">All Published Products</div>
         <div class="table-card"><div id="all-products-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
+      </div>
+
+      <div id="admin-section-approval-products" class="content-section">
+        <div class="sec-heading">Approval Products</div>
+        <div class="empty-state"><i class="fas fa-clipboard-check"></i><p>Coming soon.</p></div>
       </div>
 
       <div id="admin-section-parcels" class="content-section">
@@ -665,7 +678,7 @@ document.querySelectorAll('#user-sidebar [data-section]').forEach(item=>item.onc
 document.querySelectorAll('#admin-sidebar [data-admin-section]').forEach(item=>item.onclick=()=>showAdminSection(item.getAttribute('data-admin-section')));
 document.querySelectorAll('.modal-overlay').forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove('active');});
 
-var sT={'dashboard':'Dashboard','add-product':'Add Product','my-products':'Published Products','orders':'Orders','track-parcel':'Track Parcel','withdraw':'Withdraw','add-money':'Add Money','pickup':'Pickup Address','delivery':'Self Delivery','returns':'Return','support':'Support'};
+var sT={'dashboard':'Dashboard','add-product':'Add Product','my-products':'Published Products','approval-products':'Approval Products','orders':'Orders','track-parcel':'Track Parcel','withdraw':'Withdraw','add-money':'Add Money','pickup':'Pickup Address','delivery':'Self Delivery','returns':'Return','support':'Support'};
 function showUserSection(name){
   document.querySelectorAll('#page-user-dashboard .content-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#user-sidebar .sidebar-item').forEach(s=>s.classList.remove('active'));
@@ -677,7 +690,7 @@ function showUserSection(name){
   if(name==='add-product'){var ok=currentUser&&currentUser.status==='active';document.getElementById('add-product-locked').style.display=ok?'none':'block';document.getElementById('add-product-form').style.display=ok?'block':'none';if(ok)refreshSKS();}
 }
 
-var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','parcels':'Add Parcel','edit-parcel':'Edit/New Parcel','order-details':'User Order Details'};
+var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','approval-products':'Approval Products','parcels':'Add Parcel','edit-parcel':'Edit/New Parcel','order-details':'User Order Details'};
 function showAdminSection(name){
   document.querySelectorAll('#page-admin-dashboard .content-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#admin-sidebar .sidebar-item').forEach(s=>s.classList.remove('active'));
@@ -792,7 +805,7 @@ function loadUserDashboard(){
     '<div class="stat-card blue"><div class="stat-label">Published Products</div><div class="stat-value" id="prod-count">0</div></div>'+
     '<div class="stat-card red"><div class="stat-label">Returns</div><div class="stat-value">0</div></div>';
   var locked=!ok;
-  var cards=[{id:'add-product',icon:'fa-plus-circle',bg:'bg-green',title:'Add Product',locked:locked},{id:'my-products',icon:'fa-boxes',bg:'bg-blue',title:'Published Products',locked:locked},{id:'orders',icon:'fa-shopping-bag',bg:'bg-orange',title:'Orders',locked:locked},{id:'track-parcel',icon:'fa-map-marker-alt',bg:'bg-purple',title:'Track Parcel',locked:false},{id:'withdraw',icon:'fa-wallet',bg:'bg-teal',title:'Withdraw',locked:locked},{id:'add-money',icon:'fa-plus',bg:'bg-yellow',title:'Add Money',locked:locked},{id:'pickup',icon:'fa-map-pin',bg:'bg-pink',title:'Pickup Address',locked:locked},{id:'delivery',icon:'fa-truck',bg:'bg-indigo',title:'Self Delivery',locked:locked},{id:'returns',icon:'fa-undo',bg:'bg-red',title:'Return',locked:locked},{id:'support',icon:'fa-headset',bg:'bg-gray',title:'Support',locked:false}];
+  var cards=[{id:'add-product',icon:'fa-plus-circle',bg:'bg-green',title:'Add Product',locked:locked},{id:'my-products',icon:'fa-boxes',bg:'bg-blue',title:'Published Products',locked:locked},{id:'approval-products',icon:'fa-clipboard-check',bg:'bg-indigo',title:'Approval Products',locked:locked},{id:'orders',icon:'fa-shopping-bag',bg:'bg-orange',title:'Orders',locked:locked},{id:'track-parcel',icon:'fa-map-marker-alt',bg:'bg-purple',title:'Track Parcel',locked:false},{id:'withdraw',icon:'fa-wallet',bg:'bg-teal',title:'Withdraw',locked:locked},{id:'add-money',icon:'fa-plus',bg:'bg-yellow',title:'Add Money',locked:locked},{id:'pickup',icon:'fa-map-pin',bg:'bg-pink',title:'Pickup Address',locked:locked},{id:'delivery',icon:'fa-truck',bg:'bg-indigo',title:'Self Delivery',locked:locked},{id:'returns',icon:'fa-undo',bg:'bg-red',title:'Return',locked:locked},{id:'support',icon:'fa-headset',bg:'bg-gray',title:'Support',locked:false}];
   document.getElementById('user-dash-grid').innerHTML=cards.map(c=>'<div class="dash-card'+(c.locked?' locked':'')+'" data-nav="'+(c.locked?'locked':c.id)+'"><div class="dash-card-icon '+c.bg+'"><i class="fas '+c.icon+'"></i></div><h4>'+c.title+'</h4>'+(c.locked?'<div class="lock-icon"><i class="fas fa-lock"></i> Locked</div>':'')+' </div>').join('');
   document.querySelectorAll('[data-nav]').forEach(el=>el.onclick=()=>{var n=el.getAttribute('data-nav');if(n==='locked')showToast('Available after account approval!','warning');else showUserSection(n);});
 }
