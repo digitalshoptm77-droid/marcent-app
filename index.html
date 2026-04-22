@@ -1656,18 +1656,19 @@ async function saveEditProduct(){
     var logs=(prev.changelog||[]);
     logs.push({type:'edit',changes:changed.length?changed.join(', '):'সাধারণ আপডেট',date:new Date().toLocaleString('bn-BD')});
 
+    var newStatus=(_pdRole==='admin')?(prev.status||'pending'):'edited';
     await db.collection('products').doc(_pdCurrentId).update({
       name:newName, price:newPrice, oldPrice:newOldPrice, category:newCat, stock:newStock,
       titleType:newTitleType, discount:newDiscount,
       description:newDesc, tags:newTags, imageUrl:newImgUrl,
       deliveryMethod:newDelivery, deliveryCharge:newDelCharge,
       specs:newSpecs,
-      status:'edited',
+      status:newStatus,
       changelog:logs,
       updatedAt:firebase.firestore.FieldValue.serverTimestamp()
     });
     closeModal('pe-modal');
-    showToast('পণ্য আপডেট হয়েছে! স্ট্যাটাস "Edited"','success');
+    showToast(_pdRole==='admin'?'পণ্য আপডেট হয়েছে!':'পণ্য আপডেট হয়েছে! স্ট্যাটাস "Edited"','success');
     loadUserProducts();
     loadUserApprovalProducts();
     loadAllProducts();
