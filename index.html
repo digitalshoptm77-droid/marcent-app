@@ -1592,29 +1592,12 @@ async function openEditProduct(){
     document.getElementById('ep-size').value=specs.size||'';
     document.getElementById('ep-material').value=specs.material||'';
     document.getElementById('ep-features').value=specs.features||'';
-    // Images
-    var imgs=p.imageUrl?p.imageUrl.split(',').map(function(s){return s.trim();}).filter(Boolean):[''];
-    var imgFieldsEl=document.getElementById('ep-img-fields');
-    imgFieldsEl.innerHTML='';
-    imgs.forEach(function(url,i){
-      var row=document.createElement('div');
-      row.className='prod-img-row';row.style.marginBottom='8px';
-      var wrapD=document.createElement('div');
-      if(i>0){
-        wrapD.style.cssText='display:flex;gap:8px;align-items:center';
-        var iw=document.createElement('div');iw.className='input-wrap';iw.style.flex='1';
-        iw.innerHTML='<i class="fas fa-image ico"></i><input type="url" class="ep-img-input" value="'+url+'" placeholder="https://...">';
-        var rmBtn=document.createElement('button');rmBtn.type='button';
-        rmBtn.style.cssText='background:#fee2e2;color:#dc2626;border:none;border-radius:8px;width:34px;height:38px;cursor:pointer;font-size:14px;flex-shrink:0';
-        rmBtn.innerHTML='<i class="fas fa-times"></i>';rmBtn.onclick=function(){row.remove();};
-        wrapD.appendChild(iw);wrapD.appendChild(rmBtn);
-      } else {
-        wrapD.className='input-wrap';
-        wrapD.innerHTML='<i class="fas fa-image ico"></i><input type="url" class="ep-img-input" value="'+url+'" placeholder="https://...">';
-      }
-      row.appendChild(wrapD);
-      imgFieldsEl.appendChild(row);
-    });
+    // Images — existing urls load as previews
+    var imgs=p.imageUrl?p.imageUrl.split(',').map(function(s){return s.trim();}).filter(Boolean):[];
+    epUploadedImageUrls = imgs.slice(); // populate edit upload array
+    var previewGrid=document.getElementById('ep-img-preview-grid');
+    previewGrid.innerHTML='';
+    epUploadedImageUrls.forEach(function(url){addEpImagePreviewThumb(url);});
     openModal('pe-modal');
   }catch(e){showToast('Failed to load!','error');}
 }
@@ -1652,7 +1635,7 @@ async function saveEditProduct(){
     var newTitleType=document.getElementById('ep-title-type').value;
     var newDelivery=document.getElementById('ep-delivery').value;
     var newDelCharge=parseFloat(document.getElementById('ep-del-charge').value)||0;
-    var newImgUrl=Array.from(document.querySelectorAll('.ep-img-input')).map(function(i){return i.value.trim();}).filter(Boolean).join(',');
+    var newImgUrl=epUploadedImageUrls.join(',');
     var newSpecs={type:document.getElementById('ep-type').value.trim(),size:document.getElementById('ep-size').value.trim(),material:document.getElementById('ep-material').value.trim(),features:document.getElementById('ep-features').value.trim()};
     var prevSpecs=prev.specs||{};
 
@@ -1691,6 +1674,55 @@ async function saveEditProduct(){
     loadAdminApprovalProducts();
     openProductDetail(_pdCurrentId,_pdRole);
   }catch(e){showToast('Update failed!','error');}
+}
+
+/* ══ Edit Product Image Upload ══ */
+var epUploadedImageUrls = [];
+
+function handleEpImgFiles(files){
+  Array.from(files).forEach(function(file){
+    if(!file.type.startsWith('image/'))return;
+    if(file.size>5*1024*1024){showToast('ছবির সাইজ সর্বোচ্চ 5MB!','error');return;}
+    uploadEpImageToStorage(file);
+  });
+}
+
+function handleEpImgDrop(event){
+  event.preventDefault();
+  document.getElementById('ep-img-upload-area').style.background='var(--primary-light)';
+  handleEpImgFiles(event.dataTransfer.files);
+}
+
+async function uploadEpImageToStorage(file){
+  var statusEl=document.getElementById('ep-img-upload-status');
+  statusEl.style.display='block';
+  try{
+    var formData=new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'digital shop');
+    formData.append('cloud_name', 'dju4iks6a');
+    var response=await fetch('https://api.cloudinary.com/v1_1/dju4iks6a/image/upload',{method:'POST',body:formData});
+    var data=await response.json();
+    if(data.secure_url){
+      epUploadedImageUrls.push(data.secure_url);
+      addEpImagePreviewThumb(data.secure_url);
+      showToast('ছবি upload সফল!','success');
+    }else{throw new Error(data.error?.message||'Upload failed');}
+  }catch(e){showToast('ছবি upload ব্যর্থ!','error');console.error(e);}
+  statusEl.style.display='none';
+}
+
+function addEpImagePreviewThumb(url){
+  var grid=document.getElementById('ep-img-preview-grid');
+  var wrap=document.createElement('div');
+  wrap.style.cssText='position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid var(--primary)';
+  var img=document.createElement('img');
+  img.src=url;img.style.cssText='width:100%;height:100%;object-fit:cover';
+  var del=document.createElement('button');
+  del.type='button';del.innerHTML='✕';
+  del.style.cssText='position:absolute;top:2px;right:2px;background:rgba(220,38,38,0.85);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1';
+  del.onclick=function(){epUploadedImageUrls=epUploadedImageUrls.filter(function(u){return u!==url;});wrap.remove();};
+  wrap.appendChild(img);wrap.appendChild(del);grid.appendChild(wrap);
 }
 </script>
 
@@ -1854,9 +1886,16 @@ async function saveEditProduct(){
         <div class="form-group"><label>Stock *</label><div class="input-wrap"><i class="fas fa-cubes ico"></i><input type="number" id="ep-stock" placeholder="Qty"></div></div>
         <div class="form-group"><label>Discount (%)</label><div class="input-wrap"><i class="fas fa-percent ico"></i><input type="number" id="ep-discount" placeholder="0"></div></div>
         <div class="form-group form-full">
-          <label>Product Images (URL)</label>
-          <div id="ep-img-fields"></div>
-          <button type="button" onclick="addMoreEpImgField()" style="margin-top:4px;background:var(--primary-light);color:var(--primary);border:2px dashed var(--primary);border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%;font-family:'Hind Siliguri',sans-serif"><i class="fas fa-plus"></i> আরো ছবি দিন</button>
+          <label>Product Images <span style="color:var(--gray);font-weight:400;font-size:12px">(ছবি সরাসরি upload করুন)</span></label>
+          <!-- Upload area -->
+          <div id="ep-img-upload-area" style="border:2px dashed var(--primary);border-radius:10px;padding:16px;text-align:center;background:var(--primary-light);cursor:pointer;transition:all 0.2s" onclick="document.getElementById('ep-img-file-input').click()" ondragover="event.preventDefault();this.style.background='#c6f0db'" ondragleave="this.style.background='var(--primary-light)'" ondrop="handleEpImgDrop(event)">
+            <i class="fas fa-cloud-upload-alt" style="font-size:26px;color:var(--primary);display:block;margin-bottom:6px"></i>
+            <div style="font-size:13px;font-weight:600;color:var(--primary)">ক্লিক করুন বা ছবি টেনে আনুন</div>
+            <div style="font-size:11px;color:var(--gray);margin-top:3px">JPG, PNG, WEBP — সর্বোচ্চ 5MB</div>
+          </div>
+          <input type="file" id="ep-img-file-input" accept="image/*" multiple style="display:none" onchange="handleEpImgFiles(this.files)">
+          <div id="ep-img-preview-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
+          <div id="ep-img-upload-status" style="font-size:13px;color:var(--primary);margin-top:6px;display:none"><i class="fas fa-spinner fa-spin"></i> Uploading...</div>
         </div>
         <div class="form-group form-full"><label>Description</label><div class="input-wrap"><i class="fas fa-align-left ico-top"></i><textarea id="ep-desc" placeholder="Product description" style="height:70px;resize:none;"></textarea></div></div>
         <div class="form-group form-full"><label>Search Tags (comma separated)</label><div class="input-wrap"><i class="fas fa-hashtag ico"></i><input type="text" id="ep-tags" placeholder="e.g. phone, samsung, mobile"></div></div>
@@ -1881,6 +1920,5 @@ async function saveEditProduct(){
     </div>
   </div>
 </div>
-</script>
 </body>
 </html>
