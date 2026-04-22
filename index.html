@@ -1202,7 +1202,7 @@ async function loadAllProducts(){
       var statusLabel=labelMap[p.status]||'Pending';
       html+='<tr><td>'+(idx+1)+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.category||'-')+'</td>';
       html+='<td><span class="status-badge '+statusClass+'">'+statusLabel+'</span></td>';
-      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+p.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button></td></tr>';
+      html+='<td style="white-space:nowrap"><div style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+p.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button><button class="btn btn-sm" style="font-size:12px;background:#7c3aed;color:white;border:none" onclick="viewSellerDetails(\''+p.merchantUid+'\')"><i class="fas fa-user-circle"></i> Seller Details</button></div></td></tr>';
     });
     html+='</tbody></table>';c.innerHTML=html;
   }catch(e){}
@@ -1221,7 +1221,7 @@ async function loadAdminApprovalProducts(){
       var imgHtml=firstImg?'<img src="'+firstImg+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-';
       html+='<tr><td>'+i+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.category||'-')+'</td><td>'+(p.stock||0)+'</td>';
       html+='<td><span class="status-badge s-active">Approved</span></td>';
-      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+d.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button></td></tr>';
+      html+='<td style="white-space:nowrap"><div style="display:flex;gap:6px;align-items:center;flex-wrap:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+d.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button><button class="btn btn-sm" style="font-size:12px;background:#7c3aed;color:white;border:none" onclick="viewSellerDetails(\''+p.merchantUid+'\')"><i class="fas fa-user-circle"></i> Seller Details</button></div></td></tr>';
       i++;
     });
     html+='</tbody></table>';c.innerHTML=html;
@@ -1261,6 +1261,58 @@ async function viewMerchant(uid){
 async function approveMerchant(uid){await db.collection('merchants').doc(uid).update({status:'active'});closeModal('merchant-detail-modal');showToast('Merchant activated!','success');loadNewMerchants();loadAdminDashboard();}
 async function rejectMerchant(uid){await db.collection('merchants').doc(uid).update({status:'rejected'});closeModal('merchant-detail-modal');showToast('Merchant rejected!','warning');loadNewMerchants();loadAdminDashboard();}
 async function deleteMerchant(uid){if(!confirm('Permanently delete this merchant?'))return;await db.collection('merchants').doc(uid).delete();closeModal('merchant-detail-modal');showToast('Merchant deleted!','success');loadNewMerchants();loadActiveMerchants();loadAdminDashboard();}
+
+async function viewSellerDetails(merchantUid){
+  if(!merchantUid){showToast('Seller info not found!','error');return;}
+  try{
+    var d=await db.collection('merchants').doc(merchantUid).get();
+    if(!d.exists){showToast('Seller not found!','error');return;}
+    var m=d.data();
+    var sMap={pending:'s-pending',active:'s-active',rejected:'s-rejected'};
+    var sLabel={pending:'Pending',active:'Active',rejected:'Rejected'};
+    var sColor={pending:'#b45309',active:'#16a34a',rejected:'#dc2626'};
+    var sc=sMap[m.status]||'s-pending';
+    var sl=sLabel[m.status]||m.status;
+    var col=sColor[m.status]||'#b45309';
+    document.getElementById('seller-detail-body').innerHTML=
+      '<div style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:12px;padding:16px 18px;margin-bottom:16px;border:1px solid #86efac">'+
+        '<div style="width:52px;height:52px;background:#00a651;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;flex-shrink:0"><i class="fas fa-store"></i></div>'+
+        '<div><div style="font-size:17px;font-weight:700;color:#111;">'+(m.shopName||'-')+'</div>'+
+        '<div style="font-size:12px;color:#6b7280;margin-top:2px;">Merchant ID: <span style="font-weight:700;color:#7c3aed">'+(m.merchantId||'-')+'</span></div></div>'+
+        '<div style="margin-left:auto"><span class="status-badge '+sc+'" style="color:'+col+'">'+sl+'</span></div>'+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'+
+        '<div style="background:#f9fafb;border-radius:10px;padding:12px 14px;border:1px solid #e5e7eb">'+
+          '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px"><i class="fas fa-user" style="color:#00a651"></i> প্রথম নাম</div>'+
+          '<div style="font-size:14px;font-weight:600;color:#111">'+(m.firstName||'-')+'</div></div>'+
+        '<div style="background:#f9fafb;border-radius:10px;padding:12px 14px;border:1px solid #e5e7eb">'+
+          '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px"><i class="fas fa-user" style="color:#00a651"></i> শেষ নাম</div>'+
+          '<div style="font-size:14px;font-weight:600;color:#111">'+(m.lastName||'-')+'</div></div>'+
+        '<div style="background:#f9fafb;border-radius:10px;padding:12px 14px;border:1px solid #e5e7eb;grid-column:1/-1">'+
+          '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px"><i class="fas fa-id-card" style="color:#3b82f6"></i> পূর্ণ নাম</div>'+
+          '<div style="font-size:14px;font-weight:600;color:#111">'+(m.fullName||'-')+'</div></div>'+
+        '<div style="background:#f9fafb;border-radius:10px;padding:12px 14px;border:1px solid #e5e7eb">'+
+          '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px"><i class="fas fa-envelope" style="color:#f59e0b"></i> ইমেইল</div>'+
+          '<div style="font-size:13px;font-weight:600;color:#111;word-break:break-all">'+(m.email||'-')+'</div></div>'+
+        '<div style="background:#f9fafb;border-radius:10px;padding:12px 14px;border:1px solid #e5e7eb">'+
+          '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px"><i class="fas fa-phone" style="color:#00a651"></i> মোবাইল</div>'+
+          '<div style="font-size:14px;font-weight:600;color:#111">'+(m.phone||'-')+'</div></div>'+
+        '<div style="background:#fff7ed;border-radius:10px;padding:12px 14px;border:1px solid #fed7aa;grid-column:1/-1">'+
+          '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px"><i class="fas fa-map-marker-alt" style="color:#f57224"></i> বর্তমান ঠিকানা</div>'+
+          '<div style="font-size:13px;font-weight:500;color:#111">'+(m.currentAddress||'-')+'</div></div>'+
+        '<div style="background:#fff7ed;border-radius:10px;padding:12px 14px;border:1px solid #fed7aa;grid-column:1/-1">'+
+          '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px"><i class="fas fa-home" style="color:#f57224"></i> স্থায়ী ঠিকানা</div>'+
+          '<div style="font-size:13px;font-weight:500;color:#111">'+(m.permanentAddress||'-')+'</div></div>'+
+        '<div style="background:#ede9fe;border-radius:10px;padding:12px 14px;border:1px solid #c4b5fd">'+
+          '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px"><i class="fas fa-wallet" style="color:#7c3aed"></i> ব্যালেন্স</div>'+
+          '<div style="font-size:16px;font-weight:700;color:#7c3aed">৳'+(m.balance||0)+'</div></div>'+
+        '<div style="background:#f0f9ff;border-radius:10px;padding:12px 14px;border:1px solid #bae6fd">'+
+          '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px"><i class="fas fa-shield-alt" style="color:#0284c7"></i> ইমেইল যাচাই</div>'+
+          '<div style="font-size:13px;font-weight:600;color:'+(m.emailVerified?'#16a34a':'#dc2626')+'">'+(m.emailVerified?'✅ যাচাই হয়েছে':'❌ যাচাই হয়নি')+'</div></div>'+
+      '</div>';
+    openModal('seller-detail-modal');
+  }catch(e){showToast('Failed to load seller details!','error');console.error(e);}
+}
 
 /* ══════════════════════════════════════════
    PRODUCT DETAIL MODAL STYLES
@@ -1727,6 +1779,16 @@ async function saveEditProduct(){
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══ SELLER DETAIL MODAL ══ -->
+<div id="seller-detail-modal" class="modal-overlay" style="z-index:2000;">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="closeModal('seller-detail-modal')">✕</button>
+    <div class="modal-icon" style="background:#ede9fe;color:#7c3aed;"><i class="fas fa-user-circle"></i></div>
+    <h2 style="color:#7c3aed;">সেলার ডিটেলস</h2>
+    <div id="seller-detail-body"></div>
   </div>
 </div>
 
