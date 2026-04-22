@@ -157,6 +157,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 .search-bar i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray)}
 .prod-img-thumb{width:44px;height:44px;object-fit:cover;border-radius:8px;border:1px solid var(--border)}
 .specs-label{color:var(--gray);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px 0 6px;grid-column:1/-1;border-top:1px solid var(--border);margin-top:4px}
+.otp-box{width:48px;height:56px;border:2px solid var(--border);border-radius:10px;font-size:24px;font-weight:700;text-align:center;font-family:'Poppins',sans-serif;color:var(--dark);outline:none;transition:border-color 0.2s;background:#fafafa}.otp-box:focus{border-color:var(--primary);background:white;box-shadow:0 0 0 3px rgba(0,166,81,0.15)}.otp-box.filled{border-color:var(--primary);background:#f0fdf4}
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
   .main-content{margin-left:0}.form-row{grid-template-columns:1fr}
@@ -296,14 +297,15 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
               <div class="form-group"><label>Stock *</label><div class="input-wrap"><i class="fas fa-cubes ico"></i><input type="number" id="prod-stock" placeholder="Qty"></div></div>
               <div class="form-group"><label>Discount (%)</label><div class="input-wrap"><i class="fas fa-percent ico"></i><input type="number" id="prod-discount" placeholder="0"></div></div>
               <div class="form-group form-full">
-                <label>Product Image URL</label>
-                <div id="prod-img-fields">
-                  <div class="prod-img-row" style="margin-bottom:8px">
-                    <div class="input-wrap"><i class="fas fa-image ico"></i><input type="url" class="prod-img-input" placeholder="https://..." oninput="previewImgRow(this)"></div>
-                    <img class="img-preview-row" alt="Preview" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-top:6px;display:none">
-                  </div>
+                <label>Product Images <span style="color:var(--gray);font-weight:400;font-size:12px">(ছবি সরাসরি upload করুন)</span></label>
+                <div id="prod-img-upload-area" style="border:2px dashed var(--primary);border-radius:10px;padding:18px;text-align:center;background:var(--primary-light);cursor:pointer;transition:all 0.2s" onclick="document.getElementById('prod-img-file-input').click()" ondragover="event.preventDefault();this.style.background='#c6f0db'" ondragleave="this.style.background='var(--primary-light)'" ondrop="handleImgDrop(event)">
+                  <i class="fas fa-cloud-upload-alt" style="font-size:28px;color:var(--primary);display:block;margin-bottom:8px"></i>
+                  <div style="font-size:14px;font-weight:600;color:var(--primary)">ছবি choose করুন বা এখানে drag করুন</div>
+                  <div style="font-size:12px;color:var(--gray);margin-top:4px">JPG, PNG, WEBP সাপোর্টেড • সর্বোচ্চ 5MB</div>
                 </div>
-                <button type="button" onclick="addMoreImgField()" style="margin-top:4px;background:var(--primary-light);color:var(--primary);border:2px dashed var(--primary);border-radius:8px;padding:7px 18px;font-size:13px;font-weight:600;cursor:pointer;width:100%;font-family:'Hind Siliguri',sans-serif"><i class="fas fa-plus"></i> আরো ছবি দিন</button>
+                <input type="file" id="prod-img-file-input" accept="image/*" multiple style="display:none" onchange="handleImgFiles(this.files)">
+                <div id="prod-img-preview-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
+                <div id="prod-img-upload-status" style="font-size:13px;color:var(--primary);margin-top:6px;display:none"><i class="fas fa-spinner fa-spin"></i> Uploading...</div>
               </div>
               <div class="form-group form-full"><label>Description</label><div class="input-wrap"><i class="fas fa-align-left ico-top"></i><textarea id="prod-desc" placeholder="Product description"></textarea></div></div>
               <div class="form-group form-full"><label>Search Tags (comma separated)</label><div class="input-wrap"><i class="fas fa-hashtag ico"></i><input type="text" id="prod-tags" placeholder="e.g. phone, samsung, mobile"></div></div>
@@ -336,7 +338,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="section-approval-products" class="content-section">
         <div class="sec-heading">Approval Products</div>
-        <div class="empty-state"><i class="fas fa-clipboard-check"></i><p>Coming soon.</p></div>
+        <div class="table-card"><div id="approval-products-table-body"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
 
       <div id="section-orders" class="content-section">
@@ -465,7 +467,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="admin-section-approval-products" class="content-section">
         <div class="sec-heading">Approval Products</div>
-        <div class="empty-state"><i class="fas fa-clipboard-check"></i><p>Coming soon.</p></div>
+        <div class="table-card"><div id="admin-approval-products-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
 
       <div id="admin-section-parcels" class="content-section">
@@ -553,6 +555,21 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
   </div>
 </div>
 
+
+<!-- OTP VERIFICATION MODAL -->
+<div id="otp-modal" class="modal-overlay">
+  <div class="modal" style="max-width:420px;text-align:center">
+    <button class="modal-close" onclick="closeOtpModal()"><i class="fas fa-times"></i></button>
+    <div class="modal-icon" style="background:#e0f2fe"><i class="fas fa-envelope-open-text" style="color:#0284c7"></i></div>
+    <h2 style="font-size:20px">ইমেইল যাচাই করুন</h2>
+    <p style="font-size:13px;color:var(--gray);margin-top:-16px;margin-bottom:20px;line-height:1.7"><span id="otp-email-display" style="font-weight:700;color:var(--dark)"></span><br>এই ইমেইলে একটি <strong>৬ সংখ্যার OTP</strong> পাঠানো হয়েছে।<br><span style="font-size:12px;color:#f59e0b"><i class="fas fa-clock"></i> OTP মেয়াদ: <span id="otp-timer">10:00</span></span></p>
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:20px" id="otp-boxes"><input type="text" maxlength="1" class="otp-box" id="otp-1" oninput="otpMove(this,null,'otp-2')" onkeydown="otpBack(event,this,null,'otp-1')"><input type="text" maxlength="1" class="otp-box" id="otp-2" oninput="otpMove(this,'otp-1','otp-3')" onkeydown="otpBack(event,this,'otp-1','otp-2')"><input type="text" maxlength="1" class="otp-box" id="otp-3" oninput="otpMove(this,'otp-2','otp-4')" onkeydown="otpBack(event,this,'otp-2','otp-3')"><input type="text" maxlength="1" class="otp-box" id="otp-4" oninput="otpMove(this,'otp-3','otp-5')" onkeydown="otpBack(event,this,'otp-3','otp-4')"><input type="text" maxlength="1" class="otp-box" id="otp-5" oninput="otpMove(this,'otp-4','otp-6')" onkeydown="otpBack(event,this,'otp-4','otp-5')"><input type="text" maxlength="1" class="otp-box" id="otp-6" oninput="otpMove(this,'otp-5',null)" onkeydown="otpBack(event,this,'otp-5','otp-6')"></div>
+    <div id="otp-error" class="err-box" style="text-align:left"></div>
+    <button class="btn btn-primary btn-block" id="otp-verify-btn" onclick="verifyOtpAndRegister()"><i class="fas fa-check-circle"></i> OTP যাচাই করুন ও Account খুলুন</button>
+    <div style="margin-top:14px;font-size:13px;color:var(--gray)">OTP পাননি? <span id="otp-resend-btn" style="color:var(--primary);cursor:pointer;font-weight:600" onclick="resendOtp()">আবার পাঠান</span><span id="otp-resend-timer" style="color:var(--gray);font-size:12px"></span></div>
+  </div>
+</div>
+
 <!-- TERMS MODAL -->
 <div id="terms-modal" class="modal-overlay">
   <div class="modal" style="max-width:700px">
@@ -584,13 +601,18 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 <!-- TOAST -->
 <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg">Success!</span></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- Firebase Storage removed: using Cloudinary instead -->
 <script>
 firebase.initializeApp({apiKey:"AIzaSyBygH_x7ATAHpLarDhx9_piWPRbg8l704Q",authDomain:"digitalshoptm-1.firebaseapp.com",projectId:"digitalshoptm-1",storageBucket:"digitalshoptm-1.firebasestorage.app",messagingSenderId:"934689228128",appId:"1:934689228128:web:95d930d4ebe491db84ca05"});
 const auth=firebase.auth();
 const db=firebase.firestore();
+// Cloudinary config
+const CLOUDINARY_CLOUD='dju4iks6a';
+const CLOUDINARY_PRESET='digital shop';
 const ADMIN_EMAIL="digitalshoptm@gmail.com";
 let currentUser=null,allActiveMerchants=[];
 
@@ -613,30 +635,81 @@ function previewImgRow(input){
 }
 function addMoreImgField(){
   var container=document.getElementById('prod-img-fields');
+  if(!container)return;
   var row=document.createElement('div');
-  row.className='prod-img-row';
-  row.style.marginBottom='8px';
-  var wrap=document.createElement('div');
-  wrap.style.cssText='display:flex;gap:8px;align-items:center';
-  var inputWrap=document.createElement('div');
-  inputWrap.className='input-wrap';
-  inputWrap.style.flex='1';
+  row.className='prod-img-row';row.style.marginBottom='8px';
+  var wrap=document.createElement('div');wrap.style.cssText='display:flex;gap:8px;align-items:center';
+  var inputWrap=document.createElement('div');inputWrap.className='input-wrap';inputWrap.style.flex='1';
   inputWrap.innerHTML='<i class="fas fa-image ico"></i><input type="url" class="prod-img-input" placeholder="https://...">';
   inputWrap.querySelector('input').addEventListener('input',function(){previewImgRow(this);});
-  var removeBtn=document.createElement('button');
-  removeBtn.type='button';
+  var removeBtn=document.createElement('button');removeBtn.type='button';
   removeBtn.style.cssText='background:#fee2e2;color:#dc2626;border:none;border-radius:8px;width:34px;height:38px;cursor:pointer;font-size:14px;flex-shrink:0';
-  removeBtn.innerHTML='<i class="fas fa-times"></i>';
-  removeBtn.onclick=function(){row.remove();};
-  wrap.appendChild(inputWrap);
-  wrap.appendChild(removeBtn);
-  var img=document.createElement('img');
-  img.className='img-preview-row';
-  img.alt='Preview';
+  removeBtn.innerHTML='<i class="fas fa-times"></i>';removeBtn.onclick=function(){row.remove();};
+  wrap.appendChild(inputWrap);wrap.appendChild(removeBtn);
+  var img=document.createElement('img');img.className='img-preview-row';img.alt='Preview';
   img.style.cssText='width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid #e5e7eb;margin-top:6px;display:none';
-  row.appendChild(wrap);
-  row.appendChild(img);
-  container.appendChild(row);
+  row.appendChild(wrap);row.appendChild(img);container.appendChild(row);
+}
+
+// ── Image Upload System ──
+var uploadedImageUrls = [];
+
+function handleImgFiles(files){
+  Array.from(files).forEach(file=>{
+    if(!file.type.startsWith('image/'))return;
+    if(file.size>5*1024*1024){showToast('ছবির সাইজ সর্বোচ্চ 5MB হতে হবে!','error');return;}
+    uploadImageToStorage(file);
+  });
+}
+
+function handleImgDrop(event){
+  event.preventDefault();
+  document.getElementById('prod-img-upload-area').style.background='var(--primary-light)';
+  handleImgFiles(event.dataTransfer.files);
+}
+
+async function uploadImageToStorage(file){
+  var statusEl=document.getElementById('prod-img-upload-status');
+  statusEl.style.display='block';
+  try{
+    var formData=new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'digital shop');
+    formData.append('cloud_name', 'dju4iks6a');
+    var response=await fetch('https://api.cloudinary.com/v1_1/dju4iks6a/image/upload', {
+      method:'POST',
+      body:formData
+    });
+    var data=await response.json();
+    if(data.secure_url){
+      uploadedImageUrls.push(data.secure_url);
+      addImagePreviewThumb(data.secure_url);
+      showToast('ছবি upload সফল হয়েছে!','success');
+    } else {
+      throw new Error(data.error?.message||'Upload failed');
+    }
+  }catch(e){
+    showToast('ছবি upload ব্যর্থ! আবার চেষ্টা করুন।','error');
+    console.error(e);
+  }
+  statusEl.style.display='none';
+}
+
+function addImagePreviewThumb(url){
+  var grid=document.getElementById('prod-img-preview-grid');
+  var wrap=document.createElement('div');
+  wrap.style.cssText='position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid var(--primary)';
+  var img=document.createElement('img');
+  img.src=url;img.style.cssText='width:100%;height:100%;object-fit:cover';
+  var del=document.createElement('button');
+  del.type='button';del.innerHTML='✕';
+  del.style.cssText='position:absolute;top:2px;right:2px;background:rgba(220,38,38,0.85);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1';
+  del.onclick=function(){
+    uploadedImageUrls=uploadedImageUrls.filter(u=>u!==url);
+    wrap.remove();
+  };
+  wrap.appendChild(img);wrap.appendChild(del);
+  grid.appendChild(wrap);
 }
 function refreshSKS(){var el=document.getElementById('prod-sks');if(el)el.value=generateSKS();}
 
@@ -687,6 +760,7 @@ function showUserSection(name){
   var a=document.querySelector('#user-sidebar [data-section="'+name+'"]');if(a)a.classList.add('active');
   document.getElementById('user-sidebar').classList.remove('open');document.getElementById('sidebar-backdrop').classList.remove('show');
   if(name==='my-products')loadUserProducts();
+  if(name==='approval-products')loadUserApprovalProducts();
   if(name==='add-product'){var ok=currentUser&&currentUser.status==='active';document.getElementById('add-product-locked').style.display=ok?'none':'block';document.getElementById('add-product-form').style.display=ok?'block':'none';if(ok)refreshSKS();}
 }
 
@@ -701,6 +775,7 @@ function showAdminSection(name){
   if(name==='new-merchants')loadNewMerchants();
   if(name==='merchant-details')loadActiveMerchants();
   if(name==='published-products')loadAllProducts();
+  if(name==='approval-products')loadAdminApprovalProducts();
 }
 
 auth.onAuthStateChanged(async function(user){
@@ -715,6 +790,109 @@ auth.onAuthStateChanged(async function(user){
   }else{currentUser=null;showPage('home');}
 });
 
+// ══════════════════════════════════════════
+// OTP SYSTEM
+// ══════════════════════════════════════════
+// EmailJS config — আপনার নিজের key দিন
+const EMAILJS_SERVICE_ID = 'service_idoblk7';
+const EMAILJS_TEMPLATE_ID = 'template_tawxcnl';
+const EMAILJS_PUBLIC_KEY = 'xxfwdTjUcQYZXk8gs';
+
+var _pendingRegData = null;
+var _otpCode = null;
+var _otpExpiry = null;
+var _otpTimerInterval = null;
+var _otpResendCooldown = null;
+
+function generateOTP(){
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+async function sendOtpEmail(toEmail, toName, otp){
+  // EmailJS initialize
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+  await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    to_email: toEmail,
+    to_name: toName,
+    otp_code: otp,
+    site_name: 'Digital Shop TM',
+    expiry_min: '10'
+  });
+}
+
+function startOtpTimer(){
+  clearInterval(_otpTimerInterval);
+  var end = _otpExpiry;
+  _otpTimerInterval = setInterval(function(){
+    var now = Date.now();
+    var remaining = Math.max(0, end - now);
+    var m = Math.floor(remaining / 60000);
+    var s = Math.floor((remaining % 60000) / 1000);
+    document.getElementById('otp-timer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    if(remaining <= 0){
+      clearInterval(_otpTimerInterval);
+      document.getElementById('otp-timer').textContent = 'মেয়াদ শেষ!';
+      document.getElementById('otp-timer').style.color = '#ef4444';
+    }
+  }, 1000);
+}
+
+function startResendCooldown(){
+  var cd = 60;
+  document.getElementById('otp-resend-btn').style.display = 'none';
+  document.getElementById('otp-resend-timer').textContent = ' (' + cd + 's পরে)';
+  clearInterval(_otpResendCooldown);
+  _otpResendCooldown = setInterval(function(){
+    cd--;
+    document.getElementById('otp-resend-timer').textContent = ' (' + cd + 's পরে)';
+    if(cd <= 0){
+      clearInterval(_otpResendCooldown);
+      document.getElementById('otp-resend-btn').style.display = 'inline';
+      document.getElementById('otp-resend-timer').textContent = '';
+    }
+  }, 1000);
+}
+
+function otpMove(input, prevId, nextId){
+  input.value = input.value.replace(/[^0-9]/g, '');
+  if(input.value){ input.classList.add('filled'); if(nextId) document.getElementById(nextId).focus(); }
+  else { input.classList.remove('filled'); }
+}
+
+function otpBack(event, input, prevId, selfId){
+  if(event.key === 'Backspace' && !input.value && prevId){
+    document.getElementById(prevId).focus();
+    document.getElementById(prevId).value = '';
+    document.getElementById(prevId).classList.remove('filled');
+  }
+}
+
+function closeOtpModal(){
+  closeModal('otp-modal');
+  clearInterval(_otpTimerInterval);
+  clearInterval(_otpResendCooldown);
+  _pendingRegData = null;
+  _otpCode = null;
+}
+
+async function resendOtp(){
+  if(!_pendingRegData) return;
+  var newOtp = generateOTP();
+  _otpCode = newOtp;
+  _otpExpiry = Date.now() + 10 * 60 * 1000;
+  try{
+    await sendOtpEmail(_pendingRegData.email, _pendingRegData.fn, newOtp);
+    showToast('নতুন OTP পাঠানো হয়েছে!', 'success');
+    startOtpTimer();
+    startResendCooldown();
+    [1,2,3,4,5,6].forEach(i => { var el=document.getElementById('otp-'+i); el.value=''; el.classList.remove('filled'); });
+    document.getElementById('otp-1').focus();
+    showErr('otp-error','');
+  }catch(e){
+    showToast('OTP পাঠাতে সমস্যা হয়েছে!', 'error');
+  }
+}
+
 async function registerUser(){
   var fn=document.getElementById('reg-fname').value.trim(),ln=document.getElementById('reg-lname').value.trim();
   var phone=document.getElementById('reg-phone').value.trim(),email=document.getElementById('reg-email').value.trim();
@@ -723,26 +901,74 @@ async function registerUser(){
   var pass=document.getElementById('reg-pass').value,cpass=document.getElementById('reg-cpass').value;
   var t1=document.getElementById('reg-terms1').checked,t2=document.getElementById('reg-terms2').checked;
   showErr('signup-error','');
-  if(!fn||!ln||!phone||!email||!shop||!ca||!pa||!pass||!cpass)return showErr('signup-error','Please fill in all fields!');
-  if(pass!==cpass)return showErr('signup-error','Passwords do not match!');
-  if(pass.length<6)return showErr('signup-error','Password must be at least 6 characters!');
-  if(!t1||!t2)return showErr('signup-error','Please agree to Terms & Privacy Policy!');
-  var btn=document.getElementById('signup-submit-btn');btn.disabled=true;btn.textContent='Please wait...';
+  if(!fn||!ln||!phone||!email||!shop||!ca||!pa||!pass||!cpass)return showErr('signup-error','সব তথ্য পূরণ করুন!');
+  if(pass!==cpass)return showErr('signup-error','পাসওয়ার্ড মিলছে না!');
+  if(pass.length<6)return showErr('signup-error','পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে!');
+  if(!t1||!t2)return showErr('signup-error','Terms ও Privacy Policy-তে সম্মতি দিন!');
+  var btn=document.getElementById('signup-submit-btn');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> OTP পাঠানো হচ্ছে...';
   try{
+    // Shop name check
     var shopSnap=await db.collection('merchants').where('shopName','==',shop).get();
-    if(!shopSnap.empty){showErr('signup-error','This shop name is already taken! Please choose a different name.');btn.disabled=false;btn.innerHTML='<i class="fas fa-user-plus"></i> Sign Up';return;}
-    var cred=await auth.createUserWithEmailAndPassword(email,pass);
-    var uid=cred.user.uid;
-    var mid='TM'+Date.now().toString().slice(-8);
-    await db.collection('merchants').doc(uid).set({uid,firstName:fn,lastName:ln,fullName:fn+' '+ln,phone,email,shopName:shop,currentAddress:ca,permanentAddress:pa,merchantId:mid,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp(),balance:0});
-    closeModal('signup-modal');showToast('Registration successful! Waiting for admin approval.','success');
+    if(!shopSnap.empty){showErr('signup-error','এই Shop Name টি আগেই নেওয়া হয়েছে!');btn.disabled=false;btn.innerHTML='<i class="fas fa-user-plus"></i> Sign Up';return;}
+    // Email already used check
+    var emailSnap=await db.collection('merchants').where('email','==',email).get();
+    if(!emailSnap.empty){showErr('signup-error','এই Email দিয়ে আগেই একটি account আছে!');btn.disabled=false;btn.innerHTML='<i class="fas fa-user-plus"></i> Sign Up';return;}
+    // Generate & send OTP
+    var otp = generateOTP();
+    _otpCode = otp;
+    _otpExpiry = Date.now() + 10 * 60 * 1000;
+    _pendingRegData = {fn,ln,phone,email,shop,ca,pa,pass};
+    await sendOtpEmail(email, fn, otp);
+    // Show OTP modal
+    document.getElementById('otp-email-display').textContent = email;
+    closeModal('signup-modal');
+    openModal('otp-modal');
+    [1,2,3,4,5,6].forEach(i => { var el=document.getElementById('otp-'+i); el.value=''; el.classList.remove('filled'); });
+    document.getElementById('otp-1').focus();
+    showErr('otp-error','');
+    startOtpTimer();
+    startResendCooldown();
+    showToast('OTP পাঠানো হয়েছে! ইমেইল চেক করুন।','success');
   }catch(e){
-    var msg='Registration failed!';
-    if(e.code==='auth/email-already-in-use')msg='This email is already registered!';
-    if(e.code==='auth/invalid-email')msg='Invalid email address!';
-    showErr('signup-error',msg);
+    console.error(e);
+    showErr('signup-error','OTP পাঠাতে ব্যর্থ হয়েছে। ইমেইল সঠিক কিনা চেক করুন।');
   }
   btn.disabled=false;btn.innerHTML='<i class="fas fa-user-plus"></i> Sign Up';
+}
+
+async function verifyOtpAndRegister(){
+  var enteredOtp = [1,2,3,4,5,6].map(i => document.getElementById('otp-'+i).value).join('');
+  showErr('otp-error','');
+  if(enteredOtp.length < 6) return showErr('otp-error','৬ সংখ্যার OTP দিন!');
+  if(Date.now() > _otpExpiry) return showErr('otp-error','OTP-এর মেয়াদ শেষ হয়ে গেছে! আবার পাঠান।');
+  if(enteredOtp !== _otpCode) return showErr('otp-error','OTP সঠিক নয়! আবার চেষ্টা করুন।');
+  var btn=document.getElementById('otp-verify-btn');
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Account তৈরি হচ্ছে...';
+  try{
+    var d=_pendingRegData;
+    var cred=await auth.createUserWithEmailAndPassword(d.email, d.pass);
+    var uid=cred.user.uid;
+    var mid='TM'+Date.now().toString().slice(-8);
+    await db.collection('merchants').doc(uid).set({
+      uid,firstName:d.fn,lastName:d.ln,fullName:d.fn+' '+d.ln,
+      phone:d.phone,email:d.email,shopName:d.shop,
+      currentAddress:d.ca,permanentAddress:d.pa,
+      merchantId:mid,status:'pending',
+      emailVerified:true,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),balance:0
+    });
+    clearInterval(_otpTimerInterval);
+    clearInterval(_otpResendCooldown);
+    _pendingRegData=null; _otpCode=null;
+    closeModal('otp-modal');
+    showToast('Registration সফল হয়েছে! Admin approval-এর জন্য অপেক্ষা করুন।','success');
+  }catch(e){
+    var msg='Account তৈরি ব্যর্থ!';
+    if(e.code==='auth/email-already-in-use') msg='এই email দিয়ে আগেই account আছে!';
+    showErr('otp-error', msg);
+  }
+  btn.disabled=false;btn.innerHTML='<i class="fas fa-check-circle"></i> OTP যাচাই করুন ও Account খুলুন';
 }
 
 async function loginUser(){
@@ -815,22 +1041,43 @@ async function loadUserProducts(){
   container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
   try{
     var snap=await db.collection('products').where('merchantUid','==',u.uid).get();
-    if(snap.empty){container.innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>No products published yet.</p></div>';return;}
+    var rows=[];snap.forEach(d=>{var p=d.data();if(p.status!=='confirmed')rows.push({id:d.id,...p});});
+    if(rows.length===0){container.innerHTML='<div class="empty-state"><i class="fas fa-box"></i><p>কোনো পেন্ডিং পণ্য নেই।</p></div>';return;}
+    var html='<table><thead><tr><th>#</th><th>Image</th><th>SKS ID</th><th>Product</th><th>Price</th><th>Category</th><th>Stock</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+    rows.forEach((p,idx)=>{
+      var firstImg=p.imageUrl?(p.imageUrl.split(',')[0].trim()):'';
+      var imgHtml=firstImg?'<img src="'+firstImg+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-';
+      var statusMap={rejected:'s-rejected',deleted:'s-rejected',edited:'s-published'};
+      var labelMap={rejected:'Rejected',deleted:'Deleted',edited:'Edited'};
+      var statusClass=statusMap[p.status]||'s-pending';
+      var statusLabel=labelMap[p.status]||'Pending';
+      html+='<tr><td>'+(idx+1)+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.category||'-')+'</td><td>'+(p.stock||0)+'</td>';
+      html+='<td><span class="status-badge '+statusClass+'">'+statusLabel+'</span></td>';
+      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+p.id+'\',\'merchant\')"><i class="fas fa-info-circle"></i> বিস্তারিত</button></td></tr>';
+    });
+    html+='</tbody></table>';container.innerHTML=html;
+    var pc=document.getElementById('prod-count');if(pc)pc.textContent=rows.length;
+  }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
+}
+
+async function loadUserApprovalProducts(){
+  var u=currentUser,container=document.getElementById('approval-products-table-body');
+  container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('products').where('merchantUid','==',u.uid).where('status','==','confirmed').get();
+    if(snap.empty){container.innerHTML='<div class="empty-state"><i class="fas fa-clipboard-check"></i><p>কোনো অনুমোদিত পণ্য নেই।</p></div>';return;}
     var html='<table><thead><tr><th>#</th><th>Image</th><th>SKS ID</th><th>Product</th><th>Price</th><th>Category</th><th>Stock</th><th>Status</th><th>Action</th></tr></thead><tbody>';
     var i=1;
     snap.forEach(d=>{
       var p=d.data();
       var firstImg=p.imageUrl?(p.imageUrl.split(',')[0].trim()):'';
       var imgHtml=firstImg?'<img src="'+firstImg+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-';
-      var statusClass=p.status==='confirmed'?'s-active':p.status==='rejected'?'s-rejected':'s-pending';
-      var statusLabel=p.status==='confirmed'?'Confirmed':p.status==='rejected'?'Rejected':'Pending';
       html+='<tr><td>'+i+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.category||'-')+'</td><td>'+(p.stock||0)+'</td>';
-      html+='<td><span class="status-badge '+statusClass+'">'+statusLabel+'</span></td>';
+      html+='<td><span class="status-badge s-active">Approved</span></td>';
       html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+d.id+'\',\'merchant\')"><i class="fas fa-info-circle"></i> বিস্তারিত</button></td></tr>';
       i++;
     });
     html+='</tbody></table>';container.innerHTML=html;
-    var pc=document.getElementById('prod-count');if(pc)pc.textContent=snap.size;
   }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
 }
 
@@ -842,13 +1089,15 @@ async function addProduct(){
   var cat=document.getElementById('prod-cat').value;
   var stock=document.getElementById('prod-stock').value;
   if(!name||!price||!cat||!stock)return showToast('Name, price, category and stock are required!','error');
+  if(uploadedImageUrls.length===0)return showToast('অন্তত একটি ছবি upload করুন!','error');
   var sksSnap=await db.collection('products').where('sksId','==',sks).get();
   if(!sksSnap.empty){refreshSKS();return showToast('SKS ID conflict, refreshed! Try again.','warning');}
   try{
+    var btn=document.getElementById('add-product-btn');btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Publishing...';
     await db.collection('products').doc('prod_'+Date.now()).set({
       sksId:sks,name,price:parseFloat(price),oldPrice:parseFloat(document.getElementById('prod-old-price').value)||0,category:cat,stock:parseInt(stock)||0,
       description:document.getElementById('prod-desc').value.trim(),
-      imageUrl:Array.from(document.querySelectorAll('.prod-img-input')).map(i=>i.value.trim()).filter(Boolean).join(','),
+      imageUrl:uploadedImageUrls.join(','),
       tags:document.getElementById('prod-tags').value.trim(),
       titleType:document.getElementById('prod-title-type').value,
       discount:parseFloat(document.getElementById('prod-discount').value)||0,
@@ -859,10 +1108,13 @@ async function addProduct(){
       createdAt:firebase.firestore.FieldValue.serverTimestamp(),status:'pending'
     });
     showToast('Product published successfully!','success');
-    ['prod-name','prod-price','prod-old-price','prod-desc','prod-tags','prod-discount','prod-del-charge','prod-type','prod-size','prod-material','prod-features','prod-stock'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});var pf=document.getElementById('prod-img-fields');if(pf){pf.innerHTML='<div class="prod-img-row" style="margin-bottom:8px"><div class="input-wrap"><i class="fas fa-image ico"></i><input type="url" class="prod-img-input" placeholder="https://..." oninput="previewImgRow(this)"></div><img class="img-preview-row" alt="Preview" style="width:100%;max-height:120px;object-fit:contain;border-radius:8px;border:1px solid var(--border);margin-top:6px;display:none"></div>';}
+    uploadedImageUrls=[];
+    document.getElementById('prod-img-preview-grid').innerHTML='';
+    ['prod-name','prod-price','prod-old-price','prod-desc','prod-tags','prod-discount','prod-del-charge','prod-type','prod-size','prod-material','prod-features','prod-stock'].forEach(id=>{var el=document.getElementById(id);if(el)el.value='';});
     document.getElementById('prod-cat').value='';document.getElementById('prod-title-type').value='';document.getElementById('prod-delivery').value='our';
     refreshSKS();
-  }catch(e){showToast('Failed to publish product!','error');}
+    btn.disabled=false;btn.innerHTML='<i class="fas fa-paper-plane"></i> Publish Product';
+  }catch(e){showToast('Failed to publish product!','error');document.getElementById('add-product-btn').disabled=false;document.getElementById('add-product-btn').innerHTML='<i class="fas fa-paper-plane"></i> Publish Product';}
 }
 
 async function deleteProduct(pid){if(!confirm('Delete this product?'))return;await db.collection('products').doc(pid).delete();showToast('Product deleted!','success');loadUserProducts();}
@@ -928,28 +1180,48 @@ async function loadAllProducts(){
   var c=document.getElementById('all-products-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
   try{
     var snap=await db.collection('products').get();
-    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-boxes"></i><p>No products.</p></div>';return;}
+    var rows=[];snap.forEach(d=>{var p=d.data();if(p.status!=='confirmed')rows.push({id:d.id,...p});});
+    if(rows.length===0){c.innerHTML='<div class="empty-state"><i class="fas fa-boxes"></i><p>No pending products.</p></div>';return;}
     var html='<table><thead><tr><th>#</th><th>Img</th><th>SKS ID</th><th>Product</th><th>Price</th><th>Merchant</th><th>Category</th><th>Status</th><th>Action</th></tr></thead><tbody>';
-    var i=1;
-    snap.forEach(d=>{
-      var p=d.data();
+    rows.forEach((p,idx)=>{
       var firstImg=p.imageUrl?(p.imageUrl.split(',')[0].trim()):'';
       var imgHtml=firstImg?'<img src="'+firstImg+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-';
-      var statusClass=p.status==='confirmed'?'s-active':p.status==='rejected'?'s-rejected':'s-pending';
-      var statusLabel=p.status==='confirmed'?'Confirmed':p.status==='rejected'?'Rejected':'Pending';
-      html+='<tr><td>'+i+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.category||'-')+'</td>';
+      var statusMap={rejected:'s-rejected',deleted:'s-rejected',edited:'s-published'};
+      var labelMap={rejected:'Rejected',deleted:'Deleted',edited:'Edited'};
+      var statusClass=statusMap[p.status]||'s-pending';
+      var statusLabel=labelMap[p.status]||'Pending';
+      html+='<tr><td>'+(idx+1)+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.category||'-')+'</td>';
       html+='<td><span class="status-badge '+statusClass+'">'+statusLabel+'</span></td>';
-      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+d.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button></td></tr>';
-      i++;
+      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+p.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button></td></tr>';
     });
     html+='</tbody></table>';c.innerHTML=html;
   }catch(e){}
 }
 
+async function loadAdminApprovalProducts(){
+  var c=document.getElementById('admin-approval-products-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('products').where('status','==','confirmed').get();
+    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-clipboard-check"></i><p>No approved products yet.</p></div>';return;}
+    var html='<table><thead><tr><th>#</th><th>Img</th><th>SKS ID</th><th>Product</th><th>Price</th><th>Merchant</th><th>Category</th><th>Stock</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+    var i=1;
+    snap.forEach(d=>{
+      var p=d.data();
+      var firstImg=p.imageUrl?(p.imageUrl.split(',')[0].trim()):'';
+      var imgHtml=firstImg?'<img src="'+firstImg+'" class="prod-img-thumb" onerror="this.style.display=\'none\'">':'-';
+      html+='<tr><td>'+i+'</td><td>'+imgHtml+'</td><td><span class="sks-badge">'+p.sksId+'</span></td><td>'+p.name+'</td><td>৳'+p.price+'</td><td>'+(p.merchantName||'-')+'</td><td>'+(p.category||'-')+'</td><td>'+(p.stock||0)+'</td>';
+      html+='<td><span class="status-badge s-active">Approved</span></td>';
+      html+='<td style="white-space:nowrap"><button class="btn btn-sm btn-primary" style="font-size:12px" onclick="openProductDetail(\''+d.id+'\',\'admin\')"><i class="fas fa-info-circle"></i> View</button></td></tr>';
+      i++;
+    });
+    html+='</tbody></table>';c.innerHTML=html;
+  }catch(e){c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
+}
+
 async function viewProduct(pid){ openProductDetail(pid,'admin'); }
 
-async function confirmProduct(pid){await db.collection('products').doc(pid).update({status:'confirmed'});closeModal('product-detail-modal');showToast('Product confirmed!','success');loadAllProducts();}
-async function rejectProduct(pid){await db.collection('products').doc(pid).update({status:'rejected'});closeModal('product-detail-modal');showToast('Product rejected!','warning');loadAllProducts();}
+async function confirmProduct(pid){await db.collection('products').doc(pid).update({status:'confirmed'});closeModal('product-detail-modal');showToast('Product confirmed!','success');loadAllProducts();loadAdminApprovalProducts();}
+async function rejectProduct(pid){await db.collection('products').doc(pid).update({status:'rejected'});closeModal('product-detail-modal');showToast('Product rejected!','warning');loadAllProducts();loadAdminApprovalProducts();}
 async function adminDeleteProduct(pid){if(!confirm('Delete this product?'))return;await db.collection('products').doc(pid).delete();closeModal('product-detail-modal');showToast('Deleted!','success');loadAllProducts();}
 
 async function viewMerchant(uid){
@@ -1113,8 +1385,8 @@ async function openProductDetail(pid, role){
     var gridHtml='';
     if(p.category) gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Category</div><div class="pd-info-val">'+p.category+'</div></div>';
     if(p.titleType) gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Title</div><div class="pd-info-val">'+p.titleType+'</div></div>';
-    var statusLabel=p.status==='confirmed'?'Confirmed':p.status==='rejected'?'Rejected':'Pending';
-    var statusColor=p.status==='confirmed'?'#16a34a':p.status==='rejected'?'#dc2626':'#b45309';
+    var statusLabel=p.status==='confirmed'?'Confirmed':p.status==='rejected'?'Rejected':p.status==='deleted'?'Deleted':p.status==='edited'?'Edited':'Pending';
+    var statusColor=p.status==='confirmed'?'#16a34a':p.status==='rejected'?'#dc2626':p.status==='deleted'?'#dc2626':p.status==='edited'?'#2563eb':'#b45309';
     gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Status</div><div class="pd-info-val" style="color:'+statusColor+'">'+statusLabel+'</div></div>';
     gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Delivery</div><div class="pd-info-val">'+(p.deliveryMethod==='self'?'Self Delivery':'Our Courier')+'</div></div>';
     if(p.deliveryCharge) gridHtml+='<div class="pd-info-item"><div class="pd-info-label">Delivery Charge</div><div class="pd-info-val">৳'+p.deliveryCharge+'</div></div>';
@@ -1126,6 +1398,26 @@ async function openProductDetail(pid, role){
 
     // Description
     document.getElementById('pd-desc-text').textContent=p.description||'No description.';
+
+    // Changelog
+    var clWrap=document.getElementById('pd-changelog-wrap');
+    var clEl=document.getElementById('pd-changelog');
+    var logs=p.changelog||[];
+    if(logs.length>0){
+      clWrap.style.display='block';
+      clEl.innerHTML=logs.slice().reverse().map(function(l){
+        var color=l.type==='delete'?'#dc2626':l.type==='edit'?'#4338ca':'#16a34a';
+        var icon=l.type==='delete'?'🗑️':l.type==='edit'?'✏️':'✅';
+        return '<div style="background:#f9fafb;border-left:3px solid '+color+';border-radius:6px;padding:10px 12px;margin-bottom:8px;font-size:12px;">'
+          +'<div style="font-weight:700;color:'+color+';margin-bottom:4px;">'+icon+' '+(l.type==='delete'?'ডিলিট':l.type==='edit'?'এডিট':'অ্যাপ্রুভ')+'</div>'
+          +(l.reason?'<div style="color:#374151;margin-bottom:3px;"><b>কারণ:</b> '+l.reason+'</div>':'')
+          +(l.changes?'<div style="color:#374151;margin-bottom:3px;"><b>পরিবর্তন:</b> '+l.changes+'</div>':'')
+          +'<div style="color:#9ca3af;font-size:11px;">'+(l.date||'')+'</div>'
+          +'</div>';
+      }).join('');
+    } else {
+      clWrap.style.display='none';
+    }
 
     // Specifications
     var specs=p.specs||{};
@@ -1139,7 +1431,13 @@ async function openProductDetail(pid, role){
 
     // Admin action row (Confirm/Reject)
     var adminActionRow=document.getElementById('pd-admin-action-row');
-    if(adminActionRow) adminActionRow.style.display=(role==='admin')?'block':'none';
+    if(adminActionRow){
+      if(role==='admin' && p.status!=='confirmed' && p.status!=='deleted'){
+        adminActionRow.style.display='block';
+      } else {
+        adminActionRow.style.display='none';
+      }
+    }
 
     openModal('pd-modal');
   }catch(e){showToast('Failed to load product!','error');console.error(e);}
@@ -1160,14 +1458,30 @@ function pdToggleAccord(key){
   if(arrow)arrow.classList.toggle('collapsed');
 }
 
-/* P-Delete (merchant) */
-async function merchantDeleteProduct(){
-  if(!confirm('এই পণ্যটি ডিলিট করবেন?'))return;
+/* P-Delete (merchant) — কারণ modal খুলবে */
+function merchantDeleteProduct(){
+  document.getElementById('delete-reason-input').value='';
+  openModal('delete-reason-modal');
+}
+
+async function confirmDeleteWithReason(){
+  var reason=document.getElementById('delete-reason-input').value.trim();
+  if(!reason){showToast('ডিলিট কারণ লিখুন!','error');return;}
   try{
-    await db.collection('products').doc(_pdCurrentId).delete();
+    var d=await db.collection('products').doc(_pdCurrentId).get();
+    if(!d.exists)return;
+    var p=d.data();
+    var logs=(p.changelog||[]);
+    logs.push({type:'delete',reason:reason,date:new Date().toLocaleString('bn-BD')});
+    await db.collection('products').doc(_pdCurrentId).update({
+      status:'deleted',
+      changelog:logs
+    });
+    closeModal('delete-reason-modal');
     closeModal('pd-modal');
-    showToast('পণ্য ডিলিট হয়েছে!','success');
+    showToast('পণ্যের স্ট্যাটাস "Deleted" হয়েছে!','success');
     loadUserProducts();
+    loadUserApprovalProducts();
   }catch(e){showToast('Failed!','error');}
 }
 
@@ -1185,11 +1499,11 @@ async function adminDeleteFromDetail(){
 /* Admin confirm/reject from detail */
 async function adminConfirmFromDetail(){
   await db.collection('products').doc(_pdCurrentId).update({status:'confirmed'});
-  closeModal('pd-modal');showToast('Product confirmed!','success');loadAllProducts();
+  closeModal('pd-modal');showToast('Product confirmed!','success');loadAllProducts();loadAdminApprovalProducts();
 }
 async function adminRejectFromDetail(){
   await db.collection('products').doc(_pdCurrentId).update({status:'rejected'});
-  closeModal('pd-modal');showToast('Product rejected!','warning');loadAllProducts();
+  closeModal('pd-modal');showToast('Product rejected!','warning');loadAllProducts();loadAdminApprovalProducts();
 }
 
 /* ══ Edit Product Modal ══ */
@@ -1261,23 +1575,57 @@ async function saveEditProduct(){
   var stock=document.getElementById('ep-stock').value;
   if(!name||!price||!cat||!stock){showToast('Name, price, category, stock required!','error');return;}
   try{
+    // আগের ডেটা পড়ি
+    var prevDoc=await db.collection('products').doc(_pdCurrentId).get();
+    var prev=prevDoc.data()||{};
+
+    // কী কী পরিবর্তন হয়েছে ট্র্যাক করি
+    var changed=[];
+    var newName=name, newPrice=parseFloat(price), newCat=cat, newStock=parseInt(stock)||0;
+    var newDiscount=parseFloat(document.getElementById('ep-discount').value)||0;
+    var newDesc=document.getElementById('ep-desc').value.trim();
+    var newTags=document.getElementById('ep-tags').value.trim();
+    var newOldPrice=parseFloat(document.getElementById('ep-old-price').value)||0;
+    var newTitleType=document.getElementById('ep-title-type').value;
+    var newDelivery=document.getElementById('ep-delivery').value;
+    var newDelCharge=parseFloat(document.getElementById('ep-del-charge').value)||0;
+    var newImgUrl=Array.from(document.querySelectorAll('.ep-img-input')).map(function(i){return i.value.trim();}).filter(Boolean).join(',');
+    var newSpecs={type:document.getElementById('ep-type').value.trim(),size:document.getElementById('ep-size').value.trim(),material:document.getElementById('ep-material').value.trim(),features:document.getElementById('ep-features').value.trim()};
+    var prevSpecs=prev.specs||{};
+
+    if(prev.name!==newName) changed.push('নাম: "'+prev.name+'" → "'+newName+'"');
+    if(prev.price!==newPrice) changed.push('দাম: ৳'+prev.price+' → ৳'+newPrice);
+    if(prev.category!==newCat) changed.push('ক্যাটাগরি: "'+prev.category+'" → "'+newCat+'"');
+    if(prev.stock!==newStock) changed.push('স্টক: '+prev.stock+' → '+newStock);
+    if(prev.discount!==newDiscount) changed.push('ডিসকাউন্ট: '+prev.discount+'% → '+newDiscount+'%');
+    if(prev.oldPrice!==newOldPrice) changed.push('আসল দাম: ৳'+prev.oldPrice+' → ৳'+newOldPrice);
+    if(prev.titleType!==newTitleType) changed.push('টাইটেল: "'+prev.titleType+'" → "'+newTitleType+'"');
+    if(prev.description!==newDesc) changed.push('বিবরণ পরিবর্তিত');
+    if(prev.tags!==newTags) changed.push('ট্যাগ পরিবর্তিত');
+    if(prev.imageUrl!==newImgUrl) changed.push('ছবি পরিবর্তিত');
+    if(prev.deliveryMethod!==newDelivery) changed.push('ডেলিভারি পদ্ধতি: "'+prev.deliveryMethod+'" → "'+newDelivery+'"');
+    if(prev.deliveryCharge!==newDelCharge) changed.push('ডেলিভারি চার্জ: ৳'+prev.deliveryCharge+' → ৳'+newDelCharge);
+    if(prevSpecs.type!==newSpecs.type||prevSpecs.size!==newSpecs.size||prevSpecs.material!==newSpecs.material||prevSpecs.features!==newSpecs.features) changed.push('স্পেসিফিকেশন পরিবর্তিত');
+
+    var logs=(prev.changelog||[]);
+    logs.push({type:'edit',changes:changed.length?changed.join(', '):'সাধারণ আপডেট',date:new Date().toLocaleString('bn-BD')});
+
     await db.collection('products').doc(_pdCurrentId).update({
-      name:name,price:parseFloat(price),oldPrice:parseFloat(document.getElementById('ep-old-price').value)||0,category:cat,stock:parseInt(stock)||0,
-      titleType:document.getElementById('ep-title-type').value,
-      discount:parseFloat(document.getElementById('ep-discount').value)||0,
-      description:document.getElementById('ep-desc').value.trim(),
-      tags:document.getElementById('ep-tags').value.trim(),
-      imageUrl:Array.from(document.querySelectorAll('.ep-img-input')).map(function(i){return i.value.trim();}).filter(Boolean).join(','),
-      deliveryMethod:document.getElementById('ep-delivery').value,
-      deliveryCharge:parseFloat(document.getElementById('ep-del-charge').value)||0,
-      specs:{type:document.getElementById('ep-type').value.trim(),size:document.getElementById('ep-size').value.trim(),material:document.getElementById('ep-material').value.trim(),features:document.getElementById('ep-features').value.trim()},
+      name:newName, price:newPrice, oldPrice:newOldPrice, category:newCat, stock:newStock,
+      titleType:newTitleType, discount:newDiscount,
+      description:newDesc, tags:newTags, imageUrl:newImgUrl,
+      deliveryMethod:newDelivery, deliveryCharge:newDelCharge,
+      specs:newSpecs,
+      status:'edited',
+      changelog:logs,
       updatedAt:firebase.firestore.FieldValue.serverTimestamp()
     });
     closeModal('pe-modal');
-    showToast('Product updated!','success');
-    // Reload correct list
-    if(_pdRole==='merchant')loadUserProducts(); else loadAllProducts();
-    // Re-open detail with updated data
+    showToast('পণ্য আপডেট হয়েছে! স্ট্যাটাস "Edited"','success');
+    loadUserProducts();
+    loadUserApprovalProducts();
+    loadAllProducts();
+    loadAdminApprovalProducts();
     openProductDetail(_pdCurrentId,_pdRole);
   }catch(e){showToast('Update failed!','error');}
 }
@@ -1361,9 +1709,28 @@ async function saveEditProduct(){
         </div>
         <div class="pd-accord-body" id="pd-accord-desc">
           <div id="pd-desc-text" style="font-size:13px;color:#555;line-height:1.8;white-space:pre-wrap;"></div>
+          <div id="pd-changelog-wrap" style="display:none;margin-top:14px;border-top:1px solid #e5e7eb;padding-top:12px;">
+            <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📝 পরিবর্তনের ইতিহাস</div>
+            <div id="pd-changelog"></div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══ DELETE REASON MODAL ══ -->
+<div id="delete-reason-modal" class="modal-overlay" style="z-index:2000;">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" onclick="closeModal('delete-reason-modal')">✕</button>
+    <div class="modal-icon" style="background:#fee2e2;color:#dc2626;"><i class="fas fa-trash-alt"></i></div>
+    <h2 style="color:#dc2626;">পণ্য ডিলিট করুন</h2>
+    <p style="text-align:center;font-size:13px;color:#6b7280;margin-bottom:16px;">এই পণ্যটি ডিলিট করার কারণ লিখুন। কারণটি পণ্যের বিস্তারিতে সংরক্ষিত থাকবে।</p>
+    <div class="form-group">
+      <label>ডিলিট কারণ *</label>
+      <div class="input-wrap"><i class="fas fa-comment-alt ico-top"></i><textarea id="delete-reason-input" placeholder="কারণ লিখুন..." style="height:90px;resize:none;"></textarea></div>
+    </div>
+    <button class="btn btn-danger btn-block" onclick="confirmDeleteWithReason()"><i class="fas fa-trash"></i> ডিলিট নিশ্চিত করুন</button>
   </div>
 </div>
 
