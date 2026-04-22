@@ -1146,10 +1146,20 @@ async function loadAdminDashboard(){
 async function loadNewMerchants(){
   var c=document.getElementById('new-merchants-list');c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
   try{
-    var snap=await db.collection('merchants').where('status','==','pending').get();
-    if(snap.empty){c.innerHTML='<div class="empty-state"><i class="fas fa-user-check"></i><p>No new applications.</p></div>';return;}
+    var snap1=await db.collection('merchants').where('status','==','pending').get();
+    var snap2=await db.collection('merchants').where('status','==','rejected').get();
+    var docs=[];
+    snap1.forEach(d=>docs.push({id:d.id,...d.data()}));
+    snap2.forEach(d=>docs.push({id:d.id,...d.data()}));
+    if(docs.length===0){c.innerHTML='<div class="empty-state"><i class="fas fa-user-check"></i><p>No new applications.</p></div>';return;}
+    var sMap={pending:'s-pending',rejected:'s-rejected'};
+    var sLabel={pending:'Pending',rejected:'Rejected'};
     var html='<table><thead><tr><th>#</th><th>Name</th><th>Shop</th><th>Email</th><th>Mobile</th><th>Status</th><th>Action</th></tr></thead><tbody>';
-    var i=1;snap.forEach(d=>{var m=d.data();html+='<tr><td>'+i+'</td><td>'+m.fullName+'</td><td>'+(m.shopName||'-')+'</td><td>'+m.email+'</td><td>'+m.phone+'</td><td><span class="status-badge s-pending">Pending</span></td><td><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+d.id+'\')"><i class="fas fa-eye"></i> View</button></td></tr>';i++;});
+    docs.forEach((m,i)=>{
+      var sc=sMap[m.status]||'s-pending';
+      var sl=sLabel[m.status]||m.status;
+      html+='<tr><td>'+(i+1)+'</td><td>'+m.fullName+'</td><td>'+(m.shopName||'-')+'</td><td>'+m.email+'</td><td>'+m.phone+'</td><td><span class="status-badge '+sc+'">'+sl+'</span></td><td><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+m.id+'\')"><i class="fas fa-eye"></i> View</button></td></tr>';
+    });
     html+='</tbody></table>';c.innerHTML=html;
   }catch(e){c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
 }
@@ -1239,8 +1249,9 @@ async function viewMerchant(uid){
       '<div class="detail-row"><span class="detail-label">Permanent Address:</span><span class="detail-value">'+m.permanentAddress+'</span></div>'+
       '<div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value"><span class="status-badge '+(sMap[m.status]||'')+'">'+( sLabel[m.status]||m.status)+'</span></span></div>'+
       '<div class="action-row">'+
-      (m.status!=='active'?'<button class="btn btn-primary btn-sm" onclick="approveMerchant(\''+uid+'\')"><i class="fas fa-check"></i> Activate</button>':'')+
+      (m.status==='pending'?'<button class="btn btn-primary btn-sm" onclick="approveMerchant(\''+uid+'\')"><i class="fas fa-check"></i> Activate</button>':'')+
       (m.status==='pending'?'<button class="btn btn-warning btn-sm" onclick="rejectMerchant(\''+uid+'\')"><i class="fas fa-ban"></i> Reject</button>':'')+
+      (m.status==='rejected'?'<button class="btn btn-success btn-sm" onclick="approveMerchant(\''+uid+'\')">'+'<i class="fas fa-redo"></i> Re-activate</button>':'')+
       '<button class="btn btn-danger btn-sm" onclick="deleteMerchant(\''+uid+'\')"><i class="fas fa-trash"></i> Delete</button>'+
       '</div>';
     openModal('merchant-detail-modal');
@@ -1248,7 +1259,7 @@ async function viewMerchant(uid){
 }
 
 async function approveMerchant(uid){await db.collection('merchants').doc(uid).update({status:'active'});closeModal('merchant-detail-modal');showToast('Merchant activated!','success');loadNewMerchants();loadAdminDashboard();}
-async function rejectMerchant(uid){await db.collection('merchants').doc(uid).update({status:'rejected'});closeModal('merchant-detail-modal');showToast('Merchant rejected. Auto-delete in 24 hours.','warning');loadNewMerchants();loadAdminDashboard();setTimeout(async()=>{try{await db.collection('merchants').doc(uid).delete();}catch(e){}},86400000);}
+async function rejectMerchant(uid){await db.collection('merchants').doc(uid).update({status:'rejected'});closeModal('merchant-detail-modal');showToast('Merchant rejected!','warning');loadNewMerchants();loadAdminDashboard();}
 async function deleteMerchant(uid){if(!confirm('Permanently delete this merchant?'))return;await db.collection('merchants').doc(uid).delete();closeModal('merchant-detail-modal');showToast('Merchant deleted!','success');loadNewMerchants();loadActiveMerchants();loadAdminDashboard();}
 
 /* ══════════════════════════════════════════
