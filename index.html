@@ -381,7 +381,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="section-delivery" class="content-section">
         <div class="sec-heading">Self Delivery</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-truck"></i><p>Self delivery feature coming soon.</p></div></div>
+        <div class="table-card"><div id="merchant-self-delivery-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
 
       <div id="section-returns" class="content-section">
@@ -421,7 +421,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="sidebar-item" data-admin-section="published-products"><i class="fas fa-boxes"></i> Published Products</div>
       <div class="sidebar-item" data-admin-section="approval-products"><i class="fas fa-clipboard-check"></i> Approval Products</div>
       <div class="sidebar-item" data-admin-section="parcels"><i class="fas fa-box"></i> Add Parcel</div>
-      <div class="sidebar-item" data-admin-section="edit-parcel"><i class="fas fa-edit"></i> Edit/New Parcel</div>
+      <div class="sidebar-item" data-admin-section="edit-parcel"><i class="fas fa-user-check"></i> কাস্টমার ডেলিভারি দিবেন</div>
+      <div class="sidebar-item" data-admin-section="our-delivery"><i class="fas fa-truck"></i> আমাদের মাধ্যমে ডেলিভারি</div>
       <div class="sidebar-item" data-admin-section="order-details"><i class="fas fa-list-alt"></i> User Order Details</div>
       <div class="sidebar-label">Account</div>
       <div class="sidebar-item" id="admin-logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</div>
@@ -450,7 +451,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
           <div class="dash-card" onclick="showAdminSection('published-products')"><div class="dash-card-icon bg-orange"><i class="fas fa-boxes"></i></div><h4>Published Products</h4></div>
           <div class="dash-card" onclick="showAdminSection('approval-products')"><div class="dash-card-icon bg-indigo"><i class="fas fa-clipboard-check"></i></div><h4>Approval Products</h4></div>
           <div class="dash-card" onclick="showAdminSection('parcels')"><div class="dash-card-icon bg-purple"><i class="fas fa-box"></i></div><h4>Add Parcel</h4></div>
-          <div class="dash-card" onclick="showAdminSection('edit-parcel')"><div class="dash-card-icon bg-teal"><i class="fas fa-edit"></i></div><h4>Edit/New Parcel</h4></div>
+          <div class="dash-card" onclick="showAdminSection('edit-parcel')"><div class="dash-card-icon bg-teal"><i class="fas fa-user-check"></i></div><h4>কাস্টমার ডেলিভারি দিবেন</h4></div>
+          <div class="dash-card" onclick="showAdminSection('our-delivery')"><div class="dash-card-icon bg-green"><i class="fas fa-truck"></i></div><h4>আমাদের মাধ্যমে ডেলিভারি</h4></div>
           <div class="dash-card" onclick="showAdminSection('order-details')"><div class="dash-card-icon bg-indigo"><i class="fas fa-list-alt"></i></div><h4>User Order Details</h4></div>
         </div>
       </div>
@@ -530,8 +532,15 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       </div>
 
       <div id="admin-section-edit-parcel" class="content-section">
-        <div class="sec-heading">Edit / New Parcel</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-edit"></i><p>This feature coming soon.</p></div></div>
+        <div class="sec-heading">কাস্টমার ডেলিভারি দিবেন (Self Delivery Orders)</div>
+        <div class="search-bar" style="margin-bottom:14px"><i class="fas fa-search"></i><input type="text" id="customer-delivery-search" placeholder="SKS ID দিয়ে অর্ডার খুঁজুন..." oninput="filterCustomerDeliveryOrders(this.value)" style="padding-left:36px"></div>
+        <div class="table-card"><div id="customer-delivery-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
+      </div>
+
+      <div id="admin-section-our-delivery" class="content-section">
+        <div class="sec-heading">আমাদের মাধ্যমে ডেলিভারি (DSTM Orders)</div>
+        <div class="search-bar" style="margin-bottom:14px"><i class="fas fa-search"></i><input type="text" id="our-delivery-search" placeholder="SKS ID দিয়ে অর্ডার খুঁজুন..." oninput="filterOurDeliveryOrders(this.value)" style="padding-left:36px"></div>
+        <div class="table-card"><div id="our-delivery-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
 
       <div id="admin-section-order-details" class="content-section">
@@ -819,10 +828,11 @@ function showUserSection(name){
   if(name==='approval-products')loadUserApprovalProducts();
   if(name==='orders')loadMerchantOrders();
   if(name==='dstm-orders')loadMerchantDstmOrders();
+  if(name==='delivery')loadMerchantSelfDeliveryOrders();
   if(name==='add-product'){var ok=currentUser&&currentUser.status==='active';document.getElementById('add-product-locked').style.display=ok?'none':'block';document.getElementById('add-product-form').style.display=ok?'block':'none';if(ok)refreshSKS();}
 }
 
-var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','approval-products':'Approval Products','parcels':'Add Parcel','edit-parcel':'Edit/New Parcel','order-details':'User Order Details'};
+var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','approval-products':'Approval Products','parcels':'Add Parcel','edit-parcel':'কাস্টমার ডেলিভারি দিবেন','our-delivery':'আমাদের মাধ্যমে ডেলিভারি','order-details':'User Order Details'};
 function showAdminSection(name){
   document.querySelectorAll('#page-admin-dashboard .content-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#admin-sidebar .sidebar-item').forEach(s=>s.classList.remove('active'));
@@ -836,6 +846,8 @@ function showAdminSection(name){
   if(name==='approval-products')loadAdminApprovalProducts();
   if(name==='parcels')loadParcelProducts();
   if(name==='order-details')loadOrderDetails();
+  if(name==='edit-parcel')loadCustomerDeliveryOrders();
+  if(name==='our-delivery')loadOurDeliveryOrders();
 }
 
 auth.onAuthStateChanged(async function(user){
@@ -1586,7 +1598,7 @@ async function sendParcel(){
   btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> পাঠান';
 }
 
-/* ══ Admin Order Details ══ */
+/* ══ Admin Order Details — only pending ══ */
 var _allOrderDetails = [];
 async function loadOrderDetails(){
   var c = document.getElementById('order-details-list');
@@ -1598,7 +1610,6 @@ async function loadOrderDetails(){
     snap.forEach(function(d){ _allOrderDetails.push({id:d.id,...d.data()}); });
     renderOrderDetails(_allOrderDetails);
   }catch(e){
-    // fallback without orderBy if index not ready
     try{
       var snap2 = await db.collection('orders').get();
       _allOrderDetails = [];
@@ -1611,21 +1622,18 @@ async function loadOrderDetails(){
 
 function renderOrderDetails(list){
   var c = document.getElementById('order-details-list');
-  if(!list.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>কোনো অর্ডার নেই</p></div>'; return; }
-  var statusColor = {pending:'#b45309',confirmed:'#16a34a',cancelled:'#dc2626',delivered:'#2563eb','self-delivery':'#7c3aed'};
-  var statusLabel = {pending:'Pending',confirmed:'Confirmed',cancelled:'Cancelled',delivered:'Delivered','self-delivery':'Self Delivery'};
-  var html = '<table><thead><tr><th>#</th><th>ছবি</th><th>SKS ID</th><th>পণ্য</th><th>দাম</th><th>Merchant</th><th>কাস্টমার</th><th>স্ট্যাটাস</th><th>তারিখ</th><th>Action</th></tr></thead><tbody>';
-  list.forEach(function(o,i){
+  // শুধু pending অর্ডার দেখাবে
+  var pending = list.filter(function(o){ return o.status === 'pending'; });
+  if(!pending.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>কোনো পেন্ডিং অর্ডার নেই</p></div>'; return; }
+  var html = '<table><thead><tr><th>#</th><th>ছবি</th><th>SKS ID</th><th>পণ্য</th><th>দাম</th><th>Merchant</th><th>কাস্টমার</th><th>তারিখ</th><th>Action</th></tr></thead><tbody>';
+  pending.forEach(function(o,i){
     var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
     var imgHtml = firstImg ? '<img src="'+firstImg+'" class="prod-img-thumb" onerror=\"this.style.display=\'none\'\">' : '-';
-    var sc = statusColor[o.status] || '#6b7280';
-    var sl = statusLabel[o.status] || o.status;
     var dateStr = o.createdAt ? new Date(o.createdAt.seconds*1000).toLocaleDateString('bn-BD',{day:'2-digit',month:'short',year:'numeric'}) : '-';
     html += '<tr><td>'+(i+1)+'</td><td>'+imgHtml+'</td><td><span class="sks-badge" style="font-size:10px">'+o.sksId+'</span></td>' +
       '<td style="max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+o.productName+'</td>' +
       '<td>৳'+o.productPrice+'</td><td style="font-size:12px">'+(o.shopName||o.merchantName||'-')+'</td>' +
       '<td style="font-size:12px">'+o.custName+'<br><span style="color:#6b7280">'+o.custPhone+'</span></td>' +
-      '<td><span style="background:'+sc+'20;color:'+sc+';font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px">'+sl+'</span></td>' +
       '<td style="font-size:12px;white-space:nowrap">'+dateStr+'</td>' +
       '<td style="white-space:nowrap"><div style="display:flex;gap:4px;flex-wrap:nowrap">' +
         '<button onclick="openProductDetail(\''+o.productId+'\',\'admin\')" style="background:#e0e7ff;color:#4338ca;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-eye"></i></button>' +
@@ -1725,15 +1733,16 @@ async function merchantConfirmDelivery(type){
   if(!orderId) return;
   try{
     if(type === 'dstm'){
-      // Digital Shop TM delivery → move to dstm-orders
+      // Digital Shop TM delivery → status 'confirmed', deliveryMode 'dstm'
       await db.collection('orders').doc(orderId).update({status:'confirmed', deliveryMode:'dstm'});
       showToast('অর্ডার কনফার্ম! Digital Shop TM ডেলিভারি করবে','success');
     } else {
-      // Self delivery
+      // Self delivery → status 'self-delivery', deliveryMode 'self'
       await db.collection('orders').doc(orderId).update({status:'self-delivery', deliveryMode:'self'});
       showToast('অর্ডার কনফার্ম! নিজে ডেলিভারি দিন','success');
     }
     closeModal('confirm-order-modal');
+    // User Orders থেকে এই অর্ডারটা সরিয়ে দাও (reload করলে pending ছাড়া দেখাবে না)
     loadMerchantOrders();
     loadMerchantDstmOrders();
   }catch(e){ showToast('ব্যর্থ হয়েছে!','error'); }
@@ -1773,9 +1782,183 @@ async function loadMerchantDstmOrders(){
   }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
 }
 
-/* ══════════════════════════════════════════
-   PRODUCT DETAIL MODAL STYLES
-══════════════════════════════════════════ */
+async function loadMerchantDstmOrders(){
+  if(!currentUser) return;
+  var c = document.getElementById('merchant-dstm-orders-list');
+  if(!c) return;
+  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap = await db.collection('orders').where('merchantUid','==',currentUser.uid).get();
+    var orders = [];
+    snap.forEach(function(d){ orders.push({id:d.id,...d.data()}); });
+    // শুধু DSTM confirmed অর্ডার
+    orders = orders.filter(function(o){ return o.status === 'confirmed' && o.deliveryMode === 'dstm'; });
+    orders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+    if(!orders.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-truck-moving"></i><p>কোনো Digital Shop TM অর্ডার নেই</p></div>'; return; }
+    var html = '<div style="display:flex;flex-direction:column;gap:10px;padding:16px">';
+    orders.forEach(function(o){
+      var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+      html += '<div style="display:flex;align-items:center;gap:12px;background:white;border:1px solid #e5e7eb;border-radius:12px;padding:14px">' +
+        (firstImg ? '<img src="'+firstImg+'" style="width:60px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0">' : '<div style="width:60px;height:60px;background:#f3f4f6;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#9ca3af"><i class="fas fa-box" style="font-size:20px"></i></div>') +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:14px;font-weight:700;color:#111">'+o.productName+'</div>' +
+          '<div style="font-size:12px;color:#6b7280;margin-top:2px">৳'+o.productPrice+' &bull; SKS: '+o.sksId+'</div>' +
+          '<div style="font-size:12px;color:#374151;margin-top:2px">'+o.custName+' &bull; '+o.deliveryAddress+'</div>' +
+          '<span style="background:#dcfce7;color:#16a34a;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;margin-top:4px;display:inline-block"><i class="fas fa-store"></i> Digital Shop TM</span>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+    c.innerHTML = html;
+  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
+}
+
+/* ══ User Self Delivery Orders ══ */
+async function loadMerchantSelfDeliveryOrders(){
+  if(!currentUser) return;
+  var c = document.getElementById('merchant-self-delivery-list');
+  if(!c) return;
+  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap = await db.collection('orders').where('merchantUid','==',currentUser.uid).get();
+    var orders = [];
+    snap.forEach(function(d){ orders.push({id:d.id,...d.data()}); });
+    // শুধু self-delivery অর্ডার
+    orders = orders.filter(function(o){ return o.status === 'self-delivery' || (o.status === 'confirmed' && o.deliveryMode === 'self'); });
+    orders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+    if(!orders.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-truck"></i><p>কোনো Self Delivery অর্ডার নেই</p></div>'; return; }
+    var html = '<div style="display:flex;flex-direction:column;gap:10px;padding:16px">';
+    orders.forEach(function(o){
+      var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+      html += '<div style="display:flex;align-items:center;gap:12px;background:white;border:1px solid #e5e7eb;border-radius:12px;padding:14px">' +
+        (firstImg ? '<img src="'+firstImg+'" style="width:60px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0">' : '<div style="width:60px;height:60px;background:#f3f4f6;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#9ca3af"><i class="fas fa-box" style="font-size:20px"></i></div>') +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:14px;font-weight:700;color:#111">'+o.productName+'</div>' +
+          '<div style="font-size:12px;color:#6b7280;margin-top:2px">৳'+o.productPrice+' &bull; SKS: '+o.sksId+'</div>' +
+          '<div style="font-size:12px;color:#374151;margin-top:2px">কাস্টমার: '+o.custName+' &bull; '+o.custPhone+'</div>' +
+          '<div style="font-size:12px;color:#374151;margin-top:2px">ঠিকানা: '+o.deliveryAddress+'</div>' +
+          '<span style="background:#ede9fe;color:#7c3aed;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;margin-top:4px;display:inline-block"><i class="fas fa-user-circle"></i> Self Delivery</span>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+    c.innerHTML = html;
+  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
+}
+
+/* ══ Admin: কাস্টমার ডেলিভারি দিবেন (Self Delivery Orders) ══ */
+var _allCustomerDeliveryOrders = [];
+async function loadCustomerDeliveryOrders(){
+  var c = document.getElementById('customer-delivery-list');
+  if(!c) return;
+  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap = await db.collection('orders').get();
+    _allCustomerDeliveryOrders = [];
+    snap.forEach(function(d){
+      var o = {id:d.id,...d.data()};
+      if(o.status === 'self-delivery' || (o.status === 'confirmed' && o.deliveryMode === 'self')){
+        _allCustomerDeliveryOrders.push(o);
+      }
+    });
+    _allCustomerDeliveryOrders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+    renderCustomerDeliveryOrders(_allCustomerDeliveryOrders);
+  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
+}
+
+function renderCustomerDeliveryOrders(list){
+  var c = document.getElementById('customer-delivery-list');
+  if(!list.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-user-check"></i><p>কোনো Self Delivery অর্ডার নেই</p></div>'; return; }
+  var html = '<table><thead><tr><th>#</th><th>ছবি</th><th>SKS ID</th><th>পণ্য</th><th>দাম</th><th>Merchant / Shop</th><th>কাস্টমার</th><th>ঠিকানা</th><th>তারিখ</th><th>Action</th></tr></thead><tbody>';
+  list.forEach(function(o,i){
+    var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+    var imgHtml = firstImg ? '<img src="'+firstImg+'" class="prod-img-thumb" onerror=\"this.style.display=\'none\'\">' : '-';
+    var dateStr = o.createdAt ? new Date(o.createdAt.seconds*1000).toLocaleDateString('bn-BD',{day:'2-digit',month:'short',year:'numeric'}) : '-';
+    html += '<tr><td>'+(i+1)+'</td><td>'+imgHtml+'</td>' +
+      '<td><span class="sks-badge" style="font-size:10px">'+o.sksId+'</span></td>' +
+      '<td style="max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+o.productName+'</td>' +
+      '<td>৳'+o.productPrice+'</td>' +
+      '<td style="font-size:12px">'+(o.shopName||o.merchantName||'-')+'</td>' +
+      '<td style="font-size:12px">'+o.custName+'<br><span style="color:#6b7280">'+o.custPhone+'</span></td>' +
+      '<td style="font-size:12px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+o.deliveryAddress+'</td>' +
+      '<td style="font-size:12px;white-space:nowrap">'+dateStr+'</td>' +
+      '<td style="white-space:nowrap"><div style="display:flex;gap:4px">' +
+        '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-user"></i></button>' +
+        '<button onclick="adminViewOrderFull(\''+o.id+'\',\'customer\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-info-circle"></i></button>' +
+      '</div></td></tr>';
+  });
+  html += '</tbody></table>';
+  c.innerHTML = html;
+}
+
+function filterCustomerDeliveryOrders(q){
+  if(!q) return renderCustomerDeliveryOrders(_allCustomerDeliveryOrders);
+  var low = q.toLowerCase();
+  renderCustomerDeliveryOrders(_allCustomerDeliveryOrders.filter(function(o){ return (o.sksId||'').toLowerCase().includes(low); }));
+}
+
+/* ══ Admin: আমাদের মাধ্যমে ডেলিভারি (DSTM Confirmed Orders) ══ */
+var _allOurDeliveryOrders = [];
+async function loadOurDeliveryOrders(){
+  var c = document.getElementById('our-delivery-list');
+  if(!c) return;
+  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap = await db.collection('orders').get();
+    _allOurDeliveryOrders = [];
+    snap.forEach(function(d){
+      var o = {id:d.id,...d.data()};
+      if(o.status === 'confirmed' && o.deliveryMode === 'dstm'){
+        _allOurDeliveryOrders.push(o);
+      }
+    });
+    _allOurDeliveryOrders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+    renderOurDeliveryOrders(_allOurDeliveryOrders);
+  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
+}
+
+function renderOurDeliveryOrders(list){
+  var c = document.getElementById('our-delivery-list');
+  if(!list.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-truck"></i><p>কোনো DSTM ডেলিভারি অর্ডার নেই</p></div>'; return; }
+  var html = '<table><thead><tr><th>#</th><th>ছবি</th><th>SKS ID</th><th>পণ্য</th><th>দাম</th><th>Merchant / Shop</th><th>কাস্টমার</th><th>ঠিকানা</th><th>তারিখ</th><th>Action</th></tr></thead><tbody>';
+  list.forEach(function(o,i){
+    var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+    var imgHtml = firstImg ? '<img src="'+firstImg+'" class="prod-img-thumb" onerror=\"this.style.display=\'none\'\">' : '-';
+    var dateStr = o.createdAt ? new Date(o.createdAt.seconds*1000).toLocaleDateString('bn-BD',{day:'2-digit',month:'short',year:'numeric'}) : '-';
+    html += '<tr><td>'+(i+1)+'</td><td>'+imgHtml+'</td>' +
+      '<td><span class="sks-badge" style="font-size:10px">'+o.sksId+'</span></td>' +
+      '<td style="max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+o.productName+'</td>' +
+      '<td>৳'+o.productPrice+'</td>' +
+      '<td style="font-size:12px">'+(o.shopName||o.merchantName||'-')+'</td>' +
+      '<td style="font-size:12px">'+o.custName+'<br><span style="color:#6b7280">'+o.custPhone+'</span></td>' +
+      '<td style="font-size:12px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+o.deliveryAddress+'</td>' +
+      '<td style="font-size:12px;white-space:nowrap">'+dateStr+'</td>' +
+      '<td style="white-space:nowrap"><div style="display:flex;gap:4px">' +
+        '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-user"></i></button>' +
+        '<button onclick="adminViewOrderFull(\''+o.id+'\',\'our\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-info-circle"></i></button>' +
+      '</div></td></tr>';
+  });
+  html += '</tbody></table>';
+  c.innerHTML = html;
+}
+
+function filterOurDeliveryOrders(q){
+  if(!q) return renderOurDeliveryOrders(_allOurDeliveryOrders);
+  var low = q.toLowerCase();
+  renderOurDeliveryOrders(_allOurDeliveryOrders.filter(function(o){ return (o.sksId||'').toLowerCase().includes(low); }));
+}
+
+/* ══ Admin full order view (shared) ══ */
+function adminViewOrderFull(orderId, source){
+  var list = source === 'customer' ? _allCustomerDeliveryOrders : _allOurDeliveryOrders;
+  var o = list.find(function(x){ return x.id === orderId; });
+  if(!o) return;
+  // reuse existing viewOrderDetails modal by pushing into _allOrderDetails temporarily
+  var exists = _allOrderDetails.find(function(x){ return x.id === orderId; });
+  if(!exists) _allOrderDetails.push(o);
+  viewOrderDetails(orderId);
+}
+
 </script>
 <style>
 .pd-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;align-items:center;justify-content:center;padding:16px;}
