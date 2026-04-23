@@ -581,12 +581,13 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 </div>
 
 <!-- MERCHANT DETAIL MODAL -->
-<div id="merchant-detail-modal" class="modal-overlay">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal('merchant-detail-modal')"><i class="fas fa-times"></i></button>
-    <div class="modal-icon" style="background:#ede9fe"><i class="fas fa-user" style="color:#7c3aed"></i></div>
-    <h2>Merchant Details</h2>
-    <div id="merchant-detail-content"></div>
+<div id="merchant-detail-modal" class="modal-overlay" style="z-index:1500;">
+  <div class="modal" style="max-width:620px;padding:0;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,#1a1a2e,#2d1b69);padding:20px 24px;position:relative;">
+      <button class="modal-close" onclick="closeModal('merchant-detail-modal')" style="background:rgba(255,255,255,0.15);color:white;top:14px;right:14px;"><i class="fas fa-times"></i></button>
+      <div id="mdm-header"></div>
+    </div>
+    <div style="padding:20px 24px 24px;overflow-y:auto;max-height:72vh;scrollbar-width:none;" id="mdm-body"></div>
   </div>
 </div>
 
@@ -1234,28 +1235,121 @@ async function confirmProduct(pid){await db.collection('products').doc(pid).upda
 async function rejectProduct(pid){await db.collection('products').doc(pid).update({status:'rejected'});closeModal('product-detail-modal');showToast('Product rejected!','warning');loadAllProducts();loadAdminApprovalProducts();}
 async function adminDeleteProduct(pid){if(!confirm('Delete this product?'))return;await db.collection('products').doc(pid).delete();closeModal('product-detail-modal');showToast('Deleted!','success');loadAllProducts();}
 
+var _viewMerchantUid = null;
 async function viewMerchant(uid){
+  _viewMerchantUid = uid;
   try{
-    var d=await db.collection('merchants').doc(uid).get();if(!d.exists)return;var m=d.data();
+    var d=await db.collection('merchants').doc(uid).get();
+    if(!d.exists)return;
+    var m=d.data();
     var sMap={pending:'s-pending',active:'s-active',rejected:'s-rejected'};
     var sLabel={pending:'Pending',active:'Active',rejected:'Rejected'};
-    document.getElementById('merchant-detail-content').innerHTML=
-      '<div class="detail-row"><span class="detail-label">Full Name:</span><span class="detail-value">'+m.fullName+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">Shop Name:</span><span class="detail-value">'+(m.shopName||'-')+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">Merchant ID:</span><span class="detail-value"><span class="sks-badge">'+m.merchantId+'</span></span></div>'+
-      '<div class="detail-row"><span class="detail-label">Email:</span><span class="detail-value">'+m.email+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">Mobile:</span><span class="detail-value">'+m.phone+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">Current Address:</span><span class="detail-value">'+m.currentAddress+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">Permanent Address:</span><span class="detail-value">'+m.permanentAddress+'</span></div>'+
-      '<div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value"><span class="status-badge '+(sMap[m.status]||'')+'">'+( sLabel[m.status]||m.status)+'</span></span></div>'+
-      '<div class="action-row">'+
+    // Header
+    document.getElementById('mdm-header').innerHTML=
+      '<div style="display:flex;align-items:center;gap:14px">'+
+        '<div style="width:54px;height:54px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:white;flex-shrink:0"><i class="fas fa-store"></i></div>'+
+        '<div style="flex:1;min-width:0">'+
+          '<div style="font-size:18px;font-weight:700;color:white;margin-bottom:2px">'+(m.shopName||'-')+'</div>'+
+          '<div style="font-size:12px;color:rgba(255,255,255,0.6)">'+m.fullName+' &nbsp;&bull;&nbsp; <span style="color:#a5b4fc">'+m.merchantId+'</span></div>'+
+        '</div>'+
+        '<span class="status-badge '+(sMap[m.status]||'s-pending')+'" style="flex-shrink:0">'+(sLabel[m.status]||m.status)+'</span>'+
+      '</div>';
+    // Load approved products
+    var prodSnap=await db.collection('products').where('merchantUid','==',uid).where('status','==','confirmed').get();
+    var approvedProds=[];
+    prodSnap.forEach(function(dd){approvedProds.push({id:dd.id,...dd.data()});});
+    var bal=m.balance||0;
+    var body='';
+    // Balance card
+    body+='<div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac;border-radius:12px;padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px">'+
+      '<div style="flex:1">'+
+        '<div style="font-size:11px;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px"><i class="fas fa-wallet" style="color:#00a651"></i> ব্যালেন্স</div>'+
+        '<div style="font-size:26px;font-weight:800;color:#00a651" id="mdm-bal-display">৳'+bal+'</div>'+
+      '</div>'+
+      '<div style="display:flex;gap:8px">'+
+        '<button onclick="mdmEditBalance()" style="background:#3b82f6;color:white;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="fas fa-pen"></i> Edit</button>'+
+        '<button onclick="mdmAddBalance()" style="background:#00a651;color:white;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px"><i class="fas fa-plus"></i> যোগ</button>'+
+      '</div>'+
+    '</div>';
+    // Info grid
+    body+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">';
+    var infos=[
+      ['fas fa-user','#3b82f6','প্রথম নাম',m.firstName||'-'],
+      ['fas fa-user','#3b82f6','শেষ নাম',m.lastName||'-'],
+      ['fas fa-envelope','#f59e0b','ইমেইল',m.email||'-'],
+      ['fas fa-phone','#00a651','মোবাইল',m.phone||'-'],
+    ];
+    infos.forEach(function(it){
+      body+='<div style="background:#f9fafb;border-radius:10px;padding:11px 13px;border:1px solid #e5e7eb">'+
+        '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px"><i class="'+it[0]+'" style="color:'+it[1]+'"></i> '+it[2]+'</div>'+
+        '<div style="font-size:13px;font-weight:600;color:#111;word-break:break-all">'+it[3]+'</div></div>';
+    });
+    body+='<div style="background:#fff7ed;border-radius:10px;padding:11px 13px;border:1px solid #fed7aa;grid-column:1/-1">'+
+      '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px"><i class="fas fa-map-marker-alt" style="color:#f57224"></i> বর্তমান ঠিকানা</div>'+
+      '<div style="font-size:13px;color:#111">'+(m.currentAddress||'-')+'</div></div>';
+    body+='<div style="background:#fff7ed;border-radius:10px;padding:11px 13px;border:1px solid #fed7aa;grid-column:1/-1">'+
+      '<div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px"><i class="fas fa-home" style="color:#f57224"></i> স্থায়ী ঠিকানা</div>'+
+      '<div style="font-size:13px;color:#111">'+(m.permanentAddress||'-')+'</div></div>';
+    body+='</div>';
+    // Approved products
+    body+='<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;display:flex;align-items:center;gap:8px">'+
+      '<i class="fas fa-box-open" style="color:#00a651"></i> Approved পণ্য '+
+      '<span style="background:#dcfce7;color:#16a34a;font-size:11px;padding:2px 8px;border-radius:12px;font-weight:700">'+approvedProds.length+' টি</span></div>';
+    if(approvedProds.length===0){
+      body+='<div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;background:#f9fafb;border-radius:10px"><i class="fas fa-inbox" style="display:block;font-size:28px;opacity:.3;margin-bottom:8px"></i>কোনো approved পণ্য নেই</div>';
+    } else {
+      body+='<div style="display:flex;flex-direction:column;gap:8px">';
+      approvedProds.forEach(function(p){
+        var firstImg=p.imageUrl?(p.imageUrl.split(',')[0].trim()):'';
+        body+='<div style="display:flex;align-items:center;gap:10px;background:#f9fafb;border-radius:10px;padding:10px 12px;border:1px solid #e5e7eb">'+
+          (firstImg?'<img src="'+firstImg+'" style="width:44px;height:44px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;flex-shrink:0" onerror="this.style.display=\'none\'">':'<div style="width:44px;height:44px;background:#e5e7eb;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#9ca3af"><i class="fas fa-image"></i></div>')+
+          '<div style="flex:1;min-width:0">'+
+            '<div style="font-size:13px;font-weight:600;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.name+'</div>'+
+            '<div style="font-size:12px;color:#6b7280">৳'+p.price+' &nbsp;&bull;&nbsp; '+p.category+'</div>'+
+          '</div>'+
+          '<span class="sks-badge" style="font-size:10px;flex-shrink:0">'+p.sksId+'</span>'+
+        '</div>';
+      });
+      body+='</div>';
+    }
+    // Action buttons
+    body+='<div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap">'+
       (m.status==='pending'?'<button class="btn btn-primary btn-sm" onclick="approveMerchant(\''+uid+'\')"><i class="fas fa-check"></i> Activate</button>':'')+
       (m.status==='pending'?'<button class="btn btn-warning btn-sm" onclick="rejectMerchant(\''+uid+'\')"><i class="fas fa-ban"></i> Reject</button>':'')+
-      (m.status==='rejected'?'<button class="btn btn-success btn-sm" onclick="approveMerchant(\''+uid+'\')">'+'<i class="fas fa-redo"></i> Re-activate</button>':'')+
-      '<button class="btn btn-danger btn-sm" onclick="deleteMerchant(\''+uid+'\')"><i class="fas fa-trash"></i> Delete</button>'+
-      '</div>';
+      (m.status==='rejected'?'<button class="btn btn-success btn-sm" onclick="approveMerchant(\''+uid+'\')" ><i class="fas fa-redo"></i> Re-activate</button>':'')+
+      '<button class="btn btn-danger btn-sm" onclick="deleteMerchant(\''+uid+'\')" ><i class="fas fa-trash"></i> Delete</button>'+
+    '</div>';
+    document.getElementById('mdm-body').innerHTML=body;
     openModal('merchant-detail-modal');
-  }catch(e){showToast('Failed to load details!','error');}
+  }catch(e){console.error(e);showToast('Failed to load details!','error');}
+}
+
+async function mdmEditBalance(){
+  var uid=_viewMerchantUid;if(!uid)return;
+  var d=await db.collection('merchants').doc(uid).get();
+  var cur=d.data().balance||0;
+  var val=prompt('বর্তমান ব্যালেন্স: ৳'+cur+'\nনতুন ব্যালেন্স লিখুন:',cur);
+  if(val===null)return;
+  var newBal=parseFloat(val);
+  if(isNaN(newBal))return showToast('সঠিক পরিমাণ লিখুন!','error');
+  await db.collection('merchants').doc(uid).update({balance:newBal});
+  document.getElementById('mdm-bal-display').textContent='৳'+newBal;
+  showToast('ব্যালেন্স আপডেট হয়েছে! নতুন: ৳'+newBal,'success');
+}
+
+async function mdmAddBalance(){
+  var uid=_viewMerchantUid;if(!uid)return;
+  var d=await db.collection('merchants').doc(uid).get();
+  var cur=d.data().balance||0;
+  var val=prompt('বর্তমান ব্যালেন্স: ৳'+cur+'\nযোগ করতে পরিমাণ লিখুন (বিয়োগের জন্য - চিহ্ন দিন, যেমন: -50):','0');
+  if(val===null)return;
+  var amount=parseFloat(val);
+  if(isNaN(amount))return showToast('সঠিক পরিমাণ লিখুন!','error');
+  var newBal=cur+amount;
+  await db.collection('merchants').doc(uid).update({balance:newBal});
+  document.getElementById('mdm-bal-display').textContent='৳'+newBal;
+  var msg=amount>=0?('৳'+amount+' যোগ হয়েছে! নতুন ব্যালেন্স: ৳'+newBal):('৳'+Math.abs(amount)+' বিয়োগ হয়েছে! নতুন ব্যালেন্স: ৳'+newBal);
+  showToast(msg,'success');
 }
 
 async function approveMerchant(uid){await db.collection('merchants').doc(uid).update({status:'active'});closeModal('merchant-detail-modal');showToast('Merchant activated!','success');loadNewMerchants();loadAdminDashboard();}
