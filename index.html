@@ -208,7 +208,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
   <div class="overlay-backdrop" id="sidebar-backdrop"></div>
   <div class="sidebar" id="user-sidebar">
     <div class="sb-header">
-      <div class="sb-logo"><img src="ko.jpeg" alt="Logo" onerror="this.style.display='none'"><span style="font-size:13px;font-weight:700;color:white">Digital Shop TM</span></div>
+      <div class="sb-logo"><img src="ko.jpeg" alt="Logo" onerror=\"this.style.display=\'none\'\"><span style="font-size:13px;font-weight:700;color:white">Digital Shop TM</span></div>
       <div class="sb-user">
         <div class="sb-avatar"><i class="fas fa-user"></i></div>
         <div><div class="sb-name" id="sidebar-username">Merchant</div><div class="sb-id" id="sidebar-uid">ID: ---</div></div>
@@ -221,6 +221,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="sidebar-item" data-section="my-products"><i class="fas fa-boxes"></i> Published Products</div>
       <div class="sidebar-item" data-section="approval-products"><i class="fas fa-clipboard-check"></i> Approval Products</div>
       <div class="sidebar-item" data-section="orders"><i class="fas fa-shopping-bag"></i> Orders</div>
+      <div class="sidebar-item" data-section="dstm-orders"><i class="fas fa-truck-moving"></i> Digital Shop TM Order</div>
       <div class="sidebar-item" data-section="track-parcel"><i class="fas fa-map-marker-alt"></i> Track Parcel</div>
       <div class="sidebar-label">Financial</div>
       <div class="sidebar-item" data-section="withdraw"><i class="fas fa-wallet"></i> Withdraw</div>
@@ -343,7 +344,12 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="section-orders" class="content-section">
         <div class="sec-heading">Orders</div>
-        <div class="empty-state"><i class="fas fa-shopping-bag"></i><p>No orders yet.</p></div>
+        <div class="table-card"><div id="merchant-orders-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
+      </div>
+
+      <div id="section-dstm-orders" class="content-section">
+        <div class="sec-heading">Digital Shop TM Orders</div>
+        <div class="table-card"><div id="merchant-dstm-orders-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
 
       <div id="section-track-parcel" class="content-section">
@@ -401,7 +407,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
   <div class="overlay-backdrop" id="admin-sidebar-backdrop"></div>
   <div class="sidebar" id="admin-sidebar">
     <div class="sb-header">
-      <div class="sb-logo"><img src="ko.jpeg" alt="Logo" onerror="this.style.display='none'"><span style="font-size:13px;font-weight:700;color:white">Admin Panel</span></div>
+      <div class="sb-logo"><img src="ko.jpeg" alt="Logo" onerror=\"this.style.display=\'none\'\"><span style="font-size:13px;font-weight:700;color:white">Admin Panel</span></div>
       <div class="sb-user">
         <div class="sb-avatar" style="background:#7c3aed"><i class="fas fa-crown"></i></div>
         <div><div class="sb-name">Administrator</div><div class="sb-id">Digital Shop TM</div></div>
@@ -472,7 +478,55 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="admin-section-parcels" class="content-section">
         <div class="sec-heading">Add Parcel</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-box"></i><p>Parcel management coming soon.</p></div></div>
+        <div style="display:grid;grid-template-columns:340px 1fr;gap:0;background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;min-height:600px;">
+          <!-- LEFT: Parcel Form -->
+          <div style="padding:22px 20px;border-right:2px solid var(--border);background:#f8fafb;overflow-y:auto;">
+            <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:16px;display:flex;align-items:center;gap:8px"><i class="fas fa-clipboard-list" style="color:#7c3aed"></i> পার্সেল তথ্য</div>
+            <div id="parcel-selected-product" style="display:none;background:white;border-radius:10px;border:2px solid var(--primary);padding:12px;margin-bottom:14px">
+              <div style="font-size:10px;color:var(--gray);font-weight:700;text-transform:uppercase;margin-bottom:6px">নির্বাচিত পণ্য</div>
+              <div id="parcel-selected-info"></div>
+              <button onclick="clearParcelProduct()" style="margin-top:8px;background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;font-weight:600"><i class="fas fa-times"></i> সরান</button>
+            </div>
+            <div id="parcel-no-product" style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:10px 12px;font-size:12px;color:#856404;margin-bottom:14px"><i class="fas fa-arrow-right"></i> ডান পাশ থেকে পণ্য নির্বাচন করুন</div>
+            <div class="form-group">
+              <label style="font-size:12px;font-weight:700">পরিমাণ *</label>
+              <div class="input-wrap"><i class="fas fa-cubes ico"></i><input type="number" id="parcel-qty" placeholder="1" min="1" value="1" style="padding-left:36px"></div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px;font-weight:700">কাস্টমারের নাম *</label>
+              <div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="parcel-cust-name" placeholder="কাস্টমারের নাম" style="padding-left:36px"></div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px;font-weight:700">কাস্টমারের মোবাইল *</label>
+              <div class="input-wrap"><i class="fas fa-phone ico"></i><input type="text" id="parcel-cust-phone" placeholder="01XXXXXXXXX" style="padding-left:36px"></div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px;font-weight:700">ডেলিভারি ঠিকানা *</label>
+              <div class="input-wrap"><i class="fas fa-map-marker-alt ico-top"></i><textarea id="parcel-address" placeholder="সম্পূর্ণ ঠিকানা লিখুন..." style="height:70px;padding-left:36px;resize:none;padding-top:10px"></textarea></div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px;font-weight:700">ডেলিভারি টাইপ *</label>
+              <div class="input-wrap"><i class="fas fa-truck ico"></i>
+                <select id="parcel-delivery-type" style="padding-left:36px">
+                  <option value="standard">Standard Delivery</option>
+                  <option value="express">Express Delivery</option>
+                  <option value="same-day">Same Day Delivery</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px;font-weight:700">নোট (ঐচ্ছিক)</label>
+              <div class="input-wrap"><i class="fas fa-sticky-note ico-top"></i><textarea id="parcel-note" placeholder="অতিরিক্ত নির্দেশনা..." style="height:55px;padding-left:36px;resize:none;padding-top:10px"></textarea></div>
+            </div>
+            <button id="parcel-send-btn" onclick="sendParcel()" style="width:100%;background:linear-gradient(135deg,#7c3aed,#4338ca);color:white;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px"><i class="fas fa-paper-plane"></i> পাঠান</button>
+          </div>
+          <!-- RIGHT: Products List -->
+          <div style="padding:20px;overflow-y:auto;max-height:700px;">
+            <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:14px;display:flex;align-items:center;gap:8px"><i class="fas fa-boxes" style="color:#00a651"></i> Approved পণ্য সমূহ</div>
+            <div class="search-bar" style="margin-bottom:14px"><i class="fas fa-search"></i><input type="text" id="parcel-prod-search" placeholder="পণ্যের নাম বা SKS ID দিয়ে খুঁজুন..." oninput="filterParcelProducts(this.value)" style="padding-left:36px"></div>
+            <div id="parcel-products-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
+          </div>
+        </div>
       </div>
 
       <div id="admin-section-edit-parcel" class="content-section">
@@ -482,7 +536,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="admin-section-order-details" class="content-section">
         <div class="sec-heading">User Order Details</div>
-        <div class="table-card"><div id="order-details-list"><div class="empty-state"><i class="fas fa-list-alt"></i><p>No orders yet.</p></div></div></div>
+        <div class="search-bar" style="margin-bottom:14px"><i class="fas fa-search"></i><input type="text" id="order-details-search" placeholder="SKS ID দিয়ে অর্ডার খুঁজুন..." oninput="filterOrderDetails(this.value)" style="padding-left:36px"></div>
+        <div class="table-card"><div id="order-details-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
 
     </div>
@@ -752,7 +807,7 @@ document.querySelectorAll('#user-sidebar [data-section]').forEach(item=>item.onc
 document.querySelectorAll('#admin-sidebar [data-admin-section]').forEach(item=>item.onclick=()=>showAdminSection(item.getAttribute('data-admin-section')));
 document.querySelectorAll('.modal-overlay').forEach(o=>o.onclick=e=>{if(e.target===o)o.classList.remove('active');});
 
-var sT={'dashboard':'Dashboard','add-product':'Add Product','my-products':'Published Products','approval-products':'Approval Products','orders':'Orders','track-parcel':'Track Parcel','withdraw':'Withdraw','add-money':'Add Money','pickup':'Pickup Address','delivery':'Self Delivery','returns':'Return','support':'Support'};
+var sT={'dashboard':'Dashboard','add-product':'Add Product','my-products':'Published Products','approval-products':'Approval Products','orders':'Orders','dstm-orders':'Digital Shop TM Orders','track-parcel':'Track Parcel','withdraw':'Withdraw','add-money':'Add Money','pickup':'Pickup Address','delivery':'Self Delivery','returns':'Return','support':'Support'};
 function showUserSection(name){
   document.querySelectorAll('#page-user-dashboard .content-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#user-sidebar .sidebar-item').forEach(s=>s.classList.remove('active'));
@@ -762,6 +817,8 @@ function showUserSection(name){
   document.getElementById('user-sidebar').classList.remove('open');document.getElementById('sidebar-backdrop').classList.remove('show');
   if(name==='my-products')loadUserProducts();
   if(name==='approval-products')loadUserApprovalProducts();
+  if(name==='orders')loadMerchantOrders();
+  if(name==='dstm-orders')loadMerchantDstmOrders();
   if(name==='add-product'){var ok=currentUser&&currentUser.status==='active';document.getElementById('add-product-locked').style.display=ok?'none':'block';document.getElementById('add-product-form').style.display=ok?'block':'none';if(ok)refreshSKS();}
 }
 
@@ -777,6 +834,8 @@ function showAdminSection(name){
   if(name==='merchant-details')loadActiveMerchants();
   if(name==='published-products')loadAllProducts();
   if(name==='approval-products')loadAdminApprovalProducts();
+  if(name==='parcels')loadParcelProducts();
+  if(name==='order-details')loadOrderDetails();
 }
 
 auth.onAuthStateChanged(async function(user){
@@ -1408,6 +1467,312 @@ async function viewSellerDetails(merchantUid){
   }catch(e){showToast('Failed to load seller details!','error');console.error(e);}
 }
 
+
+
+/* ══════════════════════════════════════════
+   PARCEL SYSTEM
+══════════════════════════════════════════ */
+var _allParcelProducts = [];
+var _selectedParcelProduct = null;
+
+async function loadParcelProducts(){
+  var c = document.getElementById('parcel-products-list');
+  if(!c) return;
+  c.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap = await db.collection('products').where('status','==','confirmed').get();
+    _allParcelProducts = [];
+    snap.forEach(function(d){ _allParcelProducts.push({id:d.id,...d.data()}); });
+    renderParcelProducts(_allParcelProducts);
+  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
+}
+
+function renderParcelProducts(list){
+  var c = document.getElementById('parcel-products-list');
+  if(!list.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-search"></i><p>কোনো পণ্য পাওয়া যায়নি</p></div>'; return; }
+  var html = '<div style="display:flex;flex-direction:column;gap:10px">';
+  list.forEach(function(p){
+    var firstImg = p.imageUrl ? p.imageUrl.split(',')[0].trim() : '';
+    var isSelected = _selectedParcelProduct && _selectedParcelProduct.id === p.id;
+    html += '<div style="display:flex;align-items:center;gap:10px;background:'+(isSelected?'#f0fdf4':'white')+';border:2px solid '+(isSelected?'#00a651':'#e5e7eb')+';border-radius:10px;padding:10px 12px;transition:.2s">' +
+      (firstImg ? '<img src="'+firstImg+'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;flex-shrink:0" onerror=\"this.style.display=\'none\'\">' : '<div style="width:50px;height:50px;background:#f3f4f6;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#9ca3af"><i class="fas fa-image"></i></div>') +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:13px;font-weight:600;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.name+'</div>' +
+        '<div style="font-size:12px;color:#6b7280;margin-top:2px">৳'+p.price+' &bull; '+p.category+'</div>' +
+        '<span class="sks-badge" style="font-size:10px;margin-top:3px;display:inline-block">'+p.sksId+'</span>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">' +
+        '<button onclick="openProductDetail(\''+p.id+'\',\'admin\')" style="background:#e0e7ff;color:#4338ca;border:none;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-eye"></i> View</button>' +
+        '<button onclick="viewSellerDetails(\''+p.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-user"></i> Seller</button>' +
+        '<button onclick="selectParcelProduct(\''+p.id+'\')" style="background:'+(isSelected?'#00a651':'#f0fdf4')+';color:'+(isSelected?'white':'#00a651')+';border:2px solid #00a651;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:700;cursor:pointer">'+(isSelected?'✓ নির্বাচিত':'নির্বাচন করুন')+'</button>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div>';
+  c.innerHTML = html;
+}
+
+function filterParcelProducts(q){
+  if(!q) return renderParcelProducts(_allParcelProducts);
+  var low = q.toLowerCase();
+  renderParcelProducts(_allParcelProducts.filter(function(p){
+    return (p.name||'').toLowerCase().includes(low) || (p.sksId||'').toLowerCase().includes(low);
+  }));
+}
+
+function selectParcelProduct(pid){
+  _selectedParcelProduct = _allParcelProducts.find(function(p){ return p.id === pid; }) || null;
+  // update UI
+  var selBox = document.getElementById('parcel-selected-product');
+  var noSel = document.getElementById('parcel-no-product');
+  if(_selectedParcelProduct){
+    var p = _selectedParcelProduct;
+    var firstImg = p.imageUrl ? p.imageUrl.split(',')[0].trim() : '';
+    document.getElementById('parcel-selected-info').innerHTML =
+      '<div style="display:flex;align-items:center;gap:8px">' +
+      (firstImg ? '<img src="'+firstImg+'" style="width:40px;height:40px;object-fit:cover;border-radius:6px">' : '') +
+      '<div><div style="font-size:13px;font-weight:700;color:#111">'+p.name+'</div>' +
+      '<div style="font-size:12px;color:#6b7280">৳'+p.price+' &bull; '+p.sksId+'</div></div></div>';
+    selBox.style.display = 'block';
+    noSel.style.display = 'none';
+  } else {
+    selBox.style.display = 'none';
+    noSel.style.display = 'block';
+  }
+  renderParcelProducts(_allParcelProducts);
+}
+
+function clearParcelProduct(){
+  _selectedParcelProduct = null;
+  document.getElementById('parcel-selected-product').style.display = 'none';
+  document.getElementById('parcel-no-product').style.display = 'block';
+  renderParcelProducts(_allParcelProducts);
+}
+
+async function sendParcel(){
+  if(!_selectedParcelProduct) return showToast('প্রথমে একটি পণ্য নির্বাচন করুন!','error');
+  var qty = parseInt(document.getElementById('parcel-qty').value) || 1;
+  var custName = document.getElementById('parcel-cust-name').value.trim();
+  var custPhone = document.getElementById('parcel-cust-phone').value.trim();
+  var address = document.getElementById('parcel-address').value.trim();
+  var delivType = document.getElementById('parcel-delivery-type').value;
+  var note = document.getElementById('parcel-note').value.trim();
+  if(!custName || !custPhone || !address) return showToast('কাস্টমারের নাম, মোবাইল ও ঠিকানা দিন!','error');
+  var btn = document.getElementById('parcel-send-btn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
+  try{
+    var p = _selectedParcelProduct;
+    var orderId = 'ORD-' + Date.now();
+    var orderData = {
+      orderId, sksId: p.sksId, productId: p.id, productName: p.name,
+      productPrice: p.price, imageUrl: p.imageUrl || '',
+      qty, custName, custPhone, deliveryAddress: address,
+      deliveryType: delivType, note,
+      merchantUid: p.merchantUid, merchantName: p.merchantName || '', shopName: p.shopName || '',
+      status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdBy: 'admin'
+    };
+    await db.collection('orders').doc(orderId).set(orderData);
+    showToast('অর্ডার সফলভাবে পাঠানো হয়েছে!','success');
+    // Reset form
+    document.getElementById('parcel-qty').value = '1';
+    document.getElementById('parcel-cust-name').value = '';
+    document.getElementById('parcel-cust-phone').value = '';
+    document.getElementById('parcel-address').value = '';
+    document.getElementById('parcel-note').value = '';
+    clearParcelProduct();
+    loadOrderDetails();
+  }catch(e){ showToast('পাঠাতে ব্যর্থ হয়েছে!','error'); console.error(e); }
+  btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> পাঠান';
+}
+
+/* ══ Admin Order Details ══ */
+var _allOrderDetails = [];
+async function loadOrderDetails(){
+  var c = document.getElementById('order-details-list');
+  if(!c) return;
+  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap = await db.collection('orders').orderBy('createdAt','desc').get();
+    _allOrderDetails = [];
+    snap.forEach(function(d){ _allOrderDetails.push({id:d.id,...d.data()}); });
+    renderOrderDetails(_allOrderDetails);
+  }catch(e){
+    // fallback without orderBy if index not ready
+    try{
+      var snap2 = await db.collection('orders').get();
+      _allOrderDetails = [];
+      snap2.forEach(function(d){ _allOrderDetails.push({id:d.id,...d.data()}); });
+      _allOrderDetails.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+      renderOrderDetails(_allOrderDetails);
+    }catch(e2){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
+  }
+}
+
+function renderOrderDetails(list){
+  var c = document.getElementById('order-details-list');
+  if(!list.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>কোনো অর্ডার নেই</p></div>'; return; }
+  var statusColor = {pending:'#b45309',confirmed:'#16a34a',cancelled:'#dc2626',delivered:'#2563eb','self-delivery':'#7c3aed'};
+  var statusLabel = {pending:'Pending',confirmed:'Confirmed',cancelled:'Cancelled',delivered:'Delivered','self-delivery':'Self Delivery'};
+  var html = '<table><thead><tr><th>#</th><th>ছবি</th><th>SKS ID</th><th>পণ্য</th><th>দাম</th><th>Merchant</th><th>কাস্টমার</th><th>স্ট্যাটাস</th><th>তারিখ</th><th>Action</th></tr></thead><tbody>';
+  list.forEach(function(o,i){
+    var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+    var imgHtml = firstImg ? '<img src="'+firstImg+'" class="prod-img-thumb" onerror=\"this.style.display=\'none\'\">' : '-';
+    var sc = statusColor[o.status] || '#6b7280';
+    var sl = statusLabel[o.status] || o.status;
+    var dateStr = o.createdAt ? new Date(o.createdAt.seconds*1000).toLocaleDateString('bn-BD',{day:'2-digit',month:'short',year:'numeric'}) : '-';
+    html += '<tr><td>'+(i+1)+'</td><td>'+imgHtml+'</td><td><span class="sks-badge" style="font-size:10px">'+o.sksId+'</span></td>' +
+      '<td style="max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+o.productName+'</td>' +
+      '<td>৳'+o.productPrice+'</td><td style="font-size:12px">'+(o.shopName||o.merchantName||'-')+'</td>' +
+      '<td style="font-size:12px">'+o.custName+'<br><span style="color:#6b7280">'+o.custPhone+'</span></td>' +
+      '<td><span style="background:'+sc+'20;color:'+sc+';font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px">'+sl+'</span></td>' +
+      '<td style="font-size:12px;white-space:nowrap">'+dateStr+'</td>' +
+      '<td style="white-space:nowrap"><div style="display:flex;gap:4px;flex-wrap:nowrap">' +
+        '<button onclick="openProductDetail(\''+o.productId+'\',\'admin\')" style="background:#e0e7ff;color:#4338ca;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-eye"></i></button>' +
+        '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-user"></i></button>' +
+        '<button onclick="viewOrderDetails(\''+o.id+'\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-info-circle"></i></button>' +
+      '</div></td></tr>';
+  });
+  html += '</tbody></table>';
+  c.innerHTML = html;
+}
+
+function filterOrderDetails(q){
+  if(!q) return renderOrderDetails(_allOrderDetails);
+  var low = q.toLowerCase();
+  renderOrderDetails(_allOrderDetails.filter(function(o){ return (o.sksId||'').toLowerCase().includes(low); }));
+}
+
+function viewOrderDetails(orderId){
+  var o = _allOrderDetails.find(function(x){ return x.id === orderId; });
+  if(!o) return;
+  var dateStr = o.createdAt ? new Date(o.createdAt.seconds*1000).toLocaleString('bn-BD') : '-';
+  var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+  var statusColor = {pending:'#b45309',confirmed:'#16a34a',cancelled:'#dc2626',delivered:'#2563eb','self-delivery':'#7c3aed'};
+  var statusLabel = {pending:'Pending',confirmed:'Confirmed',cancelled:'Cancelled',delivered:'Delivered','self-delivery':'Self Delivery'};
+  var sc = statusColor[o.status]||'#6b7280';
+  var sl = statusLabel[o.status]||o.status;
+  document.getElementById('order-detail-modal-body').innerHTML =
+    '<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px">' +
+    (firstImg ? '<img src="'+firstImg+'" style="width:80px;height:80px;object-fit:cover;border-radius:10px;flex-shrink:0">' : '') +
+    '<div><div style="font-size:16px;font-weight:700;color:#111">'+o.productName+'</div>' +
+    '<div style="font-size:13px;color:#6b7280;margin-top:3px">৳'+o.productPrice+' &bull; SKS: '+o.sksId+'</div>' +
+    '<span style="background:'+sc+'20;color:'+sc+';font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px;margin-top:5px;display:inline-block">'+sl+'</span></div></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">' +
+    '<div style="background:#f9fafb;padding:10px;border-radius:8px"><div style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">অর্ডার ID</div><div style="font-weight:600">'+o.orderId+'</div></div>' +
+    '<div style="background:#f9fafb;padding:10px;border-radius:8px"><div style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">পরিমাণ</div><div style="font-weight:600">'+o.qty+'</div></div>' +
+    '<div style="background:#f9fafb;padding:10px;border-radius:8px"><div style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">কাস্টমার</div><div style="font-weight:600">'+o.custName+'</div></div>' +
+    '<div style="background:#f9fafb;padding:10px;border-radius:8px"><div style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">মোবাইল</div><div style="font-weight:600">'+o.custPhone+'</div></div>' +
+    '<div style="background:#fff7ed;padding:10px;border-radius:8px;grid-column:1/-1"><div style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">ঠিকানা</div><div style="font-weight:500">'+o.deliveryAddress+'</div></div>' +
+    '<div style="background:#f9fafb;padding:10px;border-radius:8px"><div style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">ডেলিভারি টাইপ</div><div style="font-weight:600">'+o.deliveryType+'</div></div>' +
+    '<div style="background:#f9fafb;padding:10px;border-radius:8px"><div style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">তারিখ</div><div style="font-weight:600">'+dateStr+'</div></div>' +
+    (o.note ? '<div style="background:#f0fdf4;padding:10px;border-radius:8px;grid-column:1/-1"><div style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">নোট</div><div style="font-weight:500">'+o.note+'</div></div>' : '') +
+    '<div style="background:#e0e7ff;padding:10px;border-radius:8px;grid-column:1/-1"><div style="color:#9ca3af;font-size:10px;font-weight:700;text-transform:uppercase;margin-bottom:3px">Merchant / Shop</div><div style="font-weight:600">'+o.shopName+' ('+o.merchantName+')</div></div>' +
+    '</div>';
+  openModal('order-detail-modal');
+}
+
+/* ══ Merchant Orders (user panel) ══ */
+async function loadMerchantOrders(){
+  if(!currentUser) return;
+  var c = document.getElementById('merchant-orders-list');
+  if(!c) return;
+  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap = await db.collection('orders').where('merchantUid','==',currentUser.uid).get();
+    var orders = [];
+    snap.forEach(function(d){ orders.push({id:d.id,...d.data()}); });
+    // Only show pending orders here
+    orders = orders.filter(function(o){ return o.status === 'pending'; });
+    orders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+    if(!orders.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-shopping-bag"></i><p>কোনো নতুন অর্ডার নেই</p></div>'; return; }
+    var html = '<div style="display:flex;flex-direction:column;gap:10px;padding:16px">';
+    orders.forEach(function(o){
+      var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+      html += '<div style="display:flex;align-items:center;gap:12px;background:white;border:1px solid #e5e7eb;border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)">' +
+        (firstImg ? '<img src="'+firstImg+'" style="width:60px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0">' : '<div style="width:60px;height:60px;background:#f3f4f6;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#9ca3af"><i class="fas fa-box" style="font-size:20px"></i></div>') +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:14px;font-weight:700;color:#111">'+o.productName+'</div>' +
+          '<div style="font-size:12px;color:#6b7280;margin-top:2px">৳'+o.productPrice+' &bull; SKS: '+o.sksId+'</div>' +
+          '<div style="font-size:12px;color:#374151;margin-top:2px">কাস্টমার: '+o.custName+' &bull; '+o.custPhone+'</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">' +
+          '<button onclick="merchantConfirmOrder(\''+o.id+'\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-check"></i> কনফার্ম</button>' +
+          '<button onclick="merchantCancelOrder(\''+o.id+'\')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-times"></i> ক্যান্সেল</button>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+    c.innerHTML = html;
+  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
+}
+
+async function merchantCancelOrder(orderId){
+  if(!confirm('এই অর্ডারটি ক্যান্সেল করবেন?')) return;
+  await db.collection('orders').doc(orderId).update({status:'cancelled'});
+  showToast('অর্ডার ক্যান্সেল হয়েছে','warning');
+  loadMerchantOrders();
+}
+
+function merchantConfirmOrder(orderId){
+  // Show delivery choice modal
+  document.getElementById('confirm-order-id').value = orderId;
+  openModal('confirm-order-modal');
+}
+
+async function merchantConfirmDelivery(type){
+  var orderId = document.getElementById('confirm-order-id').value;
+  if(!orderId) return;
+  try{
+    if(type === 'dstm'){
+      // Digital Shop TM delivery → move to dstm-orders
+      await db.collection('orders').doc(orderId).update({status:'confirmed', deliveryMode:'dstm'});
+      showToast('অর্ডার কনফার্ম! Digital Shop TM ডেলিভারি করবে','success');
+    } else {
+      // Self delivery
+      await db.collection('orders').doc(orderId).update({status:'self-delivery', deliveryMode:'self'});
+      showToast('অর্ডার কনফার্ম! নিজে ডেলিভারি দিন','success');
+    }
+    closeModal('confirm-order-modal');
+    loadMerchantOrders();
+    loadMerchantDstmOrders();
+  }catch(e){ showToast('ব্যর্থ হয়েছে!','error'); }
+}
+
+async function loadMerchantDstmOrders(){
+  if(!currentUser) return;
+  var c = document.getElementById('merchant-dstm-orders-list');
+  if(!c) return;
+  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap = await db.collection('orders').where('merchantUid','==',currentUser.uid).get();
+    var orders = [];
+    snap.forEach(function(d){ orders.push({id:d.id,...d.data()}); });
+    orders = orders.filter(function(o){ return o.status === 'confirmed' || o.status === 'self-delivery' || o.status === 'delivered' || o.status === 'cancelled'; });
+    orders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+    if(!orders.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-truck-moving"></i><p>কোনো অর্ডার নেই</p></div>'; return; }
+    var statusColor = {confirmed:'#16a34a','self-delivery':'#7c3aed',delivered:'#2563eb',cancelled:'#dc2626'};
+    var statusLabel = {confirmed:'Digital Shop TM','self-delivery':'Self Delivery',delivered:'Delivered',cancelled:'Cancelled'};
+    var html = '<div style="display:flex;flex-direction:column;gap:10px;padding:16px">';
+    orders.forEach(function(o){
+      var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+      var sc = statusColor[o.status]||'#6b7280';
+      var sl = statusLabel[o.status]||o.status;
+      html += '<div style="display:flex;align-items:center;gap:12px;background:white;border:1px solid #e5e7eb;border-radius:12px;padding:14px">' +
+        (firstImg ? '<img src="'+firstImg+'" style="width:60px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0">' : '<div style="width:60px;height:60px;background:#f3f4f6;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#9ca3af"><i class="fas fa-box" style="font-size:20px"></i></div>') +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:14px;font-weight:700;color:#111">'+o.productName+'</div>' +
+          '<div style="font-size:12px;color:#6b7280;margin-top:2px">৳'+o.productPrice+' &bull; SKS: '+o.sksId+'</div>' +
+          '<div style="font-size:12px;color:#374151;margin-top:2px">'+o.custName+' &bull; '+o.deliveryAddress+'</div>' +
+          '<span style="background:'+sc+'20;color:'+sc+';font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;margin-top:4px;display:inline-block">'+sl+'</span>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+    c.innerHTML = html;
+  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
+}
+
 /* ══════════════════════════════════════════
    PRODUCT DETAIL MODAL STYLES
 ══════════════════════════════════════════ */
@@ -1905,6 +2270,38 @@ function addEpImagePreviewThumb(url){
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ ORDER DETAIL MODAL ══ -->
+<div id="order-detail-modal" class="modal-overlay" style="z-index:2000;">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="closeModal('order-detail-modal')">✕</button>
+    <div class="modal-icon" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-shopping-bag"></i></div>
+    <h2 style="color:#111;">অর্ডার বিস্তারিত</h2>
+    <div id="order-detail-modal-body"></div>
+  </div>
+</div>
+
+<!-- ══ CONFIRM ORDER DELIVERY MODAL ══ -->
+<div id="confirm-order-modal" class="modal-overlay" style="z-index:2000;">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" onclick="closeModal('confirm-order-modal')">✕</button>
+    <input type="hidden" id="confirm-order-id">
+    <div class="modal-icon" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-truck"></i></div>
+    <h2 style="color:#111;">ডেলিভারি পদ্ধতি নির্বাচন করুন</h2>
+    <p style="text-align:center;font-size:14px;color:#6b7280;margin-bottom:20px">কীভাবে ডেলিভারি দিতে চান?</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onclick="merchantConfirmDelivery('dstm')" style="background:linear-gradient(135deg,#00a651,#007a3d);color:white;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;justify-content:center">
+        <i class="fas fa-store" style="font-size:18px"></i>
+        <div style="text-align:left"><div>Digital Shop TM এর মাধ্যমে</div><div style="font-size:12px;opacity:.85;font-weight:400">আমাদের কুরিয়ার ডেলিভারি করবে</div></div>
+      </button>
+      <button onclick="merchantConfirmDelivery('self')" style="background:linear-gradient(135deg,#7c3aed,#4338ca);color:white;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;justify-content:center">
+        <i class="fas fa-user-circle" style="font-size:18px"></i>
+        <div style="text-align:left"><div>নিজে ডেলিভারি দেব</div><div style="font-size:12px;opacity:.85;font-weight:400">Self Delivery (৳30 কমিশন কাটা হবে)</div></div>
+      </button>
     </div>
   </div>
 </div>
