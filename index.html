@@ -2914,6 +2914,45 @@ async function saveEditProduct(){
 
 var _returnCurrentOrder = null;
 var _returnCurrentSource = null;
+var _returnUploadedImgs = [];
+
+function handleReturnImgUpload(input){
+  var files = Array.from(input.files);
+  if(_returnUploadedImgs.length + files.length > 5){ showToast('সর্বোচ্চ ৫টি ছবি দেওয়া যাবে!','warning'); return; }
+  files.forEach(function(file){
+    if(_returnUploadedImgs.length >= 5) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      _returnUploadedImgs.push(e.target.result);
+      addReturnImgThumb(e.target.result, _returnUploadedImgs.length - 1);
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function handleReturnImgDrop(e){
+  e.preventDefault();
+  document.getElementById('return-img-upload-area').style.borderColor='#fed7aa';
+  var files = Array.from(e.dataTransfer.files).filter(function(f){ return f.type.startsWith('image/'); });
+  if(files.length) handleReturnImgUpload({files:files,value:''});
+}
+
+function addReturnImgThumb(src, idx){
+  var grid = document.getElementById('return-img-preview-grid');
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:relative;width:70px;height:70px;border-radius:8px;overflow:hidden;border:2px solid #fed7aa;flex-shrink:0';
+  wrap.innerHTML = '<img src="'+src+'" style="width:100%;height:100%;object-fit:fill;display:block">'
+    + '<button onclick="removeReturnImg('+idx+',this.parentNode)" style="position:absolute;top:2px;right:2px;background:rgba(220,38,38,.85);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><i class="fas fa-times"></i></button>';
+  grid.appendChild(wrap);
+}
+
+function removeReturnImg(idx, el){
+  _returnUploadedImgs.splice(idx, 1);
+  el.remove();
+  var btns = document.getElementById('return-img-preview-grid').querySelectorAll('button');
+  btns.forEach(function(b, i){ b.setAttribute('onclick','removeReturnImg('+i+',this.parentNode)'); });
+}
 
 function openAdminReturnModal(orderId, source){
   var list = source === 'customer' ? _allCustomerDeliveryOrders : _allOurDeliveryOrders;
@@ -2924,12 +2963,12 @@ function openAdminReturnModal(orderId, source){
 
   var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
 
-  // ছবি সেট করা
+  // পণ্য ছবি সেট
   var imgEl = document.getElementById('return-modal-img');
   if(firstImg){ imgEl.src = firstImg; imgEl.style.display = 'block'; }
   else { imgEl.style.display = 'none'; }
 
-  // তথ্য পপুলেট
+  // পণ্য তথ্য
   document.getElementById('return-modal-prod-name').textContent = o.productName || '-';
   document.getElementById('return-modal-prod-price').textContent = '৳' + (o.productPrice || '-');
   document.getElementById('return-modal-sks').textContent = 'SKS: ' + (o.sksId || '-');
@@ -2942,6 +2981,13 @@ function openAdminReturnModal(orderId, source){
   // ফর্ম রিসেট
   document.getElementById('return-reason-input').value = '';
   document.getElementById('return-details-input').value = '';
+  // কাস্টমার ইনপুট প্রি-ফিল
+  document.getElementById('return-cust-name-input').value = o.custName || '';
+  document.getElementById('return-cust-phone-input').value = o.custPhone || '';
+  document.getElementById('return-cust-addr-input').value = o.deliveryAddress || '';
+  // ছবি রিসেট
+  _returnUploadedImgs = [];
+  document.getElementById('return-img-preview-grid').innerHTML = '';
   document.getElementById('return-submit-msg').style.display = 'none';
 
   openModal('admin-return-modal');
@@ -2952,6 +2998,9 @@ async function submitAdminReturn(){
   if(!o) return;
   var reason = document.getElementById('return-reason-input').value.trim();
   var details = document.getElementById('return-details-input').value.trim();
+  var custName = document.getElementById('return-cust-name-input').value.trim();
+  var custPhone = document.getElementById('return-cust-phone-input').value.trim();
+  var custAddr = document.getElementById('return-cust-addr-input').value.trim();
   if(!reason){ showToast('রিটার্নের কারণ লিখুন!','warning'); return; }
 
   var btn = document.getElementById('return-send-btn');
@@ -2967,9 +3016,10 @@ async function submitAdminReturn(){
       productPrice: o.productPrice || '',
       productId: o.productId || '',
       imageUrl: o.imageUrl || '',
-      custName: o.custName || '',
-      custPhone: o.custPhone || '',
-      deliveryAddress: o.deliveryAddress || '',
+      returnImageUrls: _returnUploadedImgs.join(','),
+      custName: custName || o.custName || '',
+      custPhone: custPhone || o.custPhone || '',
+      deliveryAddress: custAddr || o.deliveryAddress || '',
       merchantUid: o.merchantUid || '',
       shopName: o.shopName || o.merchantName || '',
       returnReason: reason,
@@ -2987,7 +3037,6 @@ async function submitAdminReturn(){
     document.getElementById('return-submit-msg').style.display = 'flex';
     showToast('✅ রিটার্ন সফলভাবে মার্চেন্টের কাছে পাঠানো হয়েছে!','success');
 
-    // Merchant returns reload করা
     if(typeof loadMerchantReturns === 'function') loadMerchantReturns();
 
     setTimeout(function(){ closeModal('admin-return-modal'); }, 2000);
@@ -3071,30 +3120,61 @@ function filterMerchantReturns(q){
 function openMerchantReturnDetail(returnId){
   var r = _allMerchantReturns.find(function(x){ return x.id === returnId; });
   if(!r) return showToast('তথ্য পাওয়া যায়নি!','error');
-  var firstImg = r.imageUrl ? r.imageUrl.split(',')[0].trim() : '';
+
+  // পণ্যের আসল ছবিগুলো
+  var prodImgs = r.imageUrl ? r.imageUrl.split(',').map(function(s){return s.trim();}).filter(Boolean) : [];
+  var firstProdImg = prodImgs[0] || '';
+
+  // রিটার্ন ছবি
+  var retImgs = r.returnImageUrls ? r.returnImageUrls.split(',').map(function(s){return s.trim();}).filter(Boolean) : [];
+
   var dateStr = r.createdAt ? new Date(r.createdAt.seconds*1000).toLocaleString('bn-BD') : '-';
 
-  document.getElementById('merchant-return-detail-body').innerHTML =
-    // পণ্য তথ্য
-    '<div style="display:flex;gap:12px;background:#fdf4ff;border:2px solid #e9d5ff;border-radius:12px;padding:14px;margin-bottom:14px">' +
-      (firstImg ? '<img src="'+firstImg+'" style="width:70px;height:70px;object-fit:cover;border-radius:10px;flex-shrink:0">' :
-        '<div style="width:70px;height:70px;background:#f3e8ff;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#a21caf;font-size:22px"><i class="fas fa-box-open"></i></div>') +
-      '<div style="flex:1;min-width:0">' +
-        '<div style="font-size:15px;font-weight:700;color:#111">'+r.productName+'</div>' +
-        '<div style="font-size:13px;color:#6b7280;margin-top:3px">৳'+r.productPrice+' &bull; SKS: '+(r.sksId||'-')+'</div>' +
-        '<div style="margin-top:6px"><span style="background:#fdf4ff;color:#a21caf;font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;border:1px solid #e9d5ff"><i class="fas fa-undo-alt"></i> Return Request</span></div>' +
+  // ছবি গ্যালারি সেকশন
+  var imgSection =
+    '<div style="background:#fdf4ff;border:2px solid #e9d5ff;border-radius:12px;padding:14px;margin-bottom:14px">' +
+      // বড় মেইন ছবি
+      '<div id="mrd-main-wrap" style="border-radius:10px;overflow:hidden;background:#f3e8ff;height:200px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;">' +
+        (firstProdImg
+          ? '<img id="mrd-main-img" src="'+firstProdImg+'" style="width:100%;height:100%;object-fit:contain;display:block;cursor:zoom-in" onclick="openMrdViewer(this.src)">'
+          : '<div style="font-size:40px;color:#d8b4fe"><i class="fas fa-box-open"></i></div>') +
       '</div>' +
-    '</div>' +
-    // গ্রিড তথ্য
+      // পণ্য নাম ও দাম
+      '<div style="font-size:14px;font-weight:700;color:#111;margin-bottom:2px">'+r.productName+'</div>' +
+      '<div style="font-size:12px;color:#6b7280;margin-bottom:8px">৳'+r.productPrice+' &bull; SKS: '+(r.sksId||'-')+'</div>' +
+      // পণ্যের আসল ছবির থাম্বনেইল (একাধিক হলে)
+      (prodImgs.length > 1
+        ? '<div style="font-size:10px;color:#a21caf;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px"><i class="fas fa-images"></i> পণ্যের ছবি</div>'
+          + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:'+(retImgs.length?'10px':'0')+';">'
+          + prodImgs.map(function(src,i){
+              return '<div class="mrd-prod-th" onclick="mrdSetMain(\''+src+'\',this)" style="width:50px;height:50px;border-radius:7px;overflow:hidden;border:2px solid '+(i===0?'#a21caf':'#e9d5ff')+';cursor:pointer;flex-shrink:0">'
+                +'<img src="'+src+'" style="width:100%;height:100%;object-fit:fill;display:block"></div>';
+            }).join('')
+          + '</div>'
+        : '') +
+      // রিটার্ন ছবির থাম্বনেইল
+      (retImgs.length
+        ? '<div style="border-top:1px solid #e9d5ff;padding-top:10px;margin-top:6px">'
+            + '<div style="font-size:10px;color:#d97706;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px"><i class="fas fa-camera"></i> রিটার্ন পণ্যের ছবি</div>'
+            + '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
+            + retImgs.map(function(src){
+                return '<div onclick="mrdSetMain(\''+src+'\',null)" style="width:50px;height:50px;border-radius:7px;overflow:hidden;border:2px solid #fed7aa;cursor:pointer;flex-shrink:0">'
+                  +'<img src="'+src+'" style="width:100%;height:100%;object-fit:fill;display:block"></div>';
+              }).join('')
+            + '</div></div>'
+        : '') +
+    '</div>';
+
+  document.getElementById('merchant-return-detail-body').innerHTML =
+    imgSection +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">' +
       '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:10px"><div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-user"></i> কাস্টমার</div><div style="font-weight:700;color:#111">'+r.custName+'</div></div>' +
       '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:10px"><div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-phone"></i> মোবাইল</div><div style="font-weight:700;color:#0284c7"><a href="tel:'+r.custPhone+'" style="color:inherit;text-decoration:none">'+r.custPhone+'</a></div></div>' +
       '<div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:9px;padding:10px;grid-column:1/-1"><div style="font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-map-marker-alt"></i> ডেলিভারি ঠিকানা</div><div style="font-weight:600;color:#111;line-height:1.5">'+r.deliveryAddress+'</div></div>' +
-      '<div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:9px;padding:10px;grid-column:1/-1"><div style="font-size:10px;color:#a21caf;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-comment-alt"></i> রিটার্নের কারণ</div><div style="font-weight:600;color:#374151">'+r.returnReason+'</div>' + (r.returnDetails ? '<div style="font-size:12px;color:#6b7280;margin-top:4px">'+r.returnDetails+'</div>' : '') + '</div>' +
+      '<div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:9px;padding:10px;grid-column:1/-1"><div style="font-size:10px;color:#a21caf;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-comment-alt"></i> রিটার্নের কারণ</div><div style="font-weight:600;color:#374151">'+r.returnReason+'</div>'+(r.returnDetails?'<div style="font-size:12px;color:#6b7280;margin-top:4px">'+r.returnDetails+'</div>':'')+'</div>' +
       '<div style="background:#f9fafb;border-radius:9px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-store"></i> Shop</div><div style="font-weight:600;color:#111">'+r.shopName+'</div></div>' +
       '<div style="background:#f9fafb;border-radius:9px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-calendar"></i> তারিখ</div><div style="font-weight:600;color:#111">'+dateStr+'</div></div>' +
     '</div>' +
-    // সতর্কতা বার্তা
     '<div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px">' +
       '<i class="fas fa-exclamation-triangle" style="color:#dc2626;font-size:18px;flex-shrink:0"></i>' +
       '<div style="font-size:13px;color:#dc2626;font-weight:600;line-height:1.5">দ্রুত এডমিন বা কাস্টমারের সাথে যোগাযোগ করুন এবং রিটার্ন পণ্যটি সংগ্রহ নিশ্চিত করুন।</div>' +
@@ -3102,6 +3182,34 @@ function openMerchantReturnDetail(returnId){
 
   openModal('merchant-return-detail-modal');
 }
+
+// থাম্বনেইল ক্লিকে মেইন ছবি বদল
+function mrdSetMain(src, el){
+  var wrap = document.getElementById('mrd-main-wrap');
+  wrap.innerHTML = '<img id="mrd-main-img" src="'+src+'" style="width:100%;height:100%;object-fit:contain;display:block;cursor:zoom-in" onclick="openMrdViewer(this.src)">';
+  // বর্ডার হাইলাইট
+  if(el){
+    document.querySelectorAll('.mrd-prod-th').forEach(function(t){ t.style.borderColor='#e9d5ff'; });
+    el.style.borderColor='#a21caf';
+  }
+}
+
+// ফুলস্ক্রিন ভিউয়ার
+function openMrdViewer(src){
+  var ov = document.getElementById('mrd-viewer-ov');
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id = 'mrd-viewer-ov';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';
+    ov.onclick = function(){ ov.style.display='none'; };
+    ov.innerHTML = '<img id="mrd-viewer-img" src="" style="max-width:95vw;max-height:92vh;object-fit:contain;border-radius:8px;display:block">'
+      + '<button onclick="event.stopPropagation();document.getElementById(\'mrd-viewer-ov\').style.display=\'none\'" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.15);color:white;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center">✕</button>';
+    document.body.appendChild(ov);
+  }
+  document.getElementById('mrd-viewer-img').src = src;
+  ov.style.display = 'flex';
+}
+
 
 
 var epUploadedImageUrls = [];
@@ -3445,6 +3553,35 @@ function addEpImagePreviewThumb(url){
           <label style="font-size:12px;font-weight:700;color:#374151">বিস্তারিত (ঐচ্ছিক)</label>
           <div class="input-wrap"><i class="fas fa-align-left ico-top"></i><textarea id="return-details-input" placeholder="সমস্যার বিস্তারিত বিবরণ..." style="height:70px;resize:none;padding-left:36px;padding-top:10px"></textarea></div>
         </div>
+      </div>
+
+      <!-- কাস্টমার তথ্য ইনপুট (রিটার্নের জন্য) -->
+      <div style="background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:12px;padding:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#0284c7;margin-bottom:10px"><i class="fas fa-user-circle"></i> কাস্টমার তথ্য (রিটার্নের জন্য)</div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label style="font-size:12px;font-weight:700;color:#374151">কাস্টমার নাম *</label>
+          <div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="return-cust-name-input" placeholder="কাস্টমারের নাম লিখুন..." style="padding-left:36px"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label style="font-size:12px;font-weight:700;color:#374151">মোবাইল নাম্বার</label>
+          <div class="input-wrap"><i class="fas fa-phone ico"></i><input type="text" id="return-cust-phone-input" placeholder="01XXXXXXXXX" style="padding-left:36px"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label style="font-size:12px;font-weight:700;color:#374151">ঠিকানা</label>
+          <div class="input-wrap"><i class="fas fa-map-marker-alt ico-top"></i><textarea id="return-cust-addr-input" placeholder="কাস্টমারের সম্পূর্ণ ঠিকানা..." style="height:65px;resize:none;padding-left:36px;padding-top:10px"></textarea></div>
+        </div>
+      </div>
+
+      <!-- রিটার্ন পণ্যের ছবি আপলোড -->
+      <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#d97706;margin-bottom:10px"><i class="fas fa-camera"></i> রিটার্ন পণ্যের ছবি (ঐচ্ছিক)</div>
+        <div id="return-img-upload-area" onclick="document.getElementById('return-img-file-input').click()" ondragover="event.preventDefault();this.style.borderColor='#f59e0b'" ondragleave="this.style.borderColor='#fed7aa'" ondrop="handleReturnImgDrop(event)" style="border:2px dashed #fed7aa;border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:#fffbf5">
+          <div style="font-size:24px;color:#f59e0b;margin-bottom:6px"><i class="fas fa-cloud-upload-alt"></i></div>
+          <div style="font-size:13px;font-weight:700;color:#d97706">ছবি আপলোড করুন</div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:3px">ক্লিক করুন বা ড্র্যাগ করে ছবি আনুন • JPG, PNG • সর্বোচ্চ ৫টি</div>
+        </div>
+        <input type="file" id="return-img-file-input" accept="image/*" multiple style="display:none" onchange="handleReturnImgUpload(this)">
+        <div id="return-img-preview-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
       </div>
 
       <!-- সফল বার্তা -->
