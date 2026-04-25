@@ -412,9 +412,62 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="section-pickup" class="content-section">
         <div class="sec-heading">Pickup Address</div>
-        <div class="white-card">
-          <div class="form-group"><label>Pickup Address</label><div class="input-wrap"><i class="fas fa-map-marker-alt ico-top"></i><textarea placeholder="Full pickup address" style="height:80px"></textarea></div></div>
-          <button class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+        <div class="white-card" style="max-width:600px">
+          <!-- Saved address display -->
+          <div id="pickup-saved-display" style="display:none;background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:14px;margin-bottom:18px">
+            <div style="font-size:11px;font-weight:700;color:#16a34a;text-transform:uppercase;margin-bottom:8px"><i class="fas fa-check-circle"></i> সংরক্ষিত পিকআপ ঠিকানা</div>
+            <div id="pickup-saved-text" style="font-size:14px;color:#111;line-height:1.7"></div>
+            <button onclick="clearPickupSaved()" style="margin-top:10px;background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-edit"></i> পরিবর্তন করুন</button>
+          </div>
+          <div id="pickup-form-area">
+            <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:14px"><i class="fas fa-map-marker-alt" style="color:#7c3aed"></i> নতুন পিকআপ ঠিকানা সেট করুন</div>
+            <div class="form-group">
+              <label style="font-size:13px;font-weight:700">বিভাগ *</label>
+              <div class="input-wrap">
+                <i class="fas fa-map ico"></i>
+                <select id="pickup-division" style="padding-left:36px" onchange="onPickupDivisionChange()">
+                  <option value="">-- বিভাগ নির্বাচন করুন --</option>
+                  <option>ঢাকা</option><option>চট্টগ্রাম</option><option>রাজশাহী</option>
+                  <option>খুলনা</option><option>বরিশাল</option><option>সিলেট</option>
+                  <option>রংপুর</option><option>ময়মনসিংহ</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:13px;font-weight:700">জেলা *</label>
+              <div class="input-wrap">
+                <i class="fas fa-city ico"></i>
+                <select id="pickup-district" style="padding-left:36px" onchange="onPickupDistrictChange()" disabled>
+                  <option value="">-- আগে বিভাগ নির্বাচন করুন --</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:13px;font-weight:700">থানা / উপজেলা *</label>
+              <div class="input-wrap">
+                <i class="fas fa-location-arrow ico"></i>
+                <select id="pickup-thana" style="padding-left:36px" disabled>
+                  <option value="">-- আগে জেলা নির্বাচন করুন --</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:13px;font-weight:700">বিস্তারিত ঠিকানা *</label>
+              <div class="input-wrap"><i class="fas fa-home ico-top"></i><textarea id="pickup-detail" placeholder="বাড়ি নং, রাস্তা, এলাকা..." style="height:75px;padding-left:36px;resize:none;padding-top:10px"></textarea></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label style="font-size:13px;font-weight:700">নাম *</label>
+                <div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="pickup-name" placeholder="যোগাযোগের নাম" style="padding-left:36px"></div>
+              </div>
+              <div class="form-group">
+                <label style="font-size:13px;font-weight:700">মোবাইল নম্বর *</label>
+                <div class="input-wrap"><i class="fas fa-phone ico"></i><input type="text" id="pickup-mobile" placeholder="01XXXXXXXXX" style="padding-left:36px"></div>
+              </div>
+            </div>
+            <div id="pickup-err" class="err-box"></div>
+            <button onclick="savePickupAddress()" style="width:100%;background:linear-gradient(135deg,#7c3aed,#4338ca);color:white;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px"><i class="fas fa-save"></i> সংরক্ষণ করুন</button>
+          </div>
         </div>
       </div>
 
@@ -1008,6 +1061,7 @@ function showUserSection(name){
   if(name==='add-money')loadMerchantAddMoneyList();
   if(name==='withdraw'){if(currentUser){var wbd=document.getElementById('withdraw-balance-display');if(wbd)wbd.textContent=(currentUser.balance||0);}loadMerchantWithdrawList();}
   if(name==='add-product'){var ok=currentUser&&currentUser.status==='active';document.getElementById('add-product-locked').style.display=ok?'none':'block';document.getElementById('add-product-form').style.display=ok?'block':'none';if(ok)refreshSKS();}
+  if(name==='pickup') loadPickupAddressSaved();
 }
 
 var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','approval-products':'Approval Products','parcels':'Add Parcel','edit-parcel':'কাস্টমার ডেলিভারি দিবেন','our-delivery':'আমাদের মাধ্যমে ডেলিভারি','order-details':'User Order Details','transactions':'আদান-প্রদান'};
@@ -1511,7 +1565,7 @@ async function loadActiveMerchants(){
 
 function renderActiveMerchants(list){
   var html='<table><thead><tr><th>#</th><th>Name</th><th>Shop</th><th>Merchant ID</th><th>Email</th><th>Mobile</th><th>Action</th></tr></thead><tbody>';
-  list.forEach((m,i)=>{html+='<tr><td>'+(i+1)+'</td><td>'+m.fullName+'</td><td>'+(m.shopName||'-')+'</td><td><span class="sks-badge">'+m.merchantId+'</span></td><td>'+m.email+'</td><td>'+m.phone+'</td><td><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+m.id+'\')"><i class="fas fa-eye"></i> View</button></td></tr>';});
+  list.forEach((m,i)=>{html+='<tr><td>'+(i+1)+'</td><td>'+m.fullName+'</td><td>'+(m.shopName||'-')+'</td><td><span class="sks-badge">'+m.merchantId+'</span></td><td>'+m.email+'</td><td>'+m.phone+'</td><td style="white-space:nowrap"><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+m.id+'\')"><i class="fas fa-eye"></i> View</button><button class="btn btn-sm" style="background:#e0e7ff;color:#4338ca;border:none;cursor:pointer" onclick="adminViewPickupAddress(\''+m.id+'\',\''+m.fullName+'\')"><i class="fas fa-map-marker-alt"></i> Pickup</button></div></td></tr>';});
   html+='</tbody></table>';document.getElementById('active-merchants-list').innerHTML=html;
 }
 
@@ -2735,6 +2789,7 @@ function renderOurDeliveryOrders(list){
       '<td style="white-space:nowrap"><div style="display:flex;gap:4px;flex-wrap:wrap">' +
         '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="Seller Info"><i class="fas fa-user"></i></button>' +
         '<button onclick="openDstmOrderDetailAdmin(\''+o.id+'\')" style="background:#dbeafe;color:#1d4ed8;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="বিস্তারিত ও স্ট্যাটাস"><i class="fas fa-info-circle"></i> বিস্তারিত</button>' +
+        '<button onclick="adminViewPickupAddress(\''+o.merchantUid+'\',\''+((o.shopName||o.merchantName||'').replace(/'/g,"\\'"))+'\')" style="background:#e0e7ff;color:#4338ca;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="পিকআপ ঠিকানা"><i class="fas fa-map-marker-alt"></i> Pickup</button>' +
         '<button onclick="showCustomerAddressPopup(\''+o.id+'\',\'our\')" style="background:#fff7ed;color:#f57224;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="কাস্টমার ঠিকানা"><i class="fas fa-map-marker-alt"></i> ঠিকানা</button>' +
         '<button onclick="openAdminReturnModal(\''+o.id+'\',\'our\')" style="background:#fdf4ff;color:#a21caf;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="পণ্য রিটার্ন"><i class="fas fa-undo-alt"></i> রিটার্ন</button>' +
         '<button onclick="deleteOurDeliveryOrder(\''+o.id+'\')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="ডিলিট করুন"><i class="fas fa-trash-alt"></i></button>' +
@@ -3825,6 +3880,208 @@ async function deleteConfirmedTx(txId,card){
 }
 
 // Update aT map — already set in aT object above
+
+/* ══════════════════════════════════════════
+   BANGLADESH GEO DATA — বিভাগ / জেলা / থানা
+   ══════════════════════════════════════════ */
+var BD_GEO = {
+  'ঢাকা': {
+    'ঢাকা': ['আদাবর','আজিমপুর','বাড্ডা','বংশাল','ক্যান্টনমেন্ট','চকবাজার','ডেমরা','ধানমন্ডি','ডোহার','দোহার','গেন্ডারিয়া','গুলশান','হাজারিবাগ','ইসলামপুর','কদমতলী','কামরাঙ্গীরচর','কেরানীগঞ্জ','খিলগাঁও','খিলক্ষেত','কোতোয়ালী','লালবাগ','মতিঝিল','মিরপুর','মোহাম্মদপুর','নবাবগঞ্জ','নিউ মার্কেট','পল্লবী','রমনা','সবুজবাগ','শাহ আলী','শাহজাহানপুর','শ্যামপুর','সূত্রাপুর','তেজগাঁও','তুরাগ','উত্তরা','ওয়ারী'],
+    'গাজীপুর': ['গাজীপুর সদর','কালীগঞ্জ','কালিয়াকৈর','কাপাসিয়া','শ্রীপুর','টঙ্গী'],
+    'নারায়ণগঞ্জ': ['নারায়ণগঞ্জ সদর','আড়াইহাজার','বন্দর','রূপগঞ্জ','সোনারগাঁও'],
+    'মানিকগঞ্জ': ['মানিকগঞ্জ সদর','দৌলতপুর','ঘিওর','হরিরামপুর','শিবালয়','শিবালয়','সিংগাইর'],
+    'মুন্সীগঞ্জ': ['মুন্সীগঞ্জ সদর','গজারিয়া','লৌহজং','শ্রীনগর','সিরাজদিখান','টঙ্গীবাড়ী'],
+    'নরসিংদী': ['নরসিংদী সদর','বেলাবো','মনোহরদী','পলাশ','রায়পুরা','শিবপুর'],
+    'কিশোরগঞ্জ': ['কিশোরগঞ্জ সদর','অষ্টগ্রাম','বাজিতপুর','ভৈরব','হোসেনপুর','ইটনা','করিমগঞ্জ','কটিয়াদী','কুলিয়ারচর','মিঠামইন','নিকলী','পাকুন্দিয়া','তাড়াইল'],
+    'ফরিদপুর': ['ফরিদপুর সদর','আলফাডাঙ্গা','বোয়ালমারী','চরভদ্রাসন','মধুখালী','নগরকান্দা','সদরপুর','সালথা'],
+    'মাদারীপুর': ['মাদারীপুর সদর','কালকিনি','রাজৈর','শিবচর'],
+    'শরীয়তপুর': ['শরীয়তপুর সদর','ভেদরগঞ্জ','দামুদ্যা','গোসাইরহাট','নড়িয়া','জাজিরা'],
+    'রাজবাড়ী': ['রাজবাড়ী সদর','বালিয়াকান্দি','গোয়ালন্দ','পাংশা'],
+    'গোপালগঞ্জ': ['গোপালগঞ্জ সদর','কাশিয়ানী','কোটালীপাড়া','মুকসুদপুর','টুঙ্গিপাড়া'],
+    'টাঙ্গাইল': ['টাঙ্গাইল সদর','বাসাইল','ভুয়াপুর','দেলদুয়ার','ঘাটাইল','গোপালপুর','কালিহাতী','মধুপুর','মির্জাপুর','নাগরপুর','সখীপুর','ধনবাড়ী'],
+    'জামালপুর': ['জামালপুর সদর','বকশীগঞ্জ','দেওয়ানগঞ্জ','ইসলামপুর','মাদারগঞ্জ','মেলান্দহ','সরিষাবাড়ী'],
+    'শেরপুর': ['শেরপুর সদর','ঝিনাইগাতী','নকলা','নালিতাবাড়ী','শ্রীবরদী'],
+    'নেত্রকোণা': ['নেত্রকোণা সদর','আটপাড়া','বারহাট্টা','দুর্গাপুর','খালিয়াজুড়ী','কলমাকান্দা','কেন্দুয়া','মদন','মোহনগঞ্জ','পূর্বধলা'],
+  },
+  'চট্টগ্রাম': {
+    'চট্টগ্রাম': ['আকবরশাহ','বাকলিয়া','বায়েজিদ বোস্তামী','বন্দর','চান্দগাঁও','ডাবলমুরিং','ইপিজেড','হালিশহর','হাটহাজারী','খুলশী','কোতোয়ালী','লালখান বাজার','পাঁচলাইশ','পতেঙ্গা','পাহাড়তলী','রাউজান','রাঙ্গুনিয়া','সন্দ্বীপ','সীতাকুণ্ড'],
+    'কক্সবাজার': ['কক্সবাজার সদর','চকরিয়া','কুতুবদিয়া','মহেশখালী','পেকুয়া','রামু','টেকনাফ','উখিয়া'],
+    'কুমিল্লা': ['কুমিল্লা সদর','কুমিল্লা সদর দক্ষিণ','বরুড়া','ব্রাহ্মণপাড়া','বুড়িচং','চান্দিনা','চৌদ্দগ্রাম','দেবিদ্বার','হোমনা','লাকসাম','লালমাই','মনোহরগঞ্জ','মেঘনা','মুরাদনগর','নাঙ্গলকোট','তিতাস'],
+    'ব্রাহ্মণবাড়িয়া': ['ব্রাহ্মণবাড়িয়া সদর','আখাউড়া','বাঞ্ছারামপুর','বিজয়নগর','কসবা','নাসিরনগর','নবীনগর','সরাইল'],
+    'চাঁদপুর': ['চাঁদপুর সদর','ফরিদগঞ্জ','হাইমচর','হাজীগঞ্জ','কচুয়া','মতলব দক্ষিণ','মতলব উত্তর','শাহরাস্তি'],
+    'নোয়াখালী': ['নোয়াখালী সদর','বেগমগঞ্জ','চাটখিল','কোম্পানীগঞ্জ','হাতিয়া','কবিরহাট','সেনবাগ','সোনাইমুড়ী','সুবর্ণচর'],
+    'ফেনী': ['ফেনী সদর','ছাগলনাইয়া','দাগনভূঁইয়া','ফুলগাজী','পরশুরাম','সোনাগাজী'],
+    'লক্ষ্মীপুর': ['লক্ষ্মীপুর সদর','কমলনগর','রামগঞ্জ','রামগতি','রায়পুর'],
+    'খাগড়াছড়ি': ['খাগড়াছড়ি সদর','দীঘিনালা','গুইমারা','লক্ষ্মীছড়ি','মানিকছড়ি','মাটিরাঙ্গা','মহালছড়ি','পানছড়ি','রামগড়'],
+    'রাঙামাটি': ['রাঙামাটি সদর','বাঘাইছড়ি','বরকল','বেলাইছড়ি','কাউখালী','কাপ্তাই','জুরাছড়ি','লংগদু','নানিয়ারচর','রাজস্থলী'],
+    'বান্দরবান': ['বান্দরবান সদর','আলীকদম','লামা','নাইক্ষ্যংছড়ি','রুমা','রোয়াংছড়ি','থানচি'],
+  },
+  'রাজশাহী': {
+    'রাজশাহী': ['রাজশাহী সদর','বাঘা','চারঘাট','দুর্গাপুর','গোদাগাড়ী','মোহনপুর','পবা','পুঠিয়া','তানোর'],
+    'নওগাঁ': ['নওগাঁ সদর','আত্রাই','বদলগাছী','ধামইরহাট','মান্দা','মহাদেবপুর','নিয়ামতপুর','পতনীতলা','পোরশা','রাণীনগর','সাপাহার'],
+    'নাটোর': ['নাটোর সদর','বড়াইগ্রাম','বাগাতিপাড়া','গুরুদাসপুর','লালপুর','সিংড়া'],
+    'চাঁপাইনবাবগঞ্জ': ['চাঁপাইনবাবগঞ্জ সদর','ভোলাহাট','গোমস্তাপুর','নাচোল','শিবগঞ্জ'],
+    'পাবনা': ['পাবনা সদর','আটঘরিয়া','বেড়া','ভাঙ্গুড়া','চাটমোহর','ঈশ্বরদী','ফরিদপুর','সাঁথিয়া','সুজানগর'],
+    'সিরাজগঞ্জ': ['সিরাজগঞ্জ সদর','বেলকুচি','চৌহালী','কামারখন্দ','কাজীপুর','রায়গঞ্জ','শাহজাদপুর','তাড়াশ','উল্লাপাড়া'],
+    'বগুড়া': ['বগুড়া সদর','আদমদীঘি','দুপচাঁচিয়া','গাবতলী','কাহালু','নন্দীগ্রাম','শাজাহানপুর','শেরপুর','শিবগঞ্জ','সোনাতলা'],
+    'জয়পুরহাট': ['জয়পুরহাট সদর','আক্কেলপুর','কালাই','ক্ষেতলাল','পাঁচবিবি'],
+  },
+  'খুলনা': {
+    'খুলনা': ['খুলনা সদর','বটিয়াঘাটা','দাকোপ','ডুমুরিয়া','দিঘলিয়া','কয়রা','পাইকগাছা','ফুলতলা','রূপসা','তেরখাদা'],
+    'বাগেরহাট': ['বাগেরহাট সদর','চিতলমারী','ফকিরহাট','কচুয়া','মংলা','মোরেলগঞ্জ','মোল্লাহাট','রামপাল','শরণখোলা'],
+    'সাতক্ষীরা': ['সাতক্ষীরা সদর','আশাশুনি','দেবহাটা','কালীগঞ্জ','কলারোয়া','শ্যামনগর','তালা'],
+    'যশোর': ['যশোর সদর','অভয়নগর','বাঘারপাড়া','চৌগাছা','ঝিকরগাছা','কেশবপুর','মণিরামপুর','শার্শা'],
+    'নড়াইল': ['নড়াইল সদর','কালিয়া','লোহাগড়া'],
+    'মাগুরা': ['মাগুরা সদর','মহম্মদপুর','শালিখা','শ্রীপুর'],
+    'মেহেরপুর': ['মেহেরপুর সদর','গাংনী','মুজিবনগর'],
+    'চুয়াডাঙ্গা': ['চুয়াডাঙ্গা সদর','আলমডাঙ্গা','দামুড়হুদা','জীবননগর'],
+    'কুষ্টিয়া': ['কুষ্টিয়া সদর','ভেড়ামারা','দৌলতপুর','খোকসা','কুমারখালী','মিরপুর'],
+    'ঝিনাইদহ': ['ঝিনাইদহ সদর','হরিণাকুণ্ডু','কালীগঞ্জ','কোটচাঁদপুর','মহেশপুর','শৈলকুপা'],
+  },
+  'বরিশাল': {
+    'বরিশাল': ['বরিশাল সদর','আগৈলঝাড়া','বাকেরগঞ্জ','বাবুগঞ্জ','বানারীপাড়া','গৌরনদী','হিজলা','মেহেন্দিগঞ্জ','মুলাদী','উজিরপুর'],
+    'ভোলা': ['ভোলা সদর','বোরহানউদ্দিন','চরফ্যাশন','দৌলতখান','লালমোহন','মনপুরা','তজুমদ্দিন'],
+    'পটুয়াখালী': ['পটুয়াখালী সদর','বাউফল','দশমিনা','গলাচিপা','কলাপাড়া','মির্জাগঞ্জ','রাঙ্গাবালী'],
+    'পিরোজপুর': ['পিরোজপুর সদর','ভাণ্ডারিয়া','ইন্দুরকানী','কাউখালী','মঠবাড়িয়া','নাজিরপুর','নেছারাবাদ (স্বরূপকাঠী)'],
+    'বরগুনা': ['বরগুনা সদর','আমতলী','বামনা','বেতাগী','পাথরঘাটা','তালতলী'],
+    'ঝালকাঠি': ['ঝালকাঠি সদর','কাঁঠালিয়া','নলছিটি','রাজাপুর'],
+  },
+  'সিলেট': {
+    'সিলেট': ['সিলেট সদর','বালাগঞ্জ','বিয়ানীবাজার','বিশ্বনাথ','কোম্পানীগঞ্জ','ফেঞ্চুগঞ্জ','গোলাপগঞ্জ','গোয়াইনঘাট','জকিগঞ্জ','কানাইঘাট','ওসমানীনগর','দক্ষিণ সুরমা','জৈন্তাপুর'],
+    'মৌলভীবাজার': ['মৌলভীবাজার সদর','বড়লেখা','জুড়ী','কমলগঞ্জ','কুলাউড়া','রাজনগর','শ্রীমঙ্গল'],
+    'হবিগঞ্জ': ['হবিগঞ্জ সদর','আজমিরীগঞ্জ','বানিয়াচং','বাহুবল','চুনারুঘাট','লাখাই','মাধবপুর','নবীগঞ্জ'],
+    'সুনামগঞ্জ': ['সুনামগঞ্জ সদর','ছাতক','দিরাই','দোয়ারাবাজার','জগন্নাথপুর','জামালগঞ্জ','তাহিরপুর','ধর্মপাশা','শাল্লা','বিশ্বম্ভরপুর'],
+  },
+  'রংপুর': {
+    'রংপুর': ['রংপুর সদর','বদরগঞ্জ','গঙ্গাচড়া','কাউনিয়া','মিঠাপুকুর','পীরগঞ্জ','পীরগাছা','তারাগঞ্জ'],
+    'দিনাজপুর': ['দিনাজপুর সদর','বিরামপুর','বিরল','বোচাগঞ্জ','চিরিরবন্দর','ফুলবাড়ী','ঘোড়াঘাট','হাকিমপুর','খানসামা','নবাবগঞ্জ','পার্বতীপুর'],
+    'গাইবান্ধা': ['গাইবান্ধা সদর','ফুলছড়ি','গোবিন্দগঞ্জ','পলাশবাড়ী','সাদুল্লাপুর','সাঘাটা','সুন্দরগঞ্জ'],
+    'ঠাকুরগাঁও': ['ঠাকুরগাঁও সদর','বালিয়াডাঙ্গী','হরিপুর','পীরগঞ্জ','রাণীশংকৈল'],
+    'পঞ্চগড়': ['পঞ্চগড় সদর','আটোয়ারী','বোদা','দেবীগঞ্জ','তেতুলিয়া'],
+    'নীলফামারী': ['নীলফামারী সদর','ডিমলা','ডোমার','জলঢাকা','কিশোরগঞ্জ','সৈয়দপুর'],
+    'লালমনিরহাট': ['লালমনিরহাট সদর','আদিতমারী','হাতীবান্ধা','কালীগঞ্জ','পাটগ্রাম'],
+    'কুড়িগ্রাম': ['কুড়িগ্রাম সদর','ভুরুঙ্গামারী','চর রাজিবপুর','চিলমারী','ফুলবাড়ী','নাগেশ্বরী','রাজারহাট','রৌমারী','উলিপুর'],
+  },
+  'ময়মনসিংহ': {
+    'ময়মনসিংহ': ['ময়মনসিংহ সদর','ভালুকা','ধোবাউড়া','ফুলবাড়িয়া','গফরগাঁও','গৌরীপুর','হালুয়াঘাট','ঈশ্বরগঞ্জ','মুক্তাগাছা','নান্দাইল','ফুলপুর','ত্রিশাল','তারাকান্দা'],
+    'শেরপুর': ['শেরপুর সদর','ঝিনাইগাতী','নকলা','নালিতাবাড়ী','শ্রীবরদী'],
+    'জামালপুর': ['জামালপুর সদর','বকশীগঞ্জ','দেওয়ানগঞ্জ','ইসলামপুর','মাদারগঞ্জ','মেলান্দহ','সরিষাবাড়ী'],
+    'নেত্রকোণা': ['নেত্রকোণা সদর','আটপাড়া','বারহাট্টা','দুর্গাপুর','খালিয়াজুড়ী','কলমাকান্দা','কেন্দুয়া','মদন','মোহনগঞ্জ','পূর্বধলা'],
+  }
+};
+
+function onPickupDivisionChange(){
+  var div = document.getElementById('pickup-division').value;
+  var distSel = document.getElementById('pickup-district');
+  var thanaSel = document.getElementById('pickup-thana');
+  distSel.innerHTML = '<option value="">-- জেলা নির্বাচন করুন --</option>';
+  thanaSel.innerHTML = '<option value="">-- আগে জেলা নির্বাচন করুন --</option>';
+  thanaSel.disabled = true;
+  if(!div){ distSel.disabled = true; return; }
+  distSel.disabled = false;
+  var dists = BD_GEO[div] ? Object.keys(BD_GEO[div]) : [];
+  dists.forEach(function(d){ distSel.innerHTML += '<option>'+d+'</option>'; });
+}
+
+function onPickupDistrictChange(){
+  var div = document.getElementById('pickup-division').value;
+  var dist = document.getElementById('pickup-district').value;
+  var thanaSel = document.getElementById('pickup-thana');
+  thanaSel.innerHTML = '<option value="">-- থানা নির্বাচন করুন --</option>';
+  if(!dist){ thanaSel.disabled = true; return; }
+  thanaSel.disabled = false;
+  var thanas = (BD_GEO[div] && BD_GEO[div][dist]) ? BD_GEO[div][dist] : [];
+  thanas.forEach(function(t){ thanaSel.innerHTML += '<option>'+t+'</option>'; });
+}
+
+async function savePickupAddress(){
+  var division = document.getElementById('pickup-division').value;
+  var district = document.getElementById('pickup-district').value;
+  var thana = document.getElementById('pickup-thana').value;
+  var detail = document.getElementById('pickup-detail').value.trim();
+  var name = document.getElementById('pickup-name').value.trim();
+  var mobile = document.getElementById('pickup-mobile').value.trim();
+  var errEl = document.getElementById('pickup-err');
+  showErr('pickup-err','');
+  if(!division||!district||!thana||!detail||!name||!mobile){
+    showErr('pickup-err','সব তথ্য পূরণ করুন!'); return;
+  }
+  var u = currentUser;
+  if(!u) return;
+  var addressData = {
+    division, district, thana, detail, name, mobile,
+    fullAddress: name+' | '+mobile+' | '+thana+', '+district+', '+division+'\n'+detail,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try{
+    await db.collection('merchants').doc(u.uid).update({ pickupAddress: addressData });
+    showToast('পিকআপ ঠিকানা সংরক্ষিত হয়েছে!','success');
+    loadPickupAddressSaved();
+  }catch(e){ showErr('pickup-err','সংরক্ষণ ব্যর্থ: '+(e.message||'')); }
+}
+
+async function loadPickupAddressSaved(){
+  if(!currentUser) return;
+  try{
+    var doc = await db.collection('merchants').doc(currentUser.uid).get();
+    var pa = doc.data() && doc.data().pickupAddress;
+    if(pa){
+      document.getElementById('pickup-saved-display').style.display = 'block';
+      document.getElementById('pickup-form-area').style.display = 'none';
+      document.getElementById('pickup-saved-text').innerHTML =
+        '<div style="display:flex;flex-direction:column;gap:5px">' +
+        '<div><b><i class="fas fa-user" style="color:#7c3aed;width:16px"></i></b> '+pa.name+'</div>' +
+        '<div><b><i class="fas fa-phone" style="color:#7c3aed;width:16px"></i></b> '+pa.mobile+'</div>' +
+        '<div><b><i class="fas fa-map-marker-alt" style="color:#7c3aed;width:16px"></i></b> '+pa.thana+', '+pa.district+', '+pa.division+'</div>' +
+        '<div style="color:#374151;padding-left:20px">'+pa.detail+'</div>' +
+        '</div>';
+    } else {
+      document.getElementById('pickup-saved-display').style.display = 'none';
+      document.getElementById('pickup-form-area').style.display = 'block';
+    }
+  }catch(e){}
+}
+
+function clearPickupSaved(){
+  document.getElementById('pickup-saved-display').style.display = 'none';
+  document.getElementById('pickup-form-area').style.display = 'block';
+}
+
+/* Admin: view any merchant's pickup address */
+async function adminViewPickupAddress(merchantUid, merchantName){
+  var body = document.getElementById('pickup-view-body');
+  body.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  openModal('pickup-view-modal');
+  try{
+    var doc = await db.collection('merchants').doc(merchantUid).get();
+    var pa = doc.data() && doc.data().pickupAddress;
+    if(!pa){
+      body.innerHTML = '<div class="empty-state"><i class="fas fa-map-marker-alt"></i><p><b>'+(merchantName||'মার্চেন্ট')+'</b> এখনো পিকআপ ঠিকানা সেট করেননি।</p></div>';
+      return;
+    }
+    body.innerHTML =
+      '<div style="margin-bottom:10px;font-size:13px;font-weight:700;color:#7c3aed"><i class="fas fa-store"></i> '+(merchantName||'মার্চেন্ট')+'</div>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' +
+        _pickupInfoRow('fas fa-user','যোগাযোগের নাম',pa.name,'#dbeafe','#2563eb') +
+        _pickupInfoRow('fas fa-phone','মোবাইল নম্বর',pa.mobile,'#dcfce7','#16a34a') +
+        _pickupInfoRow('fas fa-map','বিভাগ',pa.division,'#ede9fe','#7c3aed') +
+        _pickupInfoRow('fas fa-city','জেলা',pa.district,'#ede9fe','#7c3aed') +
+        _pickupInfoRow('fas fa-location-arrow','থানা / উপজেলা',pa.thana,'#ede9fe','#7c3aed') +
+        _pickupInfoRow('fas fa-home','বিস্তারিত ঠিকানা',pa.detail,'#fff7ed','#d97706') +
+      '</div>';
+  }catch(e){
+    body.innerHTML = '<div style="color:#dc2626;text-align:center;padding:20px"><i class="fas fa-exclamation-triangle"></i> লোড ব্যর্থ হয়েছে।</div>';
+  }
+}
+
+function _pickupInfoRow(icon, label, value, bg, color){
+  return '<div style="background:'+bg+';border-radius:9px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px">' +
+    '<i class="'+icon+'" style="color:'+color+';margin-top:2px;flex-shrink:0;width:14px"></i>' +
+    '<div><div style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase;margin-bottom:3px">'+label+'</div>' +
+    '<div style="font-size:13px;font-weight:700;color:#111">'+value+'</div></div>' +
+    '</div>';
+}
+
 </script>
 
 <!-- ══ PRODUCT DETAIL MODAL ══ -->
@@ -4173,6 +4430,19 @@ async function deleteConfirmedTx(txId,card){
       <button onclick="closeModal('merchant-return-detail-modal')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);color:white;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
     </div>
     <div style="padding:18px 20px;max-height:80vh;overflow-y:auto;scrollbar-width:none;" id="merchant-return-detail-body"></div>
+  </div>
+</div>
+<!-- ══ PICKUP ADDRESS VIEW MODAL (Admin) ══ -->
+<div id="pickup-view-modal" class="modal-overlay" style="z-index:2200;">
+  <div class="modal" style="max-width:480px;padding:0;overflow:hidden;border-radius:18px;">
+    <div style="background:linear-gradient(135deg,#4338ca,#7c3aed);padding:16px 20px;display:flex;align-items:center;gap:10px;position:relative">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-map-marker-alt"></i></div>
+      <div style="font-size:16px;font-weight:800;color:white;font-family:'Poppins',sans-serif">পিকআপ ঠিকানা</div>
+      <button onclick="closeModal('pickup-view-modal')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);color:white;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:20px;" id="pickup-view-body">
+      <div class="loader"><i class="fas fa-spinner"></i>Loading...</div>
+    </div>
   </div>
 </div>
 
