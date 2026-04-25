@@ -685,6 +685,22 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
   </div>
 </div>
 
+
+<!-- SELF DELIVERY ORDER DETAIL MODAL -->
+<div id="self-order-detail-modal" class="modal-overlay" style="z-index:2100;">
+  <div class="modal" style="max-width:520px;padding:0;overflow:hidden;border-radius:16px;">
+    <div style="background:linear-gradient(135deg,#7c3aed,#4338ca);padding:18px 22px;position:relative;display:flex;align-items:center;gap:12px;">
+      <button class="modal-close" onclick="closeModal('self-order-detail-modal');if(_selfMsgUnsub){try{_selfMsgUnsub();}catch(e){}_selfMsgUnsub=null;}" style="background:rgba(255,255,255,0.2);color:white;top:12px;right:12px;"><i class="fas fa-times"></i></button>
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-user-circle"></i></div>
+      <div>
+        <div style="font-size:16px;font-weight:800;color:white">Self Delivery অর্ডার</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px">অর্ডার বিস্তারিত ও ট্র্যাকিং</div>
+      </div>
+    </div>
+    <div id="self-order-detail-body" style="padding:20px 20px 24px;overflow-y:auto;max-height:78vh;scrollbar-width:none;"></div>
+  </div>
+</div>
+
 <!-- DSTM ORDER DETAIL MODAL -->
 <div id="dstm-order-detail-modal" class="modal-overlay" style="z-index:2100;">
   <div class="modal" style="max-width:520px;padding:0;overflow:hidden;border-radius:16px;">
@@ -2194,13 +2210,215 @@ function renderMerchantSelfDeliveryOrders(orders){
         '<div style="font-size:12px;color:#6b7280;margin-top:2px">৳'+o.productPrice+' &bull; SKS: '+o.sksId+'</div>' +
         '<div style="font-size:12px;color:#374151;margin-top:2px">কাস্টমার: '+o.custName+' &bull; '+o.custPhone+'</div>' +
         '<div style="font-size:12px;color:#374151;margin-top:2px">ঠিকানা: '+o.deliveryAddress+'</div>' +
-        '<span style="background:#ede9fe;color:#7c3aed;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;margin-top:4px;display:inline-block"><i class="fas fa-user-circle"></i> Self Delivery</span>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap">' +
+          '<span style="background:#ede9fe;color:#7c3aed;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px"><i class="fas fa-user-circle"></i> Self Delivery</span>' +
+          (o.selfDeliveryStatus ? '<span style="background:'+getSelfStatusInfo(o.selfDeliveryStatus).bg+';color:'+getSelfStatusInfo(o.selfDeliveryStatus).color+';font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px"><i class="'+getSelfStatusInfo(o.selfDeliveryStatus).icon+'" style="font-size:9px"></i> '+getSelfStatusInfo(o.selfDeliveryStatus).label+'</span>' : '') +
+        '</div>' +
       '</div>' +
-      '<div style="flex-shrink:0"><button onclick="showCustomerAddressPopup(\''+o.id+'\',\'self\')" style="background:#fff7ed;color:#f57224;border:2px solid #fed7aa;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px"><i class="fas fa-map-marker-alt"></i> কাস্টমার ঠিকানা</button></div>' +
+      '<div style="flex-shrink:0;display:flex;flex-direction:column;gap:6px">' +
+        '<button onclick="openSelfOrderDetail(\''+o.id+'\',\'merchant\')" style="background:linear-gradient(135deg,#7c3aed,#4338ca);color:white;border:none;border-radius:8px;padding:8px 13px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px"><i class="fas fa-info-circle"></i> বিস্তারিত</button>' +
+        '<button onclick="deleteSelfDeliveryOrder(\''+o.id+'\',\'self\')" style="background:#fee2e2;color:#dc2626;border:2px solid #fca5a5;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-trash-alt"></i> ডিলিট</button>' +
+      '</div>' +
     '</div>';
   });
   html += '</div>';
   c.innerHTML = html;
+}
+
+
+/* ══════════════════════════════════════════
+   SELF DELIVERY ORDER DETAIL MODAL SYSTEM
+   - Merchant: মেসেজ + স্ট্যাটাস পরিবর্তন
+   - Admin: শুধু মেসেজ
+   ══════════════════════════════════════════ */
+
+var SELF_STATUSES = [
+  {key:'pending',      label:'পেন্ডিং',                    icon:'fas fa-clock',         color:'#f59e0b', bg:'#fef3c7'},
+  {key:'confirmed',    label:'কনফার্ম',                    icon:'fas fa-check-circle',  color:'#16a34a', bg:'#dcfce7'},
+  {key:'processing',   label:'প্রসেসিং',                   icon:'fas fa-cog',           color:'#2563eb', bg:'#dbeafe'},
+  {key:'ready',        label:'ডেলিভারির জন্য প্রস্তুত',   icon:'fas fa-box-open',      color:'#7c3aed', bg:'#ede9fe'},
+  {key:'out_delivery', label:'ডেলিভারির জন্য বের হয়েছে', icon:'fas fa-motorcycle',    color:'#0891b2', bg:'#cffafe'},
+  {key:'delivered',    label:'ডেলিভারি হয়েছে',            icon:'fas fa-check-double',  color:'#15803d', bg:'#bbf7d0'},
+  {key:'rejected',     label:'রিজেক্ট হয়েছে',             icon:'fas fa-ban',           color:'#dc2626', bg:'#fee2e2'},
+  {key:'failed',       label:'ডেলিভারি সফল হয় নাই',      icon:'fas fa-times-circle',  color:'#9f1239', bg:'#ffe4e6'},
+];
+
+function getSelfStatusInfo(key){
+  return SELF_STATUSES.find(function(s){return s.key===key;}) || {key:key,label:key,icon:'fas fa-circle',color:'#6b7280',bg:'#f3f4f6'};
+}
+
+// viewer: 'admin' or 'merchant'
+function openSelfOrderDetail(orderId, viewer){
+  var o = (_allCustomerDeliveryOrders||[]).find(function(x){return x.id===orderId;})
+        || (_allMerchantSelfDeliveryOrders||[]).find(function(x){return x.id===orderId;});
+  if(!o) return showToast('অর্ডার পাওয়া যায়নি!','error');
+  renderSelfOrderDetailModal(o, viewer);
+  openModal('self-order-detail-modal');
+  subscribeSelfMessages(orderId);
+}
+
+function renderSelfOrderDetailModal(o, viewer){
+  var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+  var selfSt = getSelfStatusInfo(o.selfDeliveryStatus || 'pending');
+  var isMerchant = (viewer === 'merchant');
+
+  // স্ট্যাটাস বাটন - শুধু Merchant দেখবে
+  var statusBtnsHtml = '';
+  if(isMerchant){
+    statusBtnsHtml = '<div style="margin-bottom:16px">' +
+      '<div style="font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px"><i class="fas fa-edit"></i> ডেলিভারি স্ট্যাটাস পরিবর্তন করুন</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:7px">';
+    SELF_STATUSES.forEach(function(s){
+      var active = (o.selfDeliveryStatus||'pending') === s.key;
+      statusBtnsHtml += '<button onclick="updateSelfDeliveryStatus(\''+o.id+'\',\''+s.key+'\')" style="background:'+(active?s.color:'#f3f4f6')+';color:'+(active?'white':s.color)+';border:2px solid '+(active?s.color:s.color+'44')+';border-radius:8px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:.15s">' +
+        '<i class="'+s.icon+'"></i>'+s.label+'</button>';
+    });
+    statusBtnsHtml += '</div></div>';
+  }
+
+  var senderRole = isMerchant ? 'merchant' : 'admin';
+
+  var body =
+    // পণ্য তথ্য
+    '<div style="display:flex;gap:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:13px;margin-bottom:14px">' +
+      (firstImg ? '<img src="'+firstImg+'" style="width:56px;height:56px;object-fit:cover;border-radius:8px;flex-shrink:0">'
+        : '<div style="width:56px;height:56px;background:#ede9fe;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#7c3aed;font-size:20px"><i class="fas fa-box"></i></div>') +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:14px;font-weight:700;color:#111;margin-bottom:3px">'+o.productName+'</div>' +
+        '<div style="font-size:12px;color:#6b7280">৳'+o.productPrice+' &bull; SKS: '+(o.sksId||'-')+'</div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap">' +
+          '<span style="background:#ede9fe;color:#7c3aed;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px"><i class="fas fa-user-circle"></i> Self Delivery</span>' +
+          '<span style="background:'+selfSt.bg+';color:'+selfSt.color+';font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px" id="self-status-badge-'+o.id+'"><i class="'+selfSt.icon+'" style="font-size:9px"></i> '+selfSt.label+'</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // কাস্টমার তথ্য
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">' +
+      '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:11px"><div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:4px"><i class="fas fa-user"></i> কাস্টমার</div><div style="font-weight:700;color:#111;font-size:13px">'+(o.custName||'-')+'</div></div>' +
+      '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:11px"><div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:4px"><i class="fas fa-phone"></i> মোবাইল</div><div style="font-weight:700;color:#0284c7;font-size:13px"><a href="tel:'+(o.custPhone||'')+'" style="color:inherit;text-decoration:none">'+(o.custPhone||'-')+'</a></div></div>' +
+      '<div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:9px;padding:11px;grid-column:1/-1"><div style="font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;margin-bottom:4px"><i class="fas fa-map-marker-alt"></i> ঠিকানা</div><div style="font-weight:600;color:#111;font-size:13px;line-height:1.5">'+(o.deliveryAddress||'-')+'</div></div>' +
+    '</div>' +
+
+    // স্ট্যাটাস বাটন (শুধু merchant)
+    statusBtnsHtml +
+
+    // মেসেজ সেকশন
+    '<div style="border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">' +
+      '<div style="background:#f8fafc;border-bottom:1px solid #e5e7eb;padding:10px 14px;font-size:12px;font-weight:700;color:#374151"><i class="fas fa-comments"></i> মেসেজ ' +
+        (isMerchant ? '<span style="background:#dcfce7;color:#16a34a;font-size:10px;padding:2px 7px;border-radius:8px;margin-left:6px">Merchant</span>'
+                    : '<span style="background:#dbeafe;color:#1d4ed8;font-size:10px;padding:2px 7px;border-radius:8px;margin-left:6px">Admin</span>') +
+      '</div>' +
+      '<div id="self-msg-list-'+o.id+'" style="padding:12px 14px;min-height:80px;max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;background:white">' +
+        '<div style="text-align:center;color:#9ca3af;font-size:12px;padding:20px 0"><i class="fas fa-spinner fa-spin"></i> লোড হচ্ছে...</div>' +
+      '</div>' +
+      '<div style="border-top:1px solid #e5e7eb;padding:10px 12px;display:flex;gap:8px;background:white">' +
+        '<input id="self-msg-input-'+o.id+'" data-role="'+senderRole+'" type="text" placeholder="মেসেজ লিখুন..." style="flex:1;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;font-size:13px;font-family:inherit;outline:none" onkeydown="if(event.key===\'Enter\')sendSelfMessage(\''+o.id+'\')">' +
+        '<button onclick="sendSelfMessage(\''+o.id+'\')" style="background:linear-gradient(135deg,#7c3aed,#4338ca);color:white;border:none;border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer"><i class="fas fa-paper-plane"></i></button>' +
+      '</div>' +
+    '</div>';
+
+  document.getElementById('self-order-detail-body').innerHTML = body;
+}
+
+var _selfMsgUnsub = null;
+function subscribeSelfMessages(orderId){
+  if(_selfMsgUnsub){try{_selfMsgUnsub();}catch(e){}_selfMsgUnsub=null;}
+  var listEl = document.getElementById('self-msg-list-'+orderId);
+  if(!listEl) return;
+  try{
+    _selfMsgUnsub = db.collection('orders').doc(orderId).collection('messages')
+      .orderBy('createdAt','asc')
+      .onSnapshot(function(snap){
+        listEl = document.getElementById('self-msg-list-'+orderId);
+        if(!listEl) return;
+        if(snap.empty){ listEl.innerHTML='<div style="text-align:center;color:#9ca3af;font-size:12px;padding:20px 0"><i class="fas fa-comment-slash"></i> এখনো কোনো মেসেজ নেই</div>'; return; }
+        var html='';
+        snap.forEach(function(d){
+          var m = d.data();
+          var isAdmin = (m.senderRole==='admin');
+          var t = m.createdAt ? new Date(m.createdAt.seconds*1000).toLocaleTimeString('bn-BD',{hour:'2-digit',minute:'2-digit'}) : '-';
+          html += '<div style="display:flex;flex-direction:column;align-items:'+(isAdmin?'flex-end':'flex-start')+'">' +
+            '<div style="background:'+(isAdmin?'linear-gradient(135deg,#1d4ed8,#3b82f6)':'linear-gradient(135deg,#7c3aed,#4338ca)')+';color:white;padding:8px 12px;border-radius:'+(isAdmin?'12px 12px 3px 12px':'12px 12px 12px 3px')+';font-size:13px;max-width:85%;line-height:1.5">'+m.text+'</div>' +
+            '<div style="font-size:10px;color:#9ca3af;margin-top:2px">'+(isAdmin?'Admin':'Merchant')+' &bull; '+t+'</div>' +
+          '</div>';
+        });
+        listEl.innerHTML = html;
+        listEl.scrollTop = listEl.scrollHeight;
+      });
+  }catch(e){ if(listEl) listEl.innerHTML='<div style="text-align:center;color:#ef4444;font-size:12px;padding:12px">মেসেজ লোড ব্যর্থ</div>'; }
+}
+
+async function sendSelfMessage(orderId){
+  var inp = document.getElementById('self-msg-input-'+orderId);
+  if(!inp) return;
+  var text = inp.value.trim();
+  if(!text) return;
+  var role = inp.getAttribute('data-role') || 'merchant';
+  inp.value = '';
+  try{
+    await db.collection('orders').doc(orderId).collection('messages').add({
+      text: text,
+      senderUid: currentUser ? currentUser.uid : 'unknown',
+      senderRole: role,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }catch(e){ showToast('মেসেজ পাঠানো ব্যর্থ!','error'); inp.value = text; }
+}
+
+async function updateSelfDeliveryStatus(orderId, statusKey){
+  var stInfo = getSelfStatusInfo(statusKey);
+  try{
+    await db.collection('orders').doc(orderId).update({selfDeliveryStatus: statusKey});
+
+    // local arrays আপডেট + re-render
+    var idxC = (_allCustomerDeliveryOrders||[]).findIndex(function(x){return x.id===orderId;});
+    if(idxC > -1){
+      _allCustomerDeliveryOrders[idxC].selfDeliveryStatus = statusKey;
+      renderCustomerDeliveryOrders(_allCustomerDeliveryOrders);
+    }
+    var idxS = (_allMerchantSelfDeliveryOrders||[]).findIndex(function(x){return x.id===orderId;});
+    if(idxS > -1){
+      _allMerchantSelfDeliveryOrders[idxS].selfDeliveryStatus = statusKey;
+      renderMerchantSelfDeliveryOrders(_allMerchantSelfDeliveryOrders);
+    }
+
+    // modal badge আপডেট
+    var badge = document.getElementById('self-status-badge-'+orderId);
+    if(badge) badge.innerHTML = '<i class="'+stInfo.icon+'" style="font-size:9px"></i> '+stInfo.label;
+
+    // status বাটন re-render
+    var o = (_allCustomerDeliveryOrders||[]).find(function(x){return x.id===orderId;})
+           || (_allMerchantSelfDeliveryOrders||[]).find(function(x){return x.id===orderId;});
+    if(o){
+      o.selfDeliveryStatus = statusKey;
+      renderSelfOrderDetailModal(o, 'merchant');
+      subscribeSelfMessages(orderId);
+    }
+
+    showToast('✅ স্ট্যাটাস পরিবর্তন হয়েছে: ' + stInfo.label, 'success');
+  }catch(e){
+    console.error('updateSelfDeliveryStatus error:', e);
+    showToast('❌ স্ট্যাটাস আপডেট ব্যর্থ: '+(e.message||''), 'error');
+  }
+}
+
+async function deleteSelfDeliveryOrder(orderId, source){
+  if(!confirm('এই অর্ডারটি Firebase থেকে স্থায়ীভাবে ডিলিট করবেন?')) return;
+  try{
+    await db.collection('orders').doc(orderId).delete();
+    if(source === 'customer'){
+      _allCustomerDeliveryOrders = (_allCustomerDeliveryOrders||[]).filter(function(x){return x.id!==orderId;});
+      renderCustomerDeliveryOrders(_allCustomerDeliveryOrders);
+    } else {
+      _allMerchantSelfDeliveryOrders = (_allMerchantSelfDeliveryOrders||[]).filter(function(x){return x.id!==orderId;});
+      renderMerchantSelfDeliveryOrders(_allMerchantSelfDeliveryOrders);
+    }
+    showToast('🗑️ অর্ডার ডিলিট হয়েছে!','success');
+  }catch(e){
+    console.error('deleteSelfDeliveryOrder error:',e);
+    showToast('❌ ডিলিট ব্যর্থ: '+(e.message||''),'error');
+  }
 }
 
 function filterMerchantSelfDelivery(q){
@@ -2244,11 +2462,12 @@ function renderCustomerDeliveryOrders(list){
       '<td style="font-size:12px">'+(o.shopName||o.merchantName||'-')+'</td>' +
       '<td style="font-size:12px">'+o.custName+'<br><span style="color:#6b7280">'+o.custPhone+'</span></td>' +
       '<td style="font-size:12px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+o.deliveryAddress+'</td>' +
-      '<td style="font-size:12px;white-space:nowrap">'+dateStr+'</td>' +
+      '<td style="font-size:12px;white-space:nowrap">'+dateStr+'<br>'+(o.selfDeliveryStatus?'<span style="background:#ede9fe;color:#7c3aed;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px">'+getSelfStatusInfo(o.selfDeliveryStatus).label+'</span>':'<span style="background:#fef3c7;color:#d97706;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px">পেন্ডিং</span>')+'</td>' +
       '<td style="white-space:nowrap"><div style="display:flex;gap:4px;flex-wrap:wrap">' +
         '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="Seller Info"><i class="fas fa-user"></i></button>' +
-        '<button onclick="adminViewOrderFull(\''+o.id+'\',\'customer\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="বিস্তারিত"><i class="fas fa-info-circle"></i></button>' +
+        '<button onclick="openSelfOrderDetail(\''+o.id+'\',\'admin\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="বিস্তারিত"><i class="fas fa-info-circle"></i> বিস্তারিত</button>' +
         '<button onclick="showCustomerAddressPopup(\''+o.id+'\',\'customer\')" style="background:#fff7ed;color:#f57224;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="কাস্টমার ঠিকানা"><i class="fas fa-map-marker-alt"></i> ঠিকানা</button>' +
+        '<button onclick="deleteSelfDeliveryOrder(\''+o.id+'\',\'customer\')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="ডিলিট"><i class="fas fa-trash-alt"></i></button>' +
       '</div></td></tr>';
   });
   html += '</tbody></table>';
