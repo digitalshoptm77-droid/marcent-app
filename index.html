@@ -367,12 +367,47 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="section-withdraw" class="content-section">
         <div class="sec-heading">Withdraw</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-wallet"></i><p>Withdraw feature coming soon.</p></div></div>
+        <div class="white-card">
+          <div style="font-size:14px;color:var(--gray);margin-bottom:16px">আপনার ব্যালেন্স: <b style="color:var(--primary);font-size:18px">৳<span id="withdraw-balance-display">0</span></b> (সর্বনিম্ন ৫০ টাকা থাকলে উইথড্র করা যাবে)</div>
+          <div class="form-group"><label>আপনার নাম *</label><div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="wd-name" placeholder="আপনার পূর্ণ নাম" style="padding-left:36px"></div></div>
+          <div class="form-group"><label>পেমেন্ট মাধ্যম *</label>
+            <div class="input-wrap"><i class="fas fa-mobile-alt ico"></i>
+              <select id="wd-method" style="padding-left:36px">
+                <option value="">-- সিলেক্ট করুন --</option>
+                <option value="নগদ">নগদ</option>
+                <option value="বিকাশ">বিকাশ</option>
+                <option value="উপায়">উপায়</option>
+                <option value="রকেট">রকেট</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label>মোবাইল নাম্বার *</label><div class="input-wrap"><i class="fas fa-phone ico"></i><input type="tel" id="wd-number" placeholder="01XXXXXXXXX" style="padding-left:36px"></div></div>
+          <button class="btn btn-primary" onclick="submitWithdraw()"><i class="fas fa-paper-plane"></i> সাবমিট করুন</button>
+          <!-- Submitted withdrawals list -->
+          <div style="margin-top:20px">
+            <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:10px"><i class="fas fa-list"></i> আপনার Withdraw সাবমিশন</div>
+            <div id="merchant-wd-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
+          </div>
+        </div>
       </div>
 
       <div id="section-add-money" class="content-section">
         <div class="sec-heading">Add Money</div>
-        <div class="white-card"><div class="empty-state"><i class="fas fa-plus-circle"></i><p>Add Money feature coming soon.</p></div></div>
+        <div class="white-card">
+          <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px;margin-bottom:16px">
+            <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:4px"><i class="fas fa-info-circle"></i> নগদে পাঠান</div>
+            <div style="font-size:15px;font-weight:800;color:#00a651">📱 01329885689</div>
+            <div style="font-size:12px;color:#166534;margin-top:4px">টাকা পাঠানোর পর নিচের ফর্ম পূরণ করুন</div>
+          </div>
+          <div class="form-group"><label>টাকার পরিমাণ (৳) *</label><div class="input-wrap"><i class="fas fa-money-bill ico"></i><input type="number" id="am-amount" placeholder="পরিমাণ লিখুন" style="padding-left:36px" min="1"></div></div>
+          <div class="form-group"><label>Transaction ID (TrxID) *</label><div class="input-wrap"><i class="fas fa-hashtag ico"></i><input type="text" id="am-trxid" placeholder="নগদ TrxID লিখুন" style="padding-left:36px"></div></div>
+          <button class="btn btn-primary" onclick="submitAddMoney()"><i class="fas fa-plus-circle"></i> Add করুন</button>
+          <!-- Submitted add money list -->
+          <div style="margin-top:20px">
+            <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:10px"><i class="fas fa-list"></i> আপনার Add Money সাবমিশন</div>
+            <div id="merchant-am-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
+          </div>
+        </div>
       </div>
 
       <div id="section-pickup" class="content-section">
@@ -430,6 +465,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="sidebar-item" data-admin-section="edit-parcel"><i class="fas fa-user-check"></i> কাস্টমার ডেলিভারি দিবেন</div>
       <div class="sidebar-item" data-admin-section="our-delivery"><i class="fas fa-truck"></i> আমাদের মাধ্যমে ডেলিভারি</div>
       <div class="sidebar-item" data-admin-section="order-details"><i class="fas fa-list-alt"></i> User Order Details</div>
+      <div class="sidebar-item" data-admin-section="transactions"><i class="fas fa-exchange-alt"></i> আদান-প্রদান</div>
       <div class="sidebar-label">Account</div>
       <div class="sidebar-item" id="admin-logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</div>
     </div>
@@ -460,6 +496,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
           <div class="dash-card" onclick="showAdminSection('edit-parcel')"><div class="dash-card-icon bg-teal"><i class="fas fa-user-check"></i></div><h4>কাস্টমার ডেলিভারি দিবেন</h4></div>
           <div class="dash-card" onclick="showAdminSection('our-delivery')"><div class="dash-card-icon bg-green"><i class="fas fa-truck"></i></div><h4>আমাদের মাধ্যমে ডেলিভারি</h4></div>
           <div class="dash-card" onclick="showAdminSection('order-details')"><div class="dash-card-icon bg-indigo"><i class="fas fa-list-alt"></i></div><h4>User Order Details</h4></div>
+          <div class="dash-card" onclick="showAdminSection('transactions')"><div class="dash-card-icon bg-yellow"><i class="fas fa-exchange-alt"></i></div><h4>আদান-প্রদান</h4></div>
         </div>
       </div>
 
@@ -570,6 +607,19 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
         <div class="sec-heading">User Order Details</div>
         <div class="search-bar" style="margin-bottom:14px"><i class="fas fa-search"></i><input type="text" id="order-details-search" placeholder="SKS ID দিয়ে অর্ডার খুঁজুন..." oninput="filterOrderDetails(this.value)" style="padding-left:36px"></div>
         <div class="table-card"><div id="order-details-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
+      </div>
+
+      <!-- ══ ADMIN TRANSACTIONS SECTION ══ -->
+      <div id="admin-section-transactions" class="content-section">
+        <div class="sec-heading">আদান-প্রদান</div>
+        <!-- Filter Buttons -->
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+          <button onclick="setTxFilter('all')" id="txf-all" class="btn btn-primary btn-sm">সব</button>
+          <button onclick="setTxFilter('add_money')" id="txf-add" class="btn btn-sm" style="background:#fef9c3;color:#854d0e;border:1.5px solid #f59e0b">Add Money</button>
+          <button onclick="setTxFilter('withdraw')" id="txf-withdraw" class="btn btn-sm" style="background:#dbeafe;color:#1d4ed8;border:1.5px solid #3b82f6">Withdraw</button>
+          <button onclick="openConfirmedTxModal()" class="btn btn-sm" style="background:#dcfce7;color:#166534;border:1.5px solid #22c55e;margin-left:auto"><i class="fas fa-check-double"></i> কনফার্ম/রিজেক্ট সাবমিশন</button>
+        </div>
+        <div class="table-card"><div id="admin-tx-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
 
     </div>
@@ -735,6 +785,54 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 <!-- TOAST -->
 <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg">Success!</span></div>
 
+<!-- ══ ADMIN TX DETAIL MODAL ══ -->
+<div id="admin-tx-detail-modal" class="modal-overlay" style="z-index:2200;">
+  <div class="modal" style="max-width:500px;padding:0;overflow:hidden;border-radius:18px;">
+    <div id="admin-tx-detail-header" style="background:linear-gradient(135deg,#00a651,#007a3d);padding:16px 20px;display:flex;align-items:center;gap:10px;position:relative">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-exchange-alt"></i></div>
+      <div style="font-size:16px;font-weight:800;color:white;font-family:'Poppins',sans-serif">সাবমিশন বিস্তারিত</div>
+      <button onclick="closeModal('admin-tx-detail-modal')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);color:white;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:18px 20px;max-height:80vh;overflow-y:auto;scrollbar-width:none;" id="admin-tx-detail-body"></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN MERCHANT INFO MODAL (for tx) ══ -->
+<div id="admin-tx-merchant-modal" class="modal-overlay" style="z-index:2300;">
+  <div class="modal" style="max-width:460px;padding:0;overflow:hidden;border-radius:18px;">
+    <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);padding:16px 20px;display:flex;align-items:center;gap:10px;position:relative">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-user-circle"></i></div>
+      <div style="font-size:16px;font-weight:800;color:white;font-family:'Poppins',sans-serif">মার্চেন্ট বিস্তারিত</div>
+      <button onclick="closeModal('admin-tx-merchant-modal')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);color:white;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:18px 20px;max-height:80vh;overflow-y:auto;scrollbar-width:none;" id="admin-tx-merchant-body"></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN CONFIRMED/REJECTED TX MODAL ══ -->
+<div id="admin-confirmed-tx-modal" class="modal-overlay" style="z-index:2200;">
+  <div class="modal" style="max-width:600px;padding:0;overflow:hidden;border-radius:18px;">
+    <div style="background:linear-gradient(135deg,#166534,#22c55e);padding:16px 20px;display:flex;align-items:center;gap:10px;position:relative">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-check-double"></i></div>
+      <div style="font-size:16px;font-weight:800;color:white;font-family:'Poppins',sans-serif">কনফার্ম/রিজেক্ট সাবমিশন</div>
+      <button onclick="closeModal('admin-confirmed-tx-modal')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);color:white;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:18px 20px;max-height:80vh;overflow-y:auto;scrollbar-width:none;" id="admin-confirmed-tx-body"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
+  </div>
+</div>
+
+<!-- ══ CONFIRMED TX DETAIL MODAL ══ -->
+<div id="confirmed-tx-detail-modal" class="modal-overlay" style="z-index:2400;">
+  <div class="modal" style="max-width:480px;padding:0;overflow:hidden;border-radius:18px;">
+    <div style="background:linear-gradient(135deg,#374151,#111827);padding:16px 20px;display:flex;align-items:center;gap:10px;position:relative">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-info-circle"></i></div>
+      <div style="font-size:16px;font-weight:800;color:white;font-family:'Poppins',sans-serif">বিস্তারিত</div>
+      <button onclick="closeModal('confirmed-tx-detail-modal')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);color:white;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:18px 20px;max-height:80vh;overflow-y:auto;scrollbar-width:none;" id="confirmed-tx-detail-body"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -899,10 +997,12 @@ function showUserSection(name){
   if(name==='dstm-orders')loadMerchantDstmOrders();
   if(name==='delivery')loadMerchantSelfDeliveryOrders();
   if(name==='returns')loadMerchantReturns();
+  if(name==='add-money')loadMerchantAddMoneyList();
+  if(name==='withdraw'){if(currentUser){var wbd=document.getElementById('withdraw-balance-display');if(wbd)wbd.textContent=(currentUser.balance||0);}loadMerchantWithdrawList();}
   if(name==='add-product'){var ok=currentUser&&currentUser.status==='active';document.getElementById('add-product-locked').style.display=ok?'none':'block';document.getElementById('add-product-form').style.display=ok?'block':'none';if(ok)refreshSKS();}
 }
 
-var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','approval-products':'Approval Products','parcels':'Add Parcel','edit-parcel':'কাস্টমার ডেলিভারি দিবেন','our-delivery':'আমাদের মাধ্যমে ডেলিভারি','order-details':'User Order Details'};
+var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','approval-products':'Approval Products','parcels':'Add Parcel','edit-parcel':'কাস্টমার ডেলিভারি দিবেন','our-delivery':'আমাদের মাধ্যমে ডেলিভারি','order-details':'User Order Details','transactions':'আদান-প্রদান'};
 function showAdminSection(name){
   document.querySelectorAll('#page-admin-dashboard .content-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#admin-sidebar .sidebar-item').forEach(s=>s.classList.remove('active'));
@@ -918,6 +1018,7 @@ function showAdminSection(name){
   if(name==='order-details')loadOrderDetails();
   if(name==='edit-parcel')loadCustomerDeliveryOrders();
   if(name==='our-delivery')loadOurDeliveryOrders();
+  if(name==='transactions'){_currentTxFilter='all';loadAdminTransactions();}
 }
 
 auth.onAuthStateChanged(async function(user){
@@ -3259,6 +3360,359 @@ function addEpImagePreviewThumb(url){
   del.onclick=function(){epUploadedImageUrls=epUploadedImageUrls.filter(function(u){return u!==url;});wrap.remove();};
   wrap.appendChild(img);wrap.appendChild(del);grid.appendChild(wrap);
 }
+
+// ══════════════════════════════════════════
+// ADD MONEY / WITHDRAW / TRANSACTIONS SYSTEM
+// ══════════════════════════════════════════
+
+// ── MERCHANT: Submit Add Money ──
+async function submitAddMoney(){
+  var u=currentUser;
+  if(!u||u.status!=='active')return showToast('একাউন্ট অ্যাপ্রুভ হয়নি!','warning');
+  var amount=parseFloat(document.getElementById('am-amount').value);
+  var trxid=document.getElementById('am-trxid').value.trim();
+  if(!amount||amount<=0)return showToast('সঠিক পরিমাণ লিখুন!','error');
+  if(!trxid)return showToast('TrxID লিখুন!','error');
+  try{
+    await db.collection('transactions').add({
+      type:'add_money',
+      merchantUid:u.uid,
+      merchantName:u.fullName||'',
+      shopName:u.shopName||'',
+      amount:amount,
+      trxId:trxid,
+      status:'pending',
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      merchantData:{
+        fullName:u.fullName||'',
+        shopName:u.shopName||'',
+        email:u.email||'',
+        mobile:u.mobile||'',
+        address:u.address||'',
+        merchantId:u.merchantId||''
+      }
+    });
+    showToast('সাবমিট হয়েছে! কিছু সময়ের মধ্যে ব্যালেন্স যোগ হবে।','success');
+    document.getElementById('am-amount').value='';
+    document.getElementById('am-trxid').value='';
+    loadMerchantAddMoneyList();
+  }catch(e){showToast('সাবমিট ব্যর্থ!','error');}
+}
+
+// ── MERCHANT: Load Add Money List ──
+async function loadMerchantAddMoneyList(){
+  var u=currentUser;
+  var container=document.getElementById('merchant-am-list');
+  if(!container)return;
+  container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('transactions').where('merchantUid','==',u.uid).where('type','==','add_money').get();
+    var docs=[];
+    snap.forEach(function(d){docs.push({id:d.id,...d.data()});});
+    docs.sort(function(a,b){var ta=a.createdAt?a.createdAt.seconds:0,tb=b.createdAt?b.createdAt.seconds:0;return tb-ta;});
+    if(!docs.length){container.innerHTML='<div class="empty-state"><i class="fas fa-inbox"></i><p>কোনো সাবমিশন নেই</p></div>';return;}
+    var html='';
+    docs.forEach(function(tx){
+      var statusColor=tx.status==='confirmed'?'#166534':tx.status==='rejected'?'#991b1b':'#854d0e';
+      var statusBg=tx.status==='confirmed'?'#dcfce7':tx.status==='rejected'?'#fee2e2':'#fef9c3';
+      var statusLabel=tx.status==='confirmed'?'কনফার্ম':tx.status==='rejected'?'রিজেক্ট':'পেন্ডিং ⏳';
+      var date=tx.createdAt?new Date(tx.createdAt.seconds*1000).toLocaleString('bn-BD'):'';
+      html+='<div style="background:white;border:1.5px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px">'
+        +'<div><div style="font-size:13px;font-weight:700;color:#111">৳'+tx.amount+' — TrxID: '+tx.trxId+'</div>'
+        +'<div style="font-size:11px;color:var(--gray);margin-top:3px">'+date+'</div></div>'
+        +'<span style="background:'+statusBg+';color:'+statusColor+';padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap">'+statusLabel+'</span></div>';
+    });
+    container.innerHTML=html;
+  }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড ব্যর্থ</p></div>';}
+}
+
+// ── MERCHANT: Submit Withdraw ──
+async function submitWithdraw(){
+  var u=currentUser;
+  if(!u||u.status!=='active')return showToast('একাউন্ট অ্যাপ্রুভ হয়নি!','warning');
+  var name=document.getElementById('wd-name').value.trim();
+  var method=document.getElementById('wd-method').value;
+  var number=document.getElementById('wd-number').value.trim();
+  if(!name)return showToast('আপনার নাম লিখুন!','error');
+  if(!method)return showToast('পেমেন্ট মাধ্যম সিলেক্ট করুন!','error');
+  if(!number)return showToast('মোবাইল নাম্বার লিখুন!','error');
+  // Re-fetch current balance from Firestore
+  var mSnap=await db.collection('merchants').doc(u.uid).get();
+  var mData=mSnap.data();
+  var balance=parseFloat(mData.balance)||0;
+  if(balance<50)return showToast('ব্যালেন্স সর্বনিম্ন ৫০ টাকা হতে হবে!','error');
+  try{
+    // Set balance to 0 immediately
+    await db.collection('merchants').doc(u.uid).update({balance:0});
+    currentUser.balance=0;
+    document.getElementById('withdraw-balance-display').textContent='0';
+    // Record transaction
+    await db.collection('transactions').add({
+      type:'withdraw',
+      merchantUid:u.uid,
+      merchantName:name,
+      shopName:u.shopName||'',
+      method:method,
+      mobileNumber:number,
+      previousBalance:balance,
+      status:'pending',
+      createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+      merchantData:{
+        fullName:u.fullName||'',
+        shopName:u.shopName||'',
+        email:u.email||'',
+        mobile:u.mobile||'',
+        address:u.address||'',
+        merchantId:u.merchantId||''
+      }
+    });
+    showToast('উইথড্র সাবমিট হয়েছে! ব্যালেন্স ০ হয়েছে।','success');
+    document.getElementById('wd-name').value='';
+    document.getElementById('wd-method').value='';
+    document.getElementById('wd-number').value='';
+    loadMerchantWithdrawList();
+  }catch(e){showToast('সাবমিট ব্যর্থ!','error');}
+}
+
+// ── MERCHANT: Load Withdraw List ──
+async function loadMerchantWithdrawList(){
+  var u=currentUser;
+  var container=document.getElementById('merchant-wd-list');
+  if(!container)return;
+  container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('transactions').where('merchantUid','==',u.uid).where('type','==','withdraw').get();
+    var docs=[];
+    snap.forEach(function(d){docs.push({id:d.id,...d.data()});});
+    docs.sort(function(a,b){var ta=a.createdAt?a.createdAt.seconds:0,tb=b.createdAt?b.createdAt.seconds:0;return tb-ta;});
+    if(!docs.length){container.innerHTML='<div class="empty-state"><i class="fas fa-inbox"></i><p>কোনো সাবমিশন নেই</p></div>';return;}
+    var html='';
+    docs.forEach(function(tx){
+      var statusColor=tx.status==='confirmed'?'#166534':tx.status==='rejected'?'#991b1b':'#854d0e';
+      var statusBg=tx.status==='confirmed'?'#dcfce7':tx.status==='rejected'?'#fee2e2':'#fef9c3';
+      var statusLabel=tx.status==='confirmed'?'কনফার্ম':tx.status==='rejected'?'রিজেক্ট':'পেন্ডিং ⏳';
+      var date=tx.createdAt?new Date(tx.createdAt.seconds*1000).toLocaleString('bn-BD'):'';
+      html+='<div style="background:white;border:1.5px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px">'
+        +'<div><div style="font-size:13px;font-weight:700;color:#111">'+tx.method+' — '+tx.mobileNumber+'</div>'
+        +'<div style="font-size:12px;color:var(--gray);margin-top:2px">উইথড্রর আগে ব্যালেন্স: <b>৳'+tx.previousBalance+'</b></div>'
+        +'<div style="font-size:11px;color:var(--gray);margin-top:2px">'+date+'</div></div>'
+        +'<span style="background:'+statusBg+';color:'+statusColor+';padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap">'+statusLabel+'</span></div>';
+    });
+    container.innerHTML=html;
+  }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড ব্যর্থ</p></div>';}
+}
+
+// ── ADMIN: Transactions Filter ──
+var _currentTxFilter='all';
+function setTxFilter(f){
+  _currentTxFilter=f;
+  ['all','add','withdraw'].forEach(function(k){
+    var btn=document.getElementById('txf-'+k);
+    if(btn){btn.className='btn btn-sm';btn.style.cssText='';}
+  });
+  var activeBtn=document.getElementById('txf-'+f);
+  if(activeBtn){activeBtn.classList.add('btn-primary');}
+  loadAdminTransactions();
+}
+
+// ── ADMIN: Load Transactions ──
+async function loadAdminTransactions(){
+  var container=document.getElementById('admin-tx-list');
+  if(!container)return;
+  container.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap=await db.collection('transactions').where('status','==','pending').get();
+    var docs=[];
+    snap.forEach(function(d){docs.push({id:d.id,...d.data()});});
+    // Sort by createdAt descending client-side
+    docs.sort(function(a,b){var ta=a.createdAt?a.createdAt.seconds:0,tb=b.createdAt?b.createdAt.seconds:0;return tb-ta;});
+    // Filter by type
+    if(_currentTxFilter==='add_money')docs=docs.filter(function(t){return t.type==='add_money';});
+    if(_currentTxFilter==='withdraw')docs=docs.filter(function(t){return t.type==='withdraw';});
+    if(!docs.length){container.innerHTML='<div class="empty-state"><i class="fas fa-inbox"></i><p>কোনো পেন্ডিং সাবমিশন নেই</p></div>';return;}
+    var html='';
+    docs.forEach(function(tx){
+      var typeLabel=tx.type==='add_money'?'Add Money':'Withdraw';
+      var typeBg=tx.type==='add_money'?'#fef9c3':'#dbeafe';
+      var typeColor=tx.type==='add_money'?'#854d0e':'#1d4ed8';
+      var date=tx.createdAt?new Date(tx.createdAt.seconds*1000).toLocaleString('bn-BD'):'';
+      html+='<div style="background:white;border:1.5px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:12px">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+        +'<div>'
+        +'<span style="background:'+typeBg+';color:'+typeColor+';padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;margin-right:8px">'+typeLabel+'</span>'
+        +'<span style="font-size:14px;font-weight:700;color:#111">'+tx.merchantName+' — '+tx.shopName+'</span>'
+        +'</div>'
+        +'<span style="font-size:11px;color:var(--gray)">'+date+'</span>'
+        +'</div>'
+        +'<div style="margin-top:8px;font-size:13px;color:var(--gray)">'
+        +(tx.type==='add_money'?'৳'+tx.amount+' | TrxID: '+tx.trxId:'পদ্ধতি: '+tx.method+' | নং: '+tx.mobileNumber+' | আগের ব্যালেন্স: ৳'+tx.previousBalance)
+        +'</div>'
+        +'<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">'
+        +'<button class="btn btn-sm" style="background:#e0e7ff;color:#4338ca;border:none;cursor:pointer" onclick="openAdminTxDetail(\''+tx.id+'\')"><i class="fas fa-info-circle"></i> বিস্তারিত</button>'
+        +'<button class="btn btn-sm" style="background:#dbeafe;color:#1d4ed8;border:none;cursor:pointer" onclick="openAdminTxMerchant(\''+tx.id+'\')"><i class="fas fa-user"></i> মার্চেন্ট বিস্তারিত</button>'
+        +'</div>'
+        +'</div>';
+    });
+    container.innerHTML=html;
+  }catch(e){console.error(e);container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড ব্যর্থ</p></div>';}
+}
+
+// ── ADMIN: Open TX Detail Modal ──
+var _currentAdminTxId=null;
+var _currentAdminTxData=null;
+async function openAdminTxDetail(txId){
+  _currentAdminTxId=txId;
+  var snap=await db.collection('transactions').doc(txId).get();
+  var tx=snap.data();
+  _currentAdminTxData=tx;
+  var date=tx.createdAt?new Date(tx.createdAt.seconds*1000).toLocaleString('bn-BD'):'';
+  var isAM=tx.type==='add_money';
+  var html='';
+  if(isAM){
+    html='<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:14px;margin-bottom:14px">'
+      +'<div style="font-size:11px;font-weight:700;color:#166534;text-transform:uppercase;margin-bottom:8px">Add Money তথ্য</div>'
+      +'<div style="font-size:15px;font-weight:800;color:#111;margin-bottom:4px">৳'+tx.amount+'</div>'
+      +'<div style="font-size:13px;color:#374151">TrxID: <b>'+tx.trxId+'</b></div>'
+      +'<div style="font-size:12px;color:var(--gray);margin-top:4px">'+date+'</div>'
+      +'</div>';
+  }else{
+    html='<div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:10px;padding:14px;margin-bottom:14px">'
+      +'<div style="font-size:11px;font-weight:700;color:#1d4ed8;text-transform:uppercase;margin-bottom:8px">Withdraw তথ্য</div>'
+      +'<div style="font-size:13px;color:#374151">পদ্ধতি: <b>'+tx.method+'</b></div>'
+      +'<div style="font-size:13px;color:#374151;margin-top:4px">মোবাইল: <b>'+tx.mobileNumber+'</b></div>'
+      +'<div style="font-size:13px;color:#374151;margin-top:4px">আগের ব্যালেন্স: <b>৳'+tx.previousBalance+'</b></div>'
+      +'<div style="font-size:12px;color:var(--gray);margin-top:4px">'+date+'</div>'
+      +'</div>';
+  }
+  html+='<div style="background:#f9fafb;border-radius:10px;padding:12px;margin-bottom:14px">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;margin-bottom:6px">মার্চেন্ট</div>'
+    +'<div style="font-size:14px;font-weight:700;color:#111">'+tx.merchantName+'</div>'
+    +'<div style="font-size:13px;color:var(--gray)">'+tx.shopName+'</div>'
+    +'</div>'
+    +'<div style="display:flex;gap:10px;margin-top:4px">'
+    +'<button class="btn btn-primary" style="flex:1;justify-content:center" onclick="adminTxAction(\''+txId+'\',\'confirmed\')"><i class="fas fa-check"></i> কনফার্ম</button>'
+    +'<button class="btn btn-danger" style="flex:1;justify-content:center" onclick="adminTxAction(\''+txId+'\',\'rejected\')"><i class="fas fa-times"></i> রিজেক্ট</button>'
+    +'</div>';
+  document.getElementById('admin-tx-detail-body').innerHTML=html;
+  openModal('admin-tx-detail-modal');
+}
+
+// ── ADMIN: Open Merchant Info for TX ──
+async function openAdminTxMerchant(txId){
+  var snap=await db.collection('transactions').doc(txId).get();
+  var tx=snap.data();
+  var md=tx.merchantData||{};
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">';
+  var fields=[['fullName','নাম','fas fa-user'],['shopName','শপ','fas fa-store'],['email','ইমেইল','fas fa-envelope'],['mobile','মোবাইল','fas fa-phone'],['address','ঠিকানা','fas fa-map-marker-alt'],['merchantId','Merchant ID','fas fa-id-card']];
+  fields.forEach(function(f){
+    html+='<div style="background:#f9fafb;border-radius:8px;padding:10px">'
+      +'<div style="font-size:10px;color:var(--gray);font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="'+f[2]+'"></i> '+f[1]+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:#111;word-break:break-all">'+(md[f[0]]||'—')+'</div></div>';
+  });
+  html+='</div>';
+  document.getElementById('admin-tx-merchant-body').innerHTML=html;
+  openModal('admin-tx-merchant-modal');
+}
+
+// ── ADMIN: Confirm / Reject TX ──
+async function adminTxAction(txId,status){
+  if(!confirm(status==='confirmed'?'কনফার্ম করবেন?':'রিজেক্ট করবেন?'))return;
+  try{
+    var snap=await db.collection('transactions').doc(txId).get();
+    var tx=snap.data();
+    await db.collection('transactions').doc(txId).update({status:status,resolvedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    // If add_money confirmed → add balance to merchant
+    if(tx.type==='add_money'&&status==='confirmed'){
+      var mSnap=await db.collection('merchants').doc(tx.merchantUid).get();
+      var currentBal=parseFloat(mSnap.data().balance)||0;
+      await db.collection('merchants').doc(tx.merchantUid).update({balance:currentBal+parseFloat(tx.amount)});
+    }
+    showToast(status==='confirmed'?'কনফার্ম হয়েছে!':'রিজেক্ট হয়েছে!','success');
+    closeModal('admin-tx-detail-modal');
+    loadAdminTransactions();
+  }catch(e){showToast('ব্যর্থ!','error');}
+}
+
+// ── ADMIN: Confirmed/Rejected Submissions Modal ──
+async function openConfirmedTxModal(){
+  openModal('admin-confirmed-tx-modal');
+  var body=document.getElementById('admin-confirmed-tx-body');
+  body.innerHTML='<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snapC=await db.collection('transactions').where('status','==','confirmed').get();
+    var snapR=await db.collection('transactions').where('status','==','rejected').get();
+    var docs=[];
+    snapC.forEach(function(d){docs.push({id:d.id,...d.data()});});
+    snapR.forEach(function(d){docs.push({id:d.id,...d.data()});});
+    docs.sort(function(a,b){var ta=a.createdAt?a.createdAt.seconds:0,tb=b.createdAt?b.createdAt.seconds:0;return tb-ta;});
+    if(!docs.length){body.innerHTML='<div class="empty-state"><i class="fas fa-inbox"></i><p>কোনো কনফার্ম/রিজেক্ট সাবমিশন নেই</p></div>';return;}
+    var html='';
+    docs.forEach(function(tx){
+      var typeLabel=tx.type==='add_money'?'Add Money':'Withdraw';
+      var typeBg=tx.type==='add_money'?'#fef9c3':'#dbeafe';
+      var typeColor=tx.type==='add_money'?'#854d0e':'#1d4ed8';
+      var statusColor=tx.status==='confirmed'?'#166534':'#991b1b';
+      var statusBg=tx.status==='confirmed'?'#dcfce7':'#fee2e2';
+      var statusLabel=tx.status==='confirmed'?'কনফার্ম':'রিজেক্ট';
+      var date=tx.createdAt?new Date(tx.createdAt.seconds*1000).toLocaleString('bn-BD'):'';
+      html+='<div style="background:white;border:1.5px solid #e5e7eb;border-radius:12px;padding:12px;margin-bottom:10px">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px">'
+        +'<div>'
+        +'<span style="background:'+typeBg+';color:'+typeColor+';padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;margin-right:6px">'+typeLabel+'</span>'
+        +'<span style="font-size:13px;font-weight:700;color:#111">'+tx.merchantName+'</span>'
+        +'</div>'
+        +'<span style="background:'+statusBg+';color:'+statusColor+';padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700">'+statusLabel+'</span>'
+        +'</div>'
+        +'<div style="font-size:12px;color:var(--gray);margin-bottom:8px">'+date+'</div>'
+        +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
+        +'<button class="btn btn-sm" style="background:#e0e7ff;color:#4338ca;border:none;cursor:pointer" onclick="openConfirmedTxDetail(\''+tx.id+'\')"><i class="fas fa-info-circle"></i> বিস্তারিত</button>'
+        +'<button class="btn btn-sm btn-danger" onclick="deleteConfirmedTx(\''+tx.id+'\',this.parentNode.parentNode)"><i class="fas fa-trash"></i> ডিলিট</button>'
+        +'</div>'
+        +'</div>';
+    });
+    body.innerHTML=html;
+  }catch(e){console.error(e);body.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড ব্যর্থ</p></div>';}
+}
+
+// ── ADMIN: Confirmed TX Detail ──
+async function openConfirmedTxDetail(txId){
+  var snap=await db.collection('transactions').doc(txId).get();
+  var tx=snap.data();
+  var md=tx.merchantData||{};
+  var date=tx.createdAt?new Date(tx.createdAt.seconds*1000).toLocaleString('bn-BD'):'';
+  var isAM=tx.type==='add_money';
+  var html='<div style="background:'+(isAM?'#f0fdf4':'#dbeafe')+';border:1px solid '+(isAM?'#86efac':'#93c5fd')+';border-radius:10px;padding:14px;margin-bottom:12px">'
+    +'<div style="font-size:11px;font-weight:700;color:'+(isAM?'#166534':'#1d4ed8')+';text-transform:uppercase;margin-bottom:6px">'+(isAM?'Add Money':'Withdraw')+'</div>';
+  if(isAM){
+    html+='<div style="font-size:15px;font-weight:800;color:#111">৳'+tx.amount+'</div>'
+      +'<div style="font-size:13px;color:#374151;margin-top:4px">TrxID: <b>'+tx.trxId+'</b></div>';
+  }else{
+    html+='<div style="font-size:13px;color:#374151">পদ্ধতি: <b>'+tx.method+'</b> | মোবাইল: <b>'+tx.mobileNumber+'</b></div>'
+      +'<div style="font-size:13px;color:#374151;margin-top:4px">উইথড্রর আগে ব্যালেন্স: <b>৳'+tx.previousBalance+'</b></div>';
+  }
+  html+='<div style="font-size:12px;color:var(--gray);margin-top:4px">'+date+'</div></div>';
+  html+='<div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:6px;text-transform:uppercase">মার্চেন্ট তথ্য</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  var fields=[['fullName','নাম'],['shopName','শপ'],['email','ইমেইল'],['mobile','মোবাইল'],['merchantId','ID'],['address','ঠিকানা']];
+  fields.forEach(function(f){
+    html+='<div style="background:#f9fafb;border-radius:8px;padding:8px"><div style="font-size:10px;color:var(--gray);margin-bottom:2px">'+f[1]+'</div><div style="font-size:12px;font-weight:700;word-break:break-all">'+(md[f[0]]||'—')+'</div></div>';
+  });
+  html+='</div>';
+  document.getElementById('confirmed-tx-detail-body').innerHTML=html;
+  openModal('confirmed-tx-detail-modal');
+}
+
+// ── ADMIN: Delete Confirmed TX ──
+async function deleteConfirmedTx(txId,card){
+  if(!confirm('ফায়ারবেস থেকে ডিলিট করবেন?'))return;
+  try{
+    await db.collection('transactions').doc(txId).delete();
+    if(card)card.remove();
+    showToast('ডিলিট হয়েছে!','success');
+  }catch(e){showToast('ডিলিট ব্যর্থ!','error');}
+}
+
+// Update aT map — already set in aT object above
 </script>
 
 <!-- ══ PRODUCT DETAIL MODAL ══ -->
