@@ -2113,15 +2113,49 @@ async function sendDstmMessage(orderId){
     });
   }catch(e){showToast('মেসেজ পাঠানো ব্যর্থ!','error');inp.value=text;}
 }
-async function updateDstmDeliveryStatus(orderId,statusKey){
+async function updateDstmDeliveryStatus(orderId, statusKey){
+  var stInfo = getDstmStatusInfo(statusKey);
   try{
-    await db.collection('orders').doc(orderId).update({deliveryStatus:statusKey});
-    showToast('স্ট্যাটাস আপডেট: '+getDstmStatusInfo(statusKey).label,'success');
-    var idxM=(_allMerchantDstmOrders||[]).findIndex(function(x){return x.id===orderId;});
-    if(idxM>-1){_allMerchantDstmOrders[idxM].deliveryStatus=statusKey;renderDstmOrderDetailModal(_allMerchantDstmOrders[idxM],false);subscribeDstmMessages(orderId);renderMerchantDstmOrders(_allMerchantDstmOrders);}
-    var idxA=(_allOurDeliveryOrders||[]).findIndex(function(x){return x.id===orderId;});
-    if(idxA>-1){_allOurDeliveryOrders[idxA].deliveryStatus=statusKey;renderDstmOrderDetailModal(_allOurDeliveryOrders[idxA],true);subscribeDstmMessages(orderId);if(typeof renderOurDeliveryOrders==='function')renderOurDeliveryOrders(_allOurDeliveryOrders);}
-  }catch(e){showToast('স্ট্যাটাস আপডেট ব্যর্থ!','error');}
+    // Firebase update
+    await db.collection('orders').doc(orderId).update({deliveryStatus: statusKey});
+
+    // ── Admin list: _allOurDeliveryOrders ──
+    var idxA = (_allOurDeliveryOrders||[]).findIndex(function(x){return x.id===orderId;});
+    if(idxA > -1){
+      _allOurDeliveryOrders[idxA].deliveryStatus = statusKey;
+      // modal re-render (admin view)
+      renderDstmOrderDetailModal(_allOurDeliveryOrders[idxA], true);
+      subscribeDstmMessages(orderId);
+      // list re-render without reload
+      renderOurDeliveryOrders(_allOurDeliveryOrders);
+    }
+
+    // ── Merchant list: _allMerchantDstmOrders ──
+    var idxM = (_allMerchantDstmOrders||[]).findIndex(function(x){return x.id===orderId;});
+    if(idxM > -1){
+      _allMerchantDstmOrders[idxM].deliveryStatus = statusKey;
+      renderMerchantDstmOrders(_allMerchantDstmOrders);
+    }
+
+    showToast('✅ স্ট্যাটাস পরিবর্তন হয়েছে: ' + stInfo.label, 'success');
+  }catch(e){
+    console.error('updateDstmDeliveryStatus error:', e);
+    showToast('❌ স্ট্যাটাস আপডেট ব্যর্থ: ' + (e.message||''), 'error');
+  }
+}
+
+async function deleteOurDeliveryOrder(orderId){
+  if(!confirm('এই অর্ডারটি Firebase থেকে স্থায়ীভাবে ডিলিট করবেন?')) return;
+  try{
+    await db.collection('orders').doc(orderId).delete();
+    // remove from local array
+    _allOurDeliveryOrders = (_allOurDeliveryOrders||[]).filter(function(x){return x.id!==orderId;});
+    renderOurDeliveryOrders(_allOurDeliveryOrders);
+    showToast('🗑️ অর্ডার ডিলিট হয়েছে!','success');
+  }catch(e){
+    console.error('deleteOurDeliveryOrder error:',e);
+    showToast('❌ ডিলিট ব্যর্থ: '+(e.message||''),'error');
+  }
 }
 
 function filterMerchantDstmOrders(q){
@@ -2267,6 +2301,7 @@ function renderOurDeliveryOrders(list){
         '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="Seller Info"><i class="fas fa-user"></i></button>' +
         '<button onclick="openDstmOrderDetailAdmin(\''+o.id+'\')" style="background:#dbeafe;color:#1d4ed8;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="বিস্তারিত ও স্ট্যাটাস"><i class="fas fa-info-circle"></i> বিস্তারিত</button>' +
         '<button onclick="showCustomerAddressPopup(\''+o.id+'\',\'our\')" style="background:#fff7ed;color:#f57224;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="কাস্টমার ঠিকানা"><i class="fas fa-map-marker-alt"></i> ঠিকানা</button>' +
+        '<button onclick="deleteOurDeliveryOrder(\''+o.id+'\')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="ডিলিট করুন"><i class="fas fa-trash-alt"></i></button>' +
       '</div></td></tr>';
   });
   html += '</tbody></table>';
