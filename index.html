@@ -527,6 +527,21 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
               <label style="font-size:12px;font-weight:700">নোট (ঐচ্ছিক)</label>
               <div class="input-wrap"><i class="fas fa-sticky-note ico-top"></i><textarea id="parcel-note" placeholder="অতিরিক্ত নির্দেশনা..." style="height:55px;padding-left:36px;resize:none;padding-top:10px"></textarea></div>
             </div>
+            <!-- ══ ডেলিভারি অ্যাসাইনমেন্ট ══ -->
+            <div class="form-group">
+              <label style="font-size:12px;font-weight:700;color:#111">ডেলিভারি দেবে কে? *</label>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+                <label id="parcel-assign-dstm-label" style="display:flex;align-items:center;gap:10px;background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:11px 14px;cursor:pointer;transition:.2s" onclick="selectParcelAssign('dstm')">
+                  <div style="width:20px;height:20px;border-radius:50%;border:2px solid #00a651;display:flex;align-items:center;justify-content:center;flex-shrink:0" id="parcel-assign-radio-dstm"><div style="width:10px;height:10px;border-radius:50%;background:#00a651;display:none" id="parcel-assign-dot-dstm"></div></div>
+                  <div><div style="font-size:13px;font-weight:700;color:#16a34a"><i class="fas fa-truck"></i> আমাদের মাধ্যমে ডেলিভারি</div><div style="font-size:11px;color:#6b7280;margin-top:2px">Digital Shop TM ডেলিভারি দেবে — অর্ডার সরাসরি DSTM-এ যাবে</div></div>
+                </label>
+                <label id="parcel-assign-self-label" style="display:flex;align-items:center;gap:10px;background:#faf5ff;border:2px solid #d8b4fe;border-radius:10px;padding:11px 14px;cursor:pointer;transition:.2s" onclick="selectParcelAssign('self')">
+                  <div style="width:20px;height:20px;border-radius:50%;border:2px solid #7c3aed;display:flex;align-items:center;justify-content:center;flex-shrink:0" id="parcel-assign-radio-self"><div style="width:10px;height:10px;border-radius:50%;background:#7c3aed;display:none" id="parcel-assign-dot-self"></div></div>
+                  <div><div style="font-size:13px;font-weight:700;color:#7c3aed"><i class="fas fa-user-circle"></i> মার্চেন্ট ডেলিভারি</div><div style="font-size:11px;color:#6b7280;margin-top:2px">মার্চেন্ট নিজে ডেলিভারি দেবে — Self Delivery-তে যাবে</div></div>
+                </label>
+              </div>
+              <input type="hidden" id="parcel-assign-type" value="">
+            </div>
             <button id="parcel-send-btn" onclick="sendParcel()" style="width:100%;background:linear-gradient(135deg,#7c3aed,#4338ca);color:white;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px"><i class="fas fa-paper-plane"></i> পাঠান</button>
           </div>
           <!-- RIGHT: Products List -->
@@ -667,6 +682,21 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
   <div class="modal" style="max-width:620px">
     <button class="modal-close" onclick="closeModal('product-detail-modal')"><i class="fas fa-times"></i></button>
     <div id="product-detail-content"></div>
+  </div>
+</div>
+
+<!-- CUSTOMER ADDRESS MODAL -->
+<div id="cust-addr-modal" class="modal-overlay" style="z-index:2000;">
+  <div class="modal" style="max-width:560px;padding:0;overflow:hidden;border-radius:16px;">
+    <div style="background:linear-gradient(135deg,#f57224,#d97706);padding:18px 22px;position:relative;display:flex;align-items:center;gap:12px;">
+      <button class="modal-close" onclick="closeModal('cust-addr-modal')" style="background:rgba(255,255,255,0.2);color:white;top:12px;right:12px;"><i class="fas fa-times"></i></button>
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-map-marker-alt"></i></div>
+      <div>
+        <div style="font-size:16px;font-weight:800;color:white">কাস্টমার ঠিকানা</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px">Customer Delivery Details</div>
+      </div>
+    </div>
+    <div id="cust-addr-modal-body" style="padding:20px 22px 24px;overflow-y:auto;max-height:75vh;scrollbar-width:none;"></div>
   </div>
 </div>
 
@@ -1614,6 +1644,28 @@ function clearParcelProduct(){
   renderParcelProducts(_allParcelProducts);
 }
 
+/* ══ Parcel Assign Select ══ */
+function selectParcelAssign(type){
+  document.getElementById('parcel-assign-type').value = type;
+  // DSTM
+  var dstmLabel = document.getElementById('parcel-assign-dstm-label');
+  var dstmDot = document.getElementById('parcel-assign-dot-dstm');
+  // Self
+  var selfLabel = document.getElementById('parcel-assign-self-label');
+  var selfDot = document.getElementById('parcel-assign-dot-self');
+  if(type === 'dstm'){
+    dstmLabel.style.borderColor = '#00a651'; dstmLabel.style.background = '#f0fdf4';
+    dstmDot.style.display = 'block';
+    selfLabel.style.borderColor = '#d8b4fe'; selfLabel.style.background = '#faf5ff';
+    selfDot.style.display = 'none';
+  } else {
+    selfLabel.style.borderColor = '#7c3aed'; selfLabel.style.background = '#f3e8ff';
+    selfDot.style.display = 'block';
+    dstmLabel.style.borderColor = '#86efac'; dstmLabel.style.background = '#f0fdf4';
+    dstmDot.style.display = 'none';
+  }
+}
+
 async function sendParcel(){
   if(!_selectedParcelProduct) return showToast('প্রথমে একটি পণ্য নির্বাচন করুন!','error');
   var qty = parseInt(document.getElementById('parcel-qty').value) || 1;
@@ -1622,33 +1674,98 @@ async function sendParcel(){
   var address = document.getElementById('parcel-address').value.trim();
   var delivType = document.getElementById('parcel-delivery-type').value;
   var note = document.getElementById('parcel-note').value.trim();
+  var assignType = document.getElementById('parcel-assign-type').value; // 'dstm' or 'self' or ''
   if(!custName || !custPhone || !address) return showToast('কাস্টমারের নাম, মোবাইল ও ঠিকানা দিন!','error');
+  if(!assignType) return showToast('ডেলিভারি পদ্ধতি নির্বাচন করুন (আমাদের / মার্চেন্ট)!','error');
   var btn = document.getElementById('parcel-send-btn');
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
   try{
     var p = _selectedParcelProduct;
     var orderId = 'ORD-' + Date.now();
+    // assignType অনুযায়ী status ও deliveryMode সেট
+    var orderStatus, deliveryMode;
+    if(assignType === 'dstm'){
+      orderStatus = 'confirmed';  // সরাসরি DSTM orders-এ
+      deliveryMode = 'dstm';
+    } else {
+      orderStatus = 'self-delivery'; // সরাসরি Self Delivery-তে
+      deliveryMode = 'self';
+    }
     var orderData = {
       orderId, sksId: p.sksId, productId: p.id, productName: p.name,
       productPrice: p.price, imageUrl: p.imageUrl || '',
       qty, custName, custPhone, deliveryAddress: address,
       deliveryType: delivType, note,
       merchantUid: p.merchantUid, merchantName: p.merchantName || '', shopName: p.shopName || '',
-      status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status: orderStatus, deliveryMode: deliveryMode,
+      adminAssigned: true, // admin নিজে assign করেছে
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       createdBy: 'admin'
     };
     await db.collection('orders').doc(orderId).set(orderData);
-    showToast('অর্ডার সফলভাবে পাঠানো হয়েছে!','success');
+    var msg = assignType === 'dstm'
+      ? 'অর্ডার সফল! Digital Shop TM ডেলিভারি করবে ✅'
+      : 'অর্ডার সফল! মার্চেন্ট নিজে ডেলিভারি দেবে ✅';
+    showToast(msg,'success');
     // Reset form
     document.getElementById('parcel-qty').value = '1';
     document.getElementById('parcel-cust-name').value = '';
     document.getElementById('parcel-cust-phone').value = '';
     document.getElementById('parcel-address').value = '';
     document.getElementById('parcel-note').value = '';
+    document.getElementById('parcel-assign-type').value = '';
+    // radio reset
+    document.getElementById('parcel-assign-dot-dstm').style.display='none';
+    document.getElementById('parcel-assign-dot-self').style.display='none';
+    document.getElementById('parcel-assign-dstm-label').style.borderColor='#86efac';
+    document.getElementById('parcel-assign-self-label').style.borderColor='#d8b4fe';
     clearParcelProduct();
     loadOrderDetails();
+    if(assignType === 'dstm') loadOurDeliveryOrders();
+    else loadCustomerDeliveryOrders();
   }catch(e){ showToast('পাঠাতে ব্যর্থ হয়েছে!','error'); console.error(e); }
   btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> পাঠান';
+}
+
+/* ══ Customer Address Popup ══ */
+function showCustomerAddressPopup(orderId, source){
+  var list;
+  if(source === 'customer') list = _allCustomerDeliveryOrders;
+  else if(source === 'our') list = _allOurDeliveryOrders;
+  else if(source === 'dstm') list = _allMerchantDstmOrders;
+  else if(source === 'self') list = _allMerchantSelfDeliveryOrders;
+  else if(source === 'orders') list = _allMerchantOrders;
+  else list = _allOrderDetails;
+  var o = list.find(function(x){ return x.id === orderId; });
+  if(!o){
+    // fallback: check all
+    o = (_allOrderDetails||[]).find(function(x){ return x.id === orderId; })
+      || (_allCustomerDeliveryOrders||[]).find(function(x){ return x.id === orderId; })
+      || (_allOurDeliveryOrders||[]).find(function(x){ return x.id === orderId; })
+      || (_allMerchantDstmOrders||[]).find(function(x){ return x.id === orderId; })
+      || (_allMerchantSelfDeliveryOrders||[]).find(function(x){ return x.id === orderId; });
+  }
+  if(!o) return showToast('অর্ডার তথ্য পাওয়া যায়নি!','error');
+  var delivModeLabel = (o.deliveryMode === 'dstm' || o.status === 'confirmed')
+    ? '<span style="background:#dcfce7;color:#16a34a;font-size:12px;font-weight:700;padding:3px 10px;border-radius:12px"><i class="fas fa-truck"></i> Digital Shop TM Delivery</span>'
+    : '<span style="background:#ede9fe;color:#7c3aed;font-size:12px;font-weight:700;padding:3px 10px;border-radius:12px"><i class="fas fa-user-circle"></i> Self Delivery</span>';
+  var dateStr = o.createdAt ? new Date(o.createdAt.seconds*1000).toLocaleString('bn-BD') : '-';
+  var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+  document.getElementById('cust-addr-modal-body').innerHTML =
+    '<div style="background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1px solid #fcd34d;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">' +
+    (firstImg ? '<img src="'+firstImg+'" style="width:52px;height:52px;object-fit:cover;border-radius:8px;flex-shrink:0">' : '<div style="width:52px;height:52px;background:#fde68a;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#d97706;font-size:20px"><i class="fas fa-box"></i></div>') +
+    '<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#111">'+o.productName+'</div>' +
+    '<div style="font-size:12px;color:#6b7280;margin-top:2px">৳'+o.productPrice+' &bull; SKS: '+(o.sksId||'-')+'</div>' +
+    '<div style="margin-top:5px">'+delivModeLabel+'</div></div></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">' +
+    '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:12px"><div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:4px"><i class="fas fa-user"></i> কাস্টমারের নাম</div><div style="font-weight:700;color:#111;font-size:14px">'+(o.custName||'-')+'</div></div>' +
+    '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:12px"><div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:4px"><i class="fas fa-phone"></i> মোবাইল নম্বর</div><div style="font-weight:700;color:#111;font-size:14px"><a href="tel:'+(o.custPhone||'')+'" style="color:#0284c7;text-decoration:none">'+(o.custPhone||'-')+'</a></div></div>' +
+    '<div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:12px;grid-column:1/-1"><div style="font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;margin-bottom:6px"><i class="fas fa-map-marker-alt"></i> ডেলিভারি ঠিকানা</div><div style="font-weight:600;color:#111;font-size:14px;line-height:1.6">'+(o.deliveryAddress||'-')+'</div></div>' +
+    '<div style="background:#f9fafb;border-radius:10px;padding:12px"><div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:4px"><i class="fas fa-store"></i> Merchant / Shop</div><div style="font-weight:600;color:#111">'+(o.shopName||o.merchantName||'-')+'</div></div>' +
+    '<div style="background:#f9fafb;border-radius:10px;padding:12px"><div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:4px"><i class="fas fa-calendar"></i> তারিখ</div><div style="font-weight:600;color:#111">'+dateStr+'</div></div>' +
+    (o.note ? '<div style="background:#f0fdf4;border-radius:10px;padding:12px;grid-column:1/-1"><div style="font-size:10px;color:#16a34a;font-weight:700;text-transform:uppercase;margin-bottom:4px"><i class="fas fa-sticky-note"></i> নোট</div><div style="color:#111">'+o.note+'</div></div>' : '') +
+    '</div>';
+  openModal('cust-addr-modal');
 }
 
 /* ══ Admin Order Details — only pending ══ */
@@ -1743,7 +1860,8 @@ async function loadMerchantOrders(){
     var snap = await db.collection('orders').where('merchantUid','==',currentUser.uid).get();
     _allMerchantOrders = [];
     snap.forEach(function(d){ _allMerchantOrders.push({id:d.id,...d.data()}); });
-    _allMerchantOrders = _allMerchantOrders.filter(function(o){ return o.status === 'pending'; });
+    // admin-assigned অর্ডার merchant-এর Orders পপে দেখাবে না
+    _allMerchantOrders = _allMerchantOrders.filter(function(o){ return o.status === 'pending' && !o.adminAssigned; });
     _allMerchantOrders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
     renderMerchantOrders(_allMerchantOrders);
   }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
@@ -1765,6 +1883,7 @@ function renderMerchantOrders(orders){
       '<div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">' +
         '<button onclick="merchantConfirmOrder(\''+o.id+'\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-check"></i> কনফার্ম</button>' +
         '<button onclick="merchantCancelOrder(\''+o.id+'\')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-times"></i> ক্যান্সেল</button>' +
+        '<button onclick="showCustomerAddressPopup(\''+o.id+'\',\'orders\')" style="background:#fff7ed;color:#f57224;border:none;border-radius:7px;padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-map-marker-alt"></i> ঠিকানা</button>' +
       '</div>' +
     '</div>';
   });
@@ -1786,8 +1905,18 @@ async function merchantCancelOrder(orderId){
 }
 
 function merchantConfirmOrder(orderId){
-  // Show delivery choice modal
   document.getElementById('confirm-order-id').value = orderId;
+  // কাস্টমার তথ্য modal-এ দেখাও
+  var o = _allMerchantOrders.find(function(x){ return x.id === orderId; });
+  var infoBox = document.getElementById('confirm-modal-cust-info');
+  if(o && (o.custName || o.custPhone || o.deliveryAddress)){
+    document.getElementById('confirm-modal-cust-name').textContent = o.custName || '-';
+    document.getElementById('confirm-modal-cust-phone').innerHTML = '<i class="fas fa-phone" style="font-size:11px"></i> ' + (o.custPhone || '-');
+    document.getElementById('confirm-modal-cust-addr').innerHTML = '<i class="fas fa-map-marker-alt" style="font-size:11px;color:#f57224"></i> ' + (o.deliveryAddress || '-');
+    infoBox.style.display = 'block';
+  } else {
+    infoBox.style.display = 'none';
+  }
   openModal('confirm-order-modal');
 }
 
@@ -1840,6 +1969,7 @@ function renderMerchantDstmOrders(orders){
         '<div style="font-size:12px;color:#374151;margin-top:2px">'+o.custName+' &bull; '+o.deliveryAddress+'</div>' +
         '<span style="background:#dcfce7;color:#16a34a;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;margin-top:4px;display:inline-block"><i class="fas fa-store"></i> Digital Shop TM</span>' +
       '</div>' +
+      '<div style="flex-shrink:0"><button onclick="showCustomerAddressPopup(\''+o.id+'\',\'dstm\')" style="background:#fff7ed;color:#f57224;border:2px solid #fed7aa;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px"><i class="fas fa-map-marker-alt"></i> কাস্টমার ঠিকানা</button></div>' +
     '</div>';
   });
   html += '</div>';
@@ -1884,6 +2014,7 @@ function renderMerchantSelfDeliveryOrders(orders){
         '<div style="font-size:12px;color:#374151;margin-top:2px">ঠিকানা: '+o.deliveryAddress+'</div>' +
         '<span style="background:#ede9fe;color:#7c3aed;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;margin-top:4px;display:inline-block"><i class="fas fa-user-circle"></i> Self Delivery</span>' +
       '</div>' +
+      '<div style="flex-shrink:0"><button onclick="showCustomerAddressPopup(\''+o.id+'\',\'self\')" style="background:#fff7ed;color:#f57224;border:2px solid #fed7aa;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px"><i class="fas fa-map-marker-alt"></i> কাস্টমার ঠিকানা</button></div>' +
     '</div>';
   });
   html += '</div>';
@@ -1932,9 +2063,10 @@ function renderCustomerDeliveryOrders(list){
       '<td style="font-size:12px">'+o.custName+'<br><span style="color:#6b7280">'+o.custPhone+'</span></td>' +
       '<td style="font-size:12px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+o.deliveryAddress+'</td>' +
       '<td style="font-size:12px;white-space:nowrap">'+dateStr+'</td>' +
-      '<td style="white-space:nowrap"><div style="display:flex;gap:4px">' +
-        '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-user"></i></button>' +
-        '<button onclick="adminViewOrderFull(\''+o.id+'\',\'customer\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-info-circle"></i></button>' +
+      '<td style="white-space:nowrap"><div style="display:flex;gap:4px;flex-wrap:wrap">' +
+        '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="Seller Info"><i class="fas fa-user"></i></button>' +
+        '<button onclick="adminViewOrderFull(\''+o.id+'\',\'customer\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="বিস্তারিত"><i class="fas fa-info-circle"></i></button>' +
+        '<button onclick="showCustomerAddressPopup(\''+o.id+'\',\'customer\')" style="background:#fff7ed;color:#f57224;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="কাস্টমার ঠিকানা"><i class="fas fa-map-marker-alt"></i> ঠিকানা</button>' +
       '</div></td></tr>';
   });
   html += '</tbody></table>';
@@ -1983,9 +2115,10 @@ function renderOurDeliveryOrders(list){
       '<td style="font-size:12px">'+o.custName+'<br><span style="color:#6b7280">'+o.custPhone+'</span></td>' +
       '<td style="font-size:12px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+o.deliveryAddress+'</td>' +
       '<td style="font-size:12px;white-space:nowrap">'+dateStr+'</td>' +
-      '<td style="white-space:nowrap"><div style="display:flex;gap:4px">' +
-        '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-user"></i></button>' +
-        '<button onclick="adminViewOrderFull(\''+o.id+'\',\'our\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer"><i class="fas fa-info-circle"></i></button>' +
+      '<td style="white-space:nowrap"><div style="display:flex;gap:4px;flex-wrap:wrap">' +
+        '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="Seller Info"><i class="fas fa-user"></i></button>' +
+        '<button onclick="adminViewOrderFull(\''+o.id+'\',\'our\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="বিস্তারিত"><i class="fas fa-info-circle"></i></button>' +
+        '<button onclick="showCustomerAddressPopup(\''+o.id+'\',\'our\')" style="background:#fff7ed;color:#f57224;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="কাস্টমার ঠিকানা"><i class="fas fa-map-marker-alt"></i> ঠিকানা</button>' +
       '</div></td></tr>';
   });
   html += '</tbody></table>';
@@ -2526,6 +2659,13 @@ function addEpImagePreviewThumb(url){
     <div class="modal-icon" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-truck"></i></div>
     <h2 style="color:#111;">ডেলিভারি পদ্ধতি নির্বাচন করুন</h2>
     <p style="text-align:center;font-size:14px;color:#6b7280;margin-bottom:20px">কীভাবে ডেলিভারি দিতে চান?</p>
+    <!-- Customer address quick view -->
+    <div id="confirm-modal-cust-info" style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:11px 14px;margin-bottom:14px;font-size:13px;display:none">
+      <div style="font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;margin-bottom:6px"><i class="fas fa-map-marker-alt"></i> কাস্টমার ঠিকানা</div>
+      <div id="confirm-modal-cust-name" style="font-weight:700;color:#111;margin-bottom:3px"></div>
+      <div id="confirm-modal-cust-phone" style="color:#0284c7;margin-bottom:3px"></div>
+      <div id="confirm-modal-cust-addr" style="color:#374151;line-height:1.5"></div>
+    </div>
     <div style="display:flex;flex-direction:column;gap:10px">
       <button onclick="merchantConfirmDelivery('dstm')" style="background:linear-gradient(135deg,#00a651,#007a3d);color:white;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:10px;justify-content:center">
         <i class="fas fa-store" style="font-size:18px"></i>
