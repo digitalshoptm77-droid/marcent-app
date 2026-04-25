@@ -367,54 +367,12 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="section-withdraw" class="content-section">
         <div class="sec-heading">Withdraw</div>
-        <div class="white-card">
-          <div style="background:linear-gradient(135deg,#ede9fe,#ddd6fe);border:2px solid #a78bfa;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
-            <i class="fas fa-info-circle" style="color:#7c3aed;font-size:18px;flex-shrink:0"></i>
-            <div style="font-size:13px;color:#5b21b6;font-weight:600">ন্যূনতম ৳৫০ ব্যালেন্স থাকলে Withdraw করা যাবে। সাবমিট করলে ব্যালেন্স ০ হয়ে যাবে।</div>
-          </div>
-          <div class="form-group"><label>আপনার নাম *</label><div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="wd-name" placeholder="আপনার পূর্ণ নাম"></div></div>
-          <div class="form-group">
-            <label>পেমেন্ট পদ্ধতি *</label>
-            <div class="input-wrap"><i class="fas fa-mobile-alt ico"></i>
-              <select id="wd-method">
-                <option value="">-- নির্বাচন করুন --</option>
-                <option value="nagad">নগদ</option>
-                <option value="bkash">বিকাশ</option>
-                <option value="upay">উপায়</option>
-                <option value="rocket">রকেট</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group"><label>মোবাইল নম্বর *</label><div class="input-wrap"><i class="fas fa-phone ico"></i><input type="text" id="wd-phone" placeholder="01XXXXXXXXX"></div></div>
-          <div id="wd-error" class="err-box"></div>
-          <button class="btn btn-primary" onclick="submitWithdraw()"><i class="fas fa-paper-plane"></i> সাবমিট করুন</button>
-          <div style="margin-top:20px">
-            <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px"><i class="fas fa-history" style="color:#7c3aed"></i> Withdraw ইতিহাস</div>
-            <div id="merchant-withdraw-history"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
-          </div>
-        </div>
+        <div class="white-card"><div class="empty-state"><i class="fas fa-wallet"></i><p>Withdraw feature coming soon.</p></div></div>
       </div>
 
       <div id="section-add-money" class="content-section">
         <div class="sec-heading">Add Money</div>
-        <div class="white-card">
-          <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #86efac;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
-            <div style="width:44px;height:44px;background:#16a34a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-mobile-alt"></i></div>
-            <div>
-              <div style="font-size:12px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.5px">আমাদের নগদ নম্বর</div>
-              <div style="font-size:22px;font-weight:800;color:#16a34a;letter-spacing:1px">01329885689</div>
-              <div style="font-size:12px;color:#6b7280;margin-top:2px">এই নম্বরে টাকা পাঠিয়ে নিচে TrxID দিন</div>
-            </div>
-          </div>
-          <div class="form-group"><label>টাকার পরিমাণ (৳) *</label><div class="input-wrap"><i class="fas fa-coins ico"></i><input type="number" id="am-amount" placeholder="0.00"></div></div>
-          <div class="form-group"><label>Transaction ID (TrxID) *</label><div class="input-wrap"><i class="fas fa-hashtag ico"></i><input type="text" id="am-trxid" placeholder="নগদ TrxID লিখুন"></div></div>
-          <div id="am-error" class="err-box"></div>
-          <button class="btn btn-primary" onclick="submitAddMoney()"><i class="fas fa-plus-circle"></i> এড করুন</button>
-          <div style="margin-top:20px">
-            <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px"><i class="fas fa-history" style="color:#16a34a"></i> Add Money ইতিহাস</div>
-            <div id="merchant-addmoney-history"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
-          </div>
-        </div>
+        <div class="white-card"><div class="empty-state"><i class="fas fa-plus-circle"></i><p>Add Money feature coming soon.</p></div></div>
       </div>
 
       <div id="section-pickup" class="content-section">
@@ -433,7 +391,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
 
       <div id="section-returns" class="content-section">
         <div class="sec-heading">Returns</div>
-        <div class="empty-state"><i class="fas fa-undo"></i><p>No returns yet.</p></div>
+        <div class="search-bar" style="margin-bottom:14px"><i class="fas fa-search"></i><input type="text" id="merchant-returns-search" placeholder="পণ্যের নাম বা SKS ID দিয়ে খুঁজুন..." oninput="filterMerchantReturns(this.value)" style="padding-left:36px"></div>
+        <div class="table-card"><div id="merchant-returns-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
       </div>
 
       <div id="section-support" class="content-section">
@@ -465,7 +424,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="sidebar-item active" data-admin-section="dashboard"><i class="fas fa-th-large"></i> Dashboard</div>
       <div class="sidebar-item" data-admin-section="new-merchants"><i class="fas fa-user-plus"></i> New Merchants <span id="new-merchant-count" style="background:var(--danger);color:white;border-radius:12px;padding:2px 8px;font-size:11px;margin-left:auto">0</span></div>
       <div class="sidebar-item" data-admin-section="merchant-details"><i class="fas fa-users"></i> Merchant Details</div>
-      <div class="sidebar-item" data-admin-section="transactions"><i class="fas fa-exchange-alt"></i> আদান-প্রদান</div>
       <div class="sidebar-item" data-admin-section="published-products"><i class="fas fa-boxes"></i> Published Products</div>
       <div class="sidebar-item" data-admin-section="approval-products"><i class="fas fa-clipboard-check"></i> Approval Products</div>
       <div class="sidebar-item" data-admin-section="parcels"><i class="fas fa-box"></i> Add Parcel</div>
@@ -502,7 +460,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
           <div class="dash-card" onclick="showAdminSection('edit-parcel')"><div class="dash-card-icon bg-teal"><i class="fas fa-user-check"></i></div><h4>কাস্টমার ডেলিভারি দিবেন</h4></div>
           <div class="dash-card" onclick="showAdminSection('our-delivery')"><div class="dash-card-icon bg-green"><i class="fas fa-truck"></i></div><h4>আমাদের মাধ্যমে ডেলিভারি</h4></div>
           <div class="dash-card" onclick="showAdminSection('order-details')"><div class="dash-card-icon bg-indigo"><i class="fas fa-list-alt"></i></div><h4>User Order Details</h4></div>
-          <div class="dash-card" onclick="showAdminSection('transactions')"><div class="dash-card-icon bg-teal"><i class="fas fa-exchange-alt"></i></div><h4>আদান-প্রদান</h4></div>
         </div>
       </div>
 
@@ -613,24 +570,6 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
         <div class="sec-heading">User Order Details</div>
         <div class="search-bar" style="margin-bottom:14px"><i class="fas fa-search"></i><input type="text" id="order-details-search" placeholder="SKS ID দিয়ে অর্ডার খুঁজুন..." oninput="filterOrderDetails(this.value)" style="padding-left:36px"></div>
         <div class="table-card"><div id="order-details-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div></div>
-      </div>
-
-      <div id="admin-section-transactions" class="content-section">
-        <div class="sec-heading">আদান-প্রদান</div>
-        <!-- ফিল্টার বাটন -->
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
-          <button id="txn-filter-all" onclick="setTxnFilter('all')" style="background:#1a1a2e;color:white;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">সব</button>
-          <button id="txn-filter-add" onclick="setTxnFilter('add_money')" style="background:#f3f4f6;color:#374151;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit"><i class="fas fa-plus-circle" style="color:#16a34a"></i> Add Money</button>
-          <button id="txn-filter-withdraw" onclick="setTxnFilter('withdraw')" style="background:#f3f4f6;color:#374151;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit"><i class="fas fa-wallet" style="color:#7c3aed"></i> Withdraw</button>
-          <button onclick="showAdminSection('confirmed-transactions')" style="background:linear-gradient(135deg,#16a34a,#15803d);color:white;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:auto"><i class="fas fa-check-double"></i> কনফার্ম/রিজেক্ট সাবমিশন</button>
-        </div>
-        <div id="admin-transactions-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
-      </div>
-
-      <div id="admin-section-confirmed-transactions" class="content-section">
-        <div class="sec-heading">কনফার্ম / রিজেক্ট সাবমিশন</div>
-        <button onclick="showAdminSection('transactions')" style="background:#f3f4f6;color:#374151;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px;display:flex;align-items:center;gap:6px"><i class="fas fa-arrow-left"></i> ফিরে যান</button>
-        <div id="admin-confirmed-transactions-list"><div class="loader"><i class="fas fa-spinner"></i>Loading...</div></div>
       </div>
 
     </div>
@@ -959,12 +898,11 @@ function showUserSection(name){
   if(name==='orders')loadMerchantOrders();
   if(name==='dstm-orders')loadMerchantDstmOrders();
   if(name==='delivery')loadMerchantSelfDeliveryOrders();
-  if(name==='add-money')loadMerchantAddMoneyHistory();
-  if(name==='withdraw')loadMerchantWithdrawHistory();
+  if(name==='returns')loadMerchantReturns();
   if(name==='add-product'){var ok=currentUser&&currentUser.status==='active';document.getElementById('add-product-locked').style.display=ok?'none':'block';document.getElementById('add-product-form').style.display=ok?'block':'none';if(ok)refreshSKS();}
 }
 
-var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','approval-products':'Approval Products','parcels':'Add Parcel','edit-parcel':'কাস্টমার ডেলিভারি দিবেন','our-delivery':'আমাদের মাধ্যমে ডেলিভারি','order-details':'User Order Details','transactions':'আদান-প্রদান','confirmed-transactions':'কনফার্ম / রিজেক্ট সাবমিশন'};
+var aT={'dashboard':'Admin Dashboard','new-merchants':'New Merchants','merchant-details':'Merchant Details','published-products':'Published Products','approval-products':'Approval Products','parcels':'Add Parcel','edit-parcel':'কাস্টমার ডেলিভারি দিবেন','our-delivery':'আমাদের মাধ্যমে ডেলিভারি','order-details':'User Order Details'};
 function showAdminSection(name){
   document.querySelectorAll('#page-admin-dashboard .content-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#admin-sidebar .sidebar-item').forEach(s=>s.classList.remove('active'));
@@ -980,8 +918,6 @@ function showAdminSection(name){
   if(name==='order-details')loadOrderDetails();
   if(name==='edit-parcel')loadCustomerDeliveryOrders();
   if(name==='our-delivery')loadOurDeliveryOrders();
-  if(name==='transactions'){_txnFilter='all';loadAdminTransactions();}
-  if(name==='confirmed-transactions')loadConfirmedTransactions();
 }
 
 auth.onAuthStateChanged(async function(user){
@@ -2533,6 +2469,7 @@ function renderCustomerDeliveryOrders(list){
         '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="Seller Info"><i class="fas fa-user"></i></button>' +
         '<button onclick="openSelfOrderDetail(\''+o.id+'\',\'admin\')" style="background:#dcfce7;color:#16a34a;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="বিস্তারিত"><i class="fas fa-info-circle"></i> বিস্তারিত</button>' +
         '<button onclick="showCustomerAddressPopup(\''+o.id+'\',\'customer\')" style="background:#fff7ed;color:#f57224;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="কাস্টমার ঠিকানা"><i class="fas fa-map-marker-alt"></i> ঠিকানা</button>' +
+        '<button onclick="openAdminReturnModal(\''+o.id+'\',\'customer\')" style="background:#fdf4ff;color:#a21caf;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="পণ্য রিটার্ন"><i class="fas fa-undo-alt"></i> রিটার্ন</button>' +
         '<button onclick="deleteSelfDeliveryOrder(\''+o.id+'\',\'customer\')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="ডিলিট"><i class="fas fa-trash-alt"></i></button>' +
       '</div></td></tr>';
   });
@@ -2586,6 +2523,7 @@ function renderOurDeliveryOrders(list){
         '<button onclick="viewSellerDetails(\''+o.merchantUid+'\')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="Seller Info"><i class="fas fa-user"></i></button>' +
         '<button onclick="openDstmOrderDetailAdmin(\''+o.id+'\')" style="background:#dbeafe;color:#1d4ed8;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="বিস্তারিত ও স্ট্যাটাস"><i class="fas fa-info-circle"></i> বিস্তারিত</button>' +
         '<button onclick="showCustomerAddressPopup(\''+o.id+'\',\'our\')" style="background:#fff7ed;color:#f57224;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="কাস্টমার ঠিকানা"><i class="fas fa-map-marker-alt"></i> ঠিকানা</button>' +
+        '<button onclick="openAdminReturnModal(\''+o.id+'\',\'our\')" style="background:#fdf4ff;color:#a21caf;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="পণ্য রিটার্ন"><i class="fas fa-undo-alt"></i> রিটার্ন</button>' +
         '<button onclick="deleteOurDeliveryOrder(\''+o.id+'\')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:600;cursor:pointer" title="ডিলিট করুন"><i class="fas fa-trash-alt"></i></button>' +
       '</div></td></tr>';
   });
@@ -2970,7 +2908,302 @@ async function saveEditProduct(){
   }catch(e){showToast('Update failed!','error');}
 }
 
-/* ══ Edit Product Image Upload ══ */
+/* ══════════════════════════════════════════
+   RETURN SYSTEM
+   ══════════════════════════════════════════ */
+
+var _returnCurrentOrder = null;
+var _returnCurrentSource = null;
+var _returnUploadedImgs = [];
+
+function handleReturnImgUpload(input){
+  var files = Array.from(input.files);
+  if(_returnUploadedImgs.length + files.length > 5){ showToast('সর্বোচ্চ ৫টি ছবি আপলোড করা যাবে!','warning'); return; }
+  files.forEach(function(file){
+    if(_returnUploadedImgs.length >= 5) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      _returnUploadedImgs.push(e.target.result);
+      addReturnImgThumb(e.target.result, _returnUploadedImgs.length - 1);
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function handleReturnImgDrop(e){
+  e.preventDefault();
+  document.getElementById('return-img-upload-area').style.borderColor='#fed7aa';
+  var files = Array.from(e.dataTransfer.files).filter(function(f){ return f.type.startsWith('image/'); });
+  if(!files.length) return;
+  var fakeInput = {files: files};
+  handleReturnImgUpload(fakeInput);
+}
+
+function addReturnImgThumb(src, idx){
+  var grid = document.getElementById('return-img-preview-grid');
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:relative;width:70px;height:70px;border-radius:8px;overflow:hidden;border:2px solid #fed7aa;flex-shrink:0';
+  wrap.innerHTML = '<img src="'+src+'" style="width:100%;height:100%;object-fit:cover;display:block">' +
+    '<button onclick="removeReturnImg('+idx+',this.parentNode)" style="position:absolute;top:2px;right:2px;background:rgba(220,38,38,.85);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><i class="fas fa-times"></i></button>';
+  grid.appendChild(wrap);
+}
+
+function removeReturnImg(idx, el){
+  _returnUploadedImgs.splice(idx, 1);
+  el.remove();
+  // re-index remove buttons
+  var btns = document.getElementById('return-img-preview-grid').querySelectorAll('button');
+  btns.forEach(function(b, i){ b.setAttribute('onclick','removeReturnImg('+i+',this.parentNode)'); });
+}
+
+function openAdminReturnModal(orderId, source){
+  var list = source === 'customer' ? _allCustomerDeliveryOrders : _allOurDeliveryOrders;
+  var o = list.find(function(x){ return x.id === orderId; });
+  if(!o) return showToast('অর্ডার পাওয়া যায়নি!','error');
+  _returnCurrentOrder = o;
+  _returnCurrentSource = source;
+
+  var firstImg = o.imageUrl ? o.imageUrl.split(',')[0].trim() : '';
+
+  // ছবি সেট করা
+  var imgEl = document.getElementById('return-modal-img');
+  if(firstImg){ imgEl.src = firstImg; imgEl.style.display = 'block'; }
+  else { imgEl.style.display = 'none'; }
+
+  // তথ্য পপুলেট
+  document.getElementById('return-modal-prod-name').textContent = o.productName || '-';
+  document.getElementById('return-modal-prod-price').textContent = '৳' + (o.productPrice || '-');
+  document.getElementById('return-modal-sks').textContent = 'SKS: ' + (o.sksId || '-');
+  document.getElementById('return-modal-cust-name').textContent = o.custName || '-';
+  document.getElementById('return-modal-cust-phone').textContent = o.custPhone || '-';
+  document.getElementById('return-modal-cust-addr').textContent = o.deliveryAddress || '-';
+  document.getElementById('return-modal-shop').innerHTML = '<i class="fas fa-store" style="color:#a21caf"></i> ' + (o.shopName || o.merchantName || '-');
+  document.getElementById('return-modal-order-id').textContent = o.orderId || o.id;
+
+  // ফর্ম রিসেট
+  document.getElementById('return-reason-input').value = '';
+  document.getElementById('return-details-input').value = '';
+  // কাস্টমার তথ্য প্রি-ফিল (অর্ডার থেকে)
+  document.getElementById('return-cust-name-input').value = o.custName || '';
+  document.getElementById('return-cust-phone-input').value = o.custPhone || '';
+  document.getElementById('return-cust-addr-input').value = o.deliveryAddress || '';
+  // ছবি রিসেট
+  _returnUploadedImgs = [];
+  document.getElementById('return-img-preview-grid').innerHTML = '';
+  document.getElementById('return-submit-msg').style.display = 'none';
+
+  openModal('admin-return-modal');
+}
+
+async function submitAdminReturn(){
+  var o = _returnCurrentOrder;
+  if(!o) return;
+  var reason = document.getElementById('return-reason-input').value.trim();
+  var details = document.getElementById('return-details-input').value.trim();
+  var custName = document.getElementById('return-cust-name-input').value.trim();
+  var custPhone = document.getElementById('return-cust-phone-input').value.trim();
+  var custAddr = document.getElementById('return-cust-addr-input').value.trim();
+  if(!reason){ showToast('রিটার্নের কারণ লিখুন!','warning'); return; }
+
+  var btn = document.getElementById('return-send-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
+
+  try{
+    var returnData = {
+      orderId: o.orderId || o.id,
+      orderDocId: o.id,
+      sksId: o.sksId || '',
+      productName: o.productName || '',
+      productPrice: o.productPrice || '',
+      productId: o.productId || '',
+      imageUrl: o.imageUrl || '',
+      returnImageUrls: _returnUploadedImgs.join(','),
+      custName: custName || o.custName || '',
+      custPhone: custPhone || o.custPhone || '',
+      deliveryAddress: custAddr || o.deliveryAddress || '',
+      merchantUid: o.merchantUid || '',
+      shopName: o.shopName || o.merchantName || '',
+      returnReason: reason,
+      returnDetails: details,
+      returnStatus: 'pending',
+      source: _returnCurrentSource,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdBy: 'admin'
+    };
+    await db.collection('returns').add(returnData);
+
+    // অর্ডারে returnStatus আপডেট
+    await db.collection('orders').doc(o.id).update({ returnStatus: 'pending', returnReason: reason });
+
+    document.getElementById('return-submit-msg').style.display = 'flex';
+    showToast('✅ রিটার্ন সফলভাবে মার্চেন্টের কাছে পাঠানো হয়েছে!','success');
+
+    // Merchant returns reload করা
+    if(typeof loadMerchantReturns === 'function') loadMerchantReturns();
+
+    setTimeout(function(){ closeModal('admin-return-modal'); }, 2000);
+  }catch(e){
+    showToast('❌ রিটার্ন পাঠাতে ব্যর্থ: '+(e.message||''),'error');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-paper-plane"></i> মার্চেন্টের কাছে পাঠান';
+}
+
+/* ══ Merchant: Returns Section ══ */
+var _allMerchantReturns = [];
+async function loadMerchantReturns(){
+  if(!currentUser) return;
+  var c = document.getElementById('merchant-returns-list');
+  if(!c) return;
+  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
+  try{
+    var snap = await db.collection('returns').where('merchantUid','==',currentUser.uid).get();
+    _allMerchantReturns = [];
+    snap.forEach(function(d){ _allMerchantReturns.push({id:d.id,...d.data()}); });
+    _allMerchantReturns.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
+    renderMerchantReturns(_allMerchantReturns);
+  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
+}
+
+function renderMerchantReturns(list){
+  var c = document.getElementById('merchant-returns-list');
+  if(!list.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-undo"></i><p>কোনো রিটার্ন অর্ডার নেই</p></div>'; return; }
+  var html = '<div style="display:flex;flex-direction:column;gap:12px;padding:16px">';
+  list.forEach(function(r){
+    var firstImg = r.imageUrl ? r.imageUrl.split(',')[0].trim() : '';
+    var statusInfo = r.returnStatus === 'accepted'
+      ? {bg:'#dcfce7',color:'#16a34a',label:'গ্রহণ করা হয়েছে',icon:'fa-check-circle'}
+      : r.returnStatus === 'rejected'
+      ? {bg:'#fee2e2',color:'#dc2626',label:'বাতিল হয়েছে',icon:'fa-times-circle'}
+      : {bg:'#fef3c7',color:'#d97706',label:'পেন্ডিং',icon:'fa-clock'};
+    var dateStr = r.createdAt ? new Date(r.createdAt.seconds*1000).toLocaleDateString('bn-BD',{day:'2-digit',month:'short',year:'numeric'}) : '-';
+
+    html +=
+      '<div style="background:white;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06)">' +
+        // হেডার — লাল ব্যান্ড
+        '<div style="background:linear-gradient(135deg,#a21caf,#7c3aed);padding:10px 16px;display:flex;align-items:center;justify-content:space-between">' +
+          '<div style="color:white;font-size:13px;font-weight:700"><i class="fas fa-undo-alt"></i> রিটার্ন রিকোয়েস্ট</div>' +
+          '<span style="background:'+statusInfo.bg+';color:'+statusInfo.color+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px"><i class="fas '+statusInfo.icon+'"></i> '+statusInfo.label+'</span>' +
+        '</div>' +
+        // বডি
+        '<div style="padding:14px;display:flex;gap:12px;align-items:flex-start">' +
+          (firstImg ? '<img src="'+firstImg+'" style="width:72px;height:72px;object-fit:cover;border-radius:10px;flex-shrink:0;border:2px solid #e5e7eb">' :
+            '<div style="width:72px;height:72px;background:#f3e8ff;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#a21caf;font-size:22px"><i class="fas fa-box-open"></i></div>') +
+          '<div style="flex:1;min-width:0">' +
+            '<div style="font-size:14px;font-weight:700;color:#111;margin-bottom:3px">'+r.productName+'</div>' +
+            '<div style="font-size:12px;color:#6b7280;margin-bottom:4px">৳'+r.productPrice+' &bull; SKS: '+(r.sksId||'-')+'</div>' +
+            '<div style="font-size:12px;color:#374151;margin-bottom:3px"><i class="fas fa-user" style="color:#a21caf;width:14px"></i> '+r.custName+' &bull; '+r.custPhone+'</div>' +
+            '<div style="font-size:12px;color:#374151;margin-bottom:6px"><i class="fas fa-map-marker-alt" style="color:#f57224;width:14px"></i> '+r.deliveryAddress+'</div>' +
+            '<div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:8px;padding:8px 10px;margin-bottom:6px">' +
+              '<div style="font-size:10px;color:#a21caf;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-comment-alt"></i> রিটার্নের কারণ</div>' +
+              '<div style="font-size:13px;color:#374151;font-weight:600">'+r.returnReason+'</div>' +
+              (r.returnDetails ? '<div style="font-size:12px;color:#6b7280;margin-top:3px">'+r.returnDetails+'</div>' : '') +
+            '</div>' +
+            '<div style="font-size:11px;color:#9ca3af">'+dateStr+'</div>' +
+          '</div>' +
+        '</div>' +
+        // ফুটার — অ্যাকশন বাটন
+        '<div style="padding:10px 14px;border-top:1px solid #f3f4f6;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fafafa">' +
+          '<button onclick="openMerchantReturnDetail(\''+r.id+'\')" style="background:linear-gradient(135deg,#a21caf,#7c3aed);color:white;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px"><i class="fas fa-eye"></i> বিস্তারিত</button>' +
+          '<div style="flex:1;font-size:12px;color:#dc2626;font-weight:600;display:flex;align-items:center;gap:5px"><i class="fas fa-exclamation-triangle"></i> দ্রুত এডমিন বা কাস্টমারের সাথে যোগাযোগ করুন</div>' +
+        '</div>' +
+      '</div>';
+  });
+  html += '</div>';
+  c.innerHTML = html;
+}
+
+function filterMerchantReturns(q){
+  if(!q) return renderMerchantReturns(_allMerchantReturns);
+  var low = q.toLowerCase();
+  renderMerchantReturns(_allMerchantReturns.filter(function(r){ return (r.sksId||'').toLowerCase().includes(low)||(r.productName||'').toLowerCase().includes(low); }));
+}
+
+function openMerchantReturnDetail(returnId){
+  var r = _allMerchantReturns.find(function(x){ return x.id === returnId; });
+  if(!r) return showToast('তথ্য পাওয়া যায়নি!','error');
+
+  // পণ্যের সব ছবি (আসল)
+  var prodImgs = r.imageUrl ? r.imageUrl.split(',').map(function(s){return s.trim();}).filter(Boolean) : [];
+  var firstProdImg = prodImgs[0] || '';
+
+  // রিটার্ন ছবি
+  var retImgs = r.returnImageUrls ? r.returnImageUrls.split(',').map(function(s){return s.trim();}).filter(Boolean) : [];
+
+  var dateStr = r.createdAt ? new Date(r.createdAt.seconds*1000).toLocaleString('bn-BD') : '-';
+
+  // পণ্যের ছবি গ্যালারি সেকশন
+  var imgSectionHtml =
+    '<div style="background:#fdf4ff;border:2px solid #e9d5ff;border-radius:12px;padding:14px;margin-bottom:14px">' +
+      // মূল বড় ছবি
+      '<div id="mrd-main-img-wrap" style="border-radius:10px;overflow:hidden;background:#f3e8ff;margin-bottom:10px;display:flex;align-items:center;justify-content:center;height:200px;">' +
+        (firstProdImg
+          ? '<img id="mrd-main-img" src="'+firstProdImg+'" style="width:100%;height:100%;object-fit:contain;display:block;cursor:zoom-in" onclick="openMrdImgViewer(this.src)">'
+          : '<div style="font-size:40px;color:#d8b4fe"><i class="fas fa-box-open"></i></div>') +
+      '</div>' +
+      // পণ্য নাম ও দাম
+      '<div style="font-size:15px;font-weight:700;color:#111;margin-bottom:3px">'+r.productName+'</div>' +
+      '<div style="font-size:13px;color:#6b7280;margin-bottom:8px">৳'+r.productPrice+' &bull; SKS: '+(r.sksId||'-')+'</div>' +
+      // পণ্যের থাম্বনেইল (একাধিক ছবি থাকলে)
+      (prodImgs.length > 1 ?
+        '<div style="font-size:10px;color:#a21caf;font-weight:700;text-transform:uppercase;margin-bottom:6px"><i class="fas fa-images"></i> পণ্যের ছবি সমূহ</div>' +
+        '<div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:'+(retImgs.length?'10px':'0')+'">'+
+          prodImgs.map(function(src,i){
+            return '<div onclick="document.getElementById(\'mrd-main-img\').src=\''+src+'\';document.querySelectorAll(\'.mrd-prod-thumb\').forEach(function(t){t.style.borderColor=\'#e9d5ff\'});this.style.borderColor=\'#a21caf\'" class="mrd-prod-thumb" style="width:52px;height:52px;border-radius:8px;overflow:hidden;border:2px solid '+(i===0?'#a21caf':'#e9d5ff')+';cursor:pointer;flex-shrink:0">'
+              + '<img src="'+src+'" style="width:100%;height:100%;object-fit:fill;display:block"></div>';
+          }).join('')+
+        '</div>' : '') +
+      // রিটার্ন ছবি থাম্বনেইল (আসল ছবির নিচে)
+      (retImgs.length ?
+        '<div style="border-top:1px solid #e9d5ff;padding-top:10px;margin-top:4px">' +
+          '<div style="font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;margin-bottom:6px"><i class="fas fa-camera"></i> রিটার্ন পণ্যের ছবি</div>' +
+          '<div style="display:flex;gap:7px;flex-wrap:wrap">'+
+            retImgs.map(function(src){
+              return '<div onclick="document.getElementById(\'mrd-main-img-wrap\').innerHTML=\'<img id=\\\"mrd-main-img\\\" src=\\\"'+src+'\\\" style=\\\"width:100%;height:100%;object-fit:contain;display:block;cursor:zoom-in\\\" onclick=\\\"openMrdImgViewer(this.src)\\\">\';" style="width:52px;height:52px;border-radius:8px;overflow:hidden;border:2px solid #fed7aa;cursor:pointer;flex-shrink:0">'
+                + '<img src="'+src+'" style="width:100%;height:100%;object-fit:fill;display:block"></div>';
+            }).join('')+
+          '</div>' +
+        '</div>' : '') +
+    '</div>';
+
+  document.getElementById('merchant-return-detail-body').innerHTML =
+    imgSectionHtml +
+    // গ্রিড তথ্য
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">' +
+      '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:10px"><div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-user"></i> কাস্টমার</div><div style="font-weight:700;color:#111">'+r.custName+'</div></div>' +
+      '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:9px;padding:10px"><div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-phone"></i> মোবাইল</div><div style="font-weight:700;color:#0284c7"><a href="tel:'+r.custPhone+'" style="color:inherit;text-decoration:none">'+r.custPhone+'</a></div></div>' +
+      '<div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:9px;padding:10px;grid-column:1/-1"><div style="font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-map-marker-alt"></i> ডেলিভারি ঠিকানা</div><div style="font-weight:600;color:#111;line-height:1.5">'+r.deliveryAddress+'</div></div>' +
+      '<div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:9px;padding:10px;grid-column:1/-1"><div style="font-size:10px;color:#a21caf;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-comment-alt"></i> রিটার্নের কারণ</div><div style="font-weight:600;color:#374151">'+r.returnReason+'</div>' + (r.returnDetails ? '<div style="font-size:12px;color:#6b7280;margin-top:4px">'+r.returnDetails+'</div>' : '') + '</div>' +
+      '<div style="background:#f9fafb;border-radius:9px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-store"></i> Shop</div><div style="font-weight:600;color:#111">'+r.shopName+'</div></div>' +
+      '<div style="background:#f9fafb;border-radius:9px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-calendar"></i> তারিখ</div><div style="font-weight:600;color:#111">'+dateStr+'</div></div>' +
+    '</div>' +
+    // সতর্কতা বার্তা
+    '<div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px">' +
+      '<i class="fas fa-exclamation-triangle" style="color:#dc2626;font-size:18px;flex-shrink:0"></i>' +
+      '<div style="font-size:13px;color:#dc2626;font-weight:600;line-height:1.5">দ্রুত এডমিন বা কাস্টমারের সাথে যোগাযোগ করুন এবং রিটার্ন পণ্যটি সংগ্রহ নিশ্চিত করুন।</div>' +
+    '</div>';
+
+  openModal('merchant-return-detail-modal');
+}
+
+// ছবি ফুলস্ক্রিন ভিউয়ার
+function openMrdImgViewer(src){
+  var overlay = document.getElementById('mrd-img-viewer-overlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'mrd-img-viewer-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';
+    overlay.onclick = function(){ overlay.style.display='none'; };
+    overlay.innerHTML = '<img id="mrd-viewer-img" src="" style="max-width:94vw;max-height:90vh;object-fit:contain;border-radius:10px;display:block"><button onclick="event.stopPropagation();document.getElementById(\'mrd-img-viewer-overlay\').style.display=\'none\'" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);color:white;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center">✕</button>';
+    document.body.appendChild(overlay);
+  }
+  document.getElementById('mrd-viewer-img').src = src;
+  overlay.style.display = 'flex';
+}
+
+
 var epUploadedImageUrls = [];
 
 function handleEpImgFiles(files){
@@ -3018,333 +3251,6 @@ function addEpImagePreviewThumb(url){
   del.onclick=function(){epUploadedImageUrls=epUploadedImageUrls.filter(function(u){return u!==url;});wrap.remove();};
   wrap.appendChild(img);wrap.appendChild(del);grid.appendChild(wrap);
 }
-
-/* ══════════════════════════════════════════
-   ADD MONEY & WITHDRAW SYSTEM
-   ══════════════════════════════════════════ */
-
-/* ── Merchant: Add Money Submit ── */
-async function submitAddMoney(){
-  var amount = parseFloat(document.getElementById('am-amount').value);
-  var trxid = document.getElementById('am-trxid').value.trim();
-  var errEl = document.getElementById('am-error');
-  errEl.style.display='none';
-  if(!amount || amount <= 0){ errEl.textContent='সঠিক পরিমাণ দিন!'; errEl.style.display='block'; return; }
-  if(!trxid){ errEl.textContent='TrxID দিন!'; errEl.style.display='block'; return; }
-  var btn = event.target; btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
-  try{
-    await db.collection('transactions').add({
-      type: 'add_money',
-      merchantUid: currentUser.uid,
-      merchantName: currentUser.fullName || '-',
-      shopName: currentUser.shopName || '-',
-      merchantId: currentUser.merchantId || '-',
-      amount: amount,
-      trxId: trxid,
-      nagadNumber: '01329885689',
-      status: 'pending',
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    document.getElementById('am-amount').value = '';
-    document.getElementById('am-trxid').value = '';
-    showToast('✅ সাবমিট হয়েছে! কিছু সময়ের মধ্যে টাকা এড হবে।', 'success');
-    loadMerchantAddMoneyHistory();
-  }catch(e){ errEl.textContent='সাবমিট ব্যর্থ: '+(e.message||''); errEl.style.display='block'; }
-  btn.disabled=false; btn.innerHTML='<i class="fas fa-plus-circle"></i> এড করুন';
-}
-
-async function loadMerchantAddMoneyHistory(){
-  if(!currentUser) return;
-  var c = document.getElementById('merchant-addmoney-history');
-  if(!c) return;
-  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
-  try{
-    var snap = await db.collection('transactions').where('merchantUid','==',currentUser.uid).where('type','==','add_money').get();
-    var list = [];
-    snap.forEach(function(d){ list.push({id:d.id,...d.data()}); });
-    list.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
-    if(!list.length){ c.innerHTML='<div class="empty-state" style="padding:20px"><i class="fas fa-history"></i><p>কোনো ইতিহাস নেই</p></div>'; return; }
-    var html = '<div style="display:flex;flex-direction:column;gap:8px">';
-    list.forEach(function(t){
-      var sc = t.status==='confirmed' ? {bg:'#dcfce7',color:'#16a34a',label:'কনফার্ম',icon:'fa-check-circle'}
-             : t.status==='rejected' ? {bg:'#fee2e2',color:'#dc2626',label:'রিজেক্ট',icon:'fa-times-circle'}
-             : {bg:'#fef3c7',color:'#d97706',label:'পেন্ডিং',icon:'fa-clock'};
-      var dateStr = t.createdAt ? new Date(t.createdAt.seconds*1000).toLocaleString('bn-BD') : '-';
-      html += '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px">' +
-        '<div style="width:40px;height:40px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#16a34a;font-size:16px"><i class="fas fa-plus-circle"></i></div>' +
-        '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#111">৳'+t.amount+'</div>' +
-        '<div style="font-size:12px;color:#6b7280">TrxID: '+t.trxId+' &bull; '+dateStr+'</div></div>' +
-        '<span style="background:'+sc.bg+';color:'+sc.color+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px"><i class="fas '+sc.icon+'"></i> '+sc.label+'</span>' +
-        '</div>';
-    });
-    html += '</div>';
-    c.innerHTML = html;
-  }catch(e){ c.innerHTML='<div class="empty-state" style="padding:20px"><i class="fas fa-exclamation-circle"></i><p>লোড ব্যর্থ</p></div>'; }
-}
-
-/* ── Merchant: Withdraw Submit ── */
-async function submitWithdraw(){
-  var name = document.getElementById('wd-name').value.trim();
-  var method = document.getElementById('wd-method').value;
-  var phone = document.getElementById('wd-phone').value.trim();
-  var errEl = document.getElementById('wd-error');
-  errEl.style.display='none';
-  if(!name){ errEl.textContent='নাম দিন!'; errEl.style.display='block'; return; }
-  if(!method){ errEl.textContent='পেমেন্ট পদ্ধতি নির্বাচন করুন!'; errEl.style.display='block'; return; }
-  if(!phone){ errEl.textContent='মোবাইল নম্বর দিন!'; errEl.style.display='block'; return; }
-  var bal = parseFloat(currentUser.balance || 0);
-  if(bal < 50){ errEl.textContent='ন্যূনতম ৳৫০ ব্যালেন্স থাকতে হবে। বর্তমান ব্যালেন্স: ৳'+bal; errEl.style.display='block'; return; }
-  if(!confirm('সাবমিট করলে আপনার ব্যালেন্স ৳'+bal+' থেকে ৳০ হয়ে যাবে। নিশ্চিত?')) return;
-  var btn = event.target; btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
-  try{
-    var methodLabel = {nagad:'নগদ',bkash:'বিকাশ',upay:'উপায়',rocket:'রকেট'};
-    await db.collection('transactions').add({
-      type: 'withdraw',
-      merchantUid: currentUser.uid,
-      merchantName: currentUser.fullName || '-',
-      shopName: currentUser.shopName || '-',
-      merchantId: currentUser.merchantId || '-',
-      amount: bal,
-      previousBalance: bal,
-      paymentMethod: method,
-      paymentMethodLabel: methodLabel[method]||method,
-      withdrawName: name,
-      withdrawPhone: phone,
-      status: 'pending',
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    // ব্যালেন্স ০ করা
-    await db.collection('merchants').doc(currentUser.uid).update({ balance: 0 });
-    currentUser.balance = 0;
-    loadUserDashboard();
-    document.getElementById('wd-name').value = '';
-    document.getElementById('wd-phone').value = '';
-    document.getElementById('wd-method').value = '';
-    showToast('✅ Withdraw সাবমিট হয়েছে! ব্যালেন্স ৳০ করা হয়েছে।', 'success');
-    loadMerchantWithdrawHistory();
-  }catch(e){ errEl.textContent='সাবমিট ব্যর্থ: '+(e.message||''); errEl.style.display='block'; }
-  btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> সাবমিট করুন';
-}
-
-async function loadMerchantWithdrawHistory(){
-  if(!currentUser) return;
-  var c = document.getElementById('merchant-withdraw-history');
-  if(!c) return;
-  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
-  try{
-    var snap = await db.collection('transactions').where('merchantUid','==',currentUser.uid).where('type','==','withdraw').get();
-    var list = [];
-    snap.forEach(function(d){ list.push({id:d.id,...d.data()}); });
-    list.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
-    if(!list.length){ c.innerHTML='<div class="empty-state" style="padding:20px"><i class="fas fa-history"></i><p>কোনো ইতিহাস নেই</p></div>'; return; }
-    var html = '<div style="display:flex;flex-direction:column;gap:8px">';
-    list.forEach(function(t){
-      var sc = t.status==='confirmed' ? {bg:'#dcfce7',color:'#16a34a',label:'কনফার্ম',icon:'fa-check-circle'}
-             : t.status==='rejected' ? {bg:'#fee2e2',color:'#dc2626',label:'রিজেক্ট',icon:'fa-times-circle'}
-             : {bg:'#fef3c7',color:'#d97706',label:'পেন্ডিং',icon:'fa-clock'};
-      var dateStr = t.createdAt ? new Date(t.createdAt.seconds*1000).toLocaleString('bn-BD') : '-';
-      html += '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px">' +
-        '<div style="width:40px;height:40px;background:#ede9fe;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#7c3aed;font-size:16px"><i class="fas fa-wallet"></i></div>' +
-        '<div style="flex:1"><div style="font-size:14px;font-weight:700;color:#111">৳'+t.amount+' → '+(t.paymentMethodLabel||t.paymentMethod)+'</div>' +
-        '<div style="font-size:12px;color:#6b7280">'+t.withdrawPhone+' &bull; '+dateStr+'</div></div>' +
-        '<span style="background:'+sc.bg+';color:'+sc.color+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px"><i class="fas '+sc.icon+'"></i> '+sc.label+'</span>' +
-        '</div>';
-    });
-    html += '</div>';
-    c.innerHTML = html;
-  }catch(e){ c.innerHTML='<div class="empty-state" style="padding:20px"><i class="fas fa-exclamation-circle"></i><p>লোড ব্যর্থ</p></div>'; }
-}
-
-/* ── Section load triggers for merchant ── */
-var _origShowUserSection = typeof showUserSection === 'function' ? showUserSection : null;
-
-/* ── Admin: Transactions ── */
-var _txnFilter = 'all';
-var _allAdminTxns = [];
-
-function setTxnFilter(f){
-  _txnFilter = f;
-  var btns = {all:'txn-filter-all', add_money:'txn-filter-add', withdraw:'txn-filter-withdraw'};
-  Object.keys(btns).forEach(function(k){
-    var el = document.getElementById(btns[k]);
-    if(el) el.style.background = (k===f) ? '#1a1a2e' : '#f3f4f6';
-    if(el) el.style.color = (k===f) ? 'white' : '#374151';
-  });
-  renderAdminTransactions(_allAdminTxns);
-}
-
-async function loadAdminTransactions(){
-  var c = document.getElementById('admin-transactions-list');
-  if(!c) return;
-  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
-  try{
-    var snap = await db.collection('transactions').get();
-    _allAdminTxns = [];
-    snap.forEach(function(d){
-      var t = {id:d.id,...d.data()};
-      if(t.status === 'pending') _allAdminTxns.push(t);
-    });
-    _allAdminTxns.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
-    renderAdminTransactions(_allAdminTxns);
-  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড ব্যর্থ</p></div>'; }
-}
-
-function renderAdminTransactions(list){
-  var c = document.getElementById('admin-transactions-list');
-  var filtered = _txnFilter==='all' ? list : list.filter(function(t){ return t.type===_txnFilter; });
-  if(!filtered.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-exchange-alt"></i><p>কোনো পেন্ডিং সাবমিশন নেই</p></div>'; return; }
-  var html = '<div style="display:flex;flex-direction:column;gap:12px">';
-  filtered.forEach(function(t){
-    var isAdd = t.type === 'add_money';
-    var accent = isAdd ? {bg:'#dcfce7',color:'#16a34a',icon:'fa-plus-circle',label:'Add Money'} : {bg:'#ede9fe',color:'#7c3aed',icon:'fa-wallet',label:'Withdraw'};
-    var dateStr = t.createdAt ? new Date(t.createdAt.seconds*1000).toLocaleString('bn-BD') : '-';
-    html +=
-      '<div style="background:white;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)">' +
-        '<div style="background:'+accent.bg+';padding:10px 16px;display:flex;align-items:center;justify-content:space-between">' +
-          '<div style="font-size:13px;font-weight:700;color:'+accent.color+'"><i class="fas '+accent.icon+'"></i> '+accent.label+'</div>' +
-          '<span style="background:white;color:'+accent.color+';font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;border:1px solid '+accent.color+'20">Pending</span>' +
-        '</div>' +
-        '<div style="padding:12px 16px;display:flex;align-items:center;gap:12px">' +
-          '<div style="width:44px;height:44px;background:'+accent.bg+';border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;color:'+accent.color+'"><i class="fas '+accent.icon+'"></i></div>' +
-          '<div style="flex:1;min-width:0">' +
-            '<div style="font-size:15px;font-weight:800;color:#111">৳'+t.amount+'</div>' +
-            '<div style="font-size:12px;color:#6b7280;margin-top:2px">'+t.merchantName+' &bull; '+t.shopName+'</div>' +
-            (isAdd ? '<div style="font-size:12px;color:#6b7280">TrxID: '+t.trxId+'</div>' : '<div style="font-size:12px;color:#6b7280">'+(t.paymentMethodLabel||t.paymentMethod)+': '+t.withdrawPhone+'</div>') +
-            '<div style="font-size:11px;color:#9ca3af;margin-top:2px">'+dateStr+'</div>' +
-          '</div>' +
-        '</div>' +
-        '<div style="padding:10px 14px;border-top:1px solid #f3f4f6;display:flex;gap:8px;background:#fafafa;flex-wrap:wrap">' +
-          '<button onclick="openAdminTxnDetail(''+t.id+'')" style="background:#e0e7ff;color:#4338ca;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-info-circle"></i> বিস্তারিত</button>' +
-          '<button onclick="openAdminTxnMerchantDetail(''+t.merchantUid+'')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-user-circle"></i> মার্চেন্ট ডিটেইলস</button>' +
-        '</div>' +
-      '</div>';
-  });
-  html += '</div>';
-  c.innerHTML = html;
-}
-
-function openAdminTxnDetail(txnId){
-  var t = _allAdminTxns.find(function(x){ return x.id===txnId; })
-        || _allConfirmedTxns.find(function(x){ return x.id===txnId; });
-  if(!t) return showToast('তথ্য পাওয়া যায়নি!','error');
-  var isAdd = t.type==='add_money';
-  var dateStr = t.createdAt ? new Date(t.createdAt.seconds*1000).toLocaleString('bn-BD') : '-';
-  var statusInfo = t.status==='confirmed' ? {bg:'#dcfce7',color:'#16a34a',label:'কনফার্ম'}
-                 : t.status==='rejected'  ? {bg:'#fee2e2',color:'#dc2626',label:'রিজেক্ট'}
-                 : {bg:'#fef3c7',color:'#d97706',label:'পেন্ডিং'};
-  var html =
-    '<div style="background:linear-gradient(135deg,'+(isAdd?'#f0fdf4,#dcfce7':'#faf5ff,#ede9fe')+';border:1px solid '+(isAdd?'#86efac':'#a78bfa')+';border-radius:12px;padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:12px">' +
-      '<div style="width:52px;height:52px;background:'+(isAdd?'#16a34a':'#7c3aed')+';border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0"><i class="fas '+(isAdd?'fa-plus-circle':'fa-wallet')+'"></i></div>' +
-      '<div><div style="font-size:22px;font-weight:800;color:#111">৳'+t.amount+'</div>' +
-      '<div style="font-size:13px;color:#6b7280">'+(isAdd?'Add Money':'Withdraw')+' &bull; '+dateStr+'</div>' +
-      '<span style="background:'+statusInfo.bg+';color:'+statusInfo.color+';font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;margin-top:5px;display:inline-block">'+statusInfo.label+'</span></div>' +
-    '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px">' +
-      '<div style="background:#f9fafb;border-radius:9px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-user"></i> মার্চেন্ট</div><div style="font-weight:700;color:#111">'+t.merchantName+'</div></div>' +
-      '<div style="background:#f9fafb;border-radius:9px;padding:10px"><div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-store"></i> শপ</div><div style="font-weight:700;color:#111">'+t.shopName+'</div></div>' +
-      (isAdd ?
-        '<div style="background:#f0fdf4;border-radius:9px;padding:10px"><div style="font-size:10px;color:#16a34a;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-hashtag"></i> TrxID</div><div style="font-weight:700;color:#111">'+t.trxId+'</div></div>' +
-        '<div style="background:#f0fdf4;border-radius:9px;padding:10px"><div style="font-size:10px;color:#16a34a;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-mobile-alt"></i> নগদ নম্বর</div><div style="font-weight:700;color:#111">'+t.nagadNumber+'</div></div>'
-        :
-        '<div style="background:#faf5ff;border-radius:9px;padding:10px"><div style="font-size:10px;color:#7c3aed;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-mobile-alt"></i> পদ্ধতি</div><div style="font-weight:700;color:#111">'+(t.paymentMethodLabel||t.paymentMethod)+'</div></div>' +
-        '<div style="background:#faf5ff;border-radius:9px;padding:10px"><div style="font-size:10px;color:#7c3aed;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-phone"></i> নম্বর</div><div style="font-weight:700;color:#111">'+t.withdrawPhone+'</div></div>' +
-        '<div style="background:#fff7ed;border-radius:9px;padding:10px;grid-column:1/-1"><div style="font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-coins"></i> উইথড্রয়ের আগে ব্যালেন্স</div><div style="font-weight:800;color:#d97706;font-size:16px">৳'+t.previousBalance+'</div></div>'
-      ) +
-      '<div style="background:#f9fafb;border-radius:9px;padding:10px;grid-column:1/-1"><div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-calendar"></i> তারিখ</div><div style="font-weight:600;color:#111">'+dateStr+'</div></div>' +
-    '</div>';
-
-  // কনফার্ম/রিজেক্ট বাটন (শুধু pending)
-  if(t.status === 'pending'){
-    html += '<div style="display:flex;gap:10px;margin-bottom:14px">' +
-      '<button onclick="adminUpdateTxnStatus(''+t.id+'','confirmed')" style="flex:1;background:linear-gradient(135deg,#16a34a,#15803d);color:white;border:none;border-radius:9px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit"><i class="fas fa-check-circle"></i> কনফার্ম</button>' +
-      '<button onclick="adminUpdateTxnStatus(''+t.id+'','rejected')" style="flex:1;background:linear-gradient(135deg,#dc2626,#b91c1c);color:white;border:none;border-radius:9px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit"><i class="fas fa-times-circle"></i> রিজেক্ট</button>' +
-    '</div>';
-  }
-  html += '<button onclick="openAdminTxnMerchantDetail(''+t.merchantUid+'')" style="width:100%;background:#ede9fe;color:#7c3aed;border:none;border-radius:9px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit"><i class="fas fa-user-circle"></i> মার্চেন্ট ডিটেইলস দেখুন</button>';
-
-  document.getElementById('admin-txn-detail-body').innerHTML = html;
-  openModal('admin-txn-detail-modal');
-}
-
-function openAdminTxnMerchantDetail(uid){
-  if(uid) viewMerchant(uid);
-}
-
-async function adminUpdateTxnStatus(txnId, status){
-  if(!confirm(status==='confirmed'?'কনফার্ম করবেন?':'রিজেক্ট করবেন?')) return;
-  try{
-    await db.collection('transactions').doc(txnId).update({ status: status });
-    // pending list থেকে সরিয়ে confirmed list এ
-    _allAdminTxns = _allAdminTxns.filter(function(x){ return x.id!==txnId; });
-    renderAdminTransactions(_allAdminTxns);
-    closeModal('admin-txn-detail-modal');
-    showToast(status==='confirmed'?'✅ কনফার্ম হয়েছে!':'❌ রিজেক্ট হয়েছে!', status==='confirmed'?'success':'error');
-    loadConfirmedTransactions();
-  }catch(e){ showToast('আপডেট ব্যর্থ: '+(e.message||''),'error'); }
-}
-
-/* ── Admin: Confirmed/Rejected Transactions ── */
-var _allConfirmedTxns = [];
-async function loadConfirmedTransactions(){
-  var c = document.getElementById('admin-confirmed-transactions-list');
-  if(!c) return;
-  c.innerHTML = '<div class="loader"><i class="fas fa-spinner"></i>Loading...</div>';
-  try{
-    var snap = await db.collection('transactions').get();
-    _allConfirmedTxns = [];
-    snap.forEach(function(d){
-      var t = {id:d.id,...d.data()};
-      if(t.status==='confirmed' || t.status==='rejected') _allConfirmedTxns.push(t);
-    });
-    _allConfirmedTxns.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
-    renderConfirmedTransactions(_allConfirmedTxns);
-  }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড ব্যর্থ</p></div>'; }
-}
-
-function renderConfirmedTransactions(list){
-  var c = document.getElementById('admin-confirmed-transactions-list');
-  if(!list.length){ c.innerHTML='<div class="empty-state"><i class="fas fa-exchange-alt"></i><p>কোনো কনফার্ম/রিজেক্ট সাবমিশন নেই</p></div>'; return; }
-  var html = '<div style="display:flex;flex-direction:column;gap:12px">';
-  list.forEach(function(t){
-    var isAdd = t.type==='add_money';
-    var accent = isAdd ? {bg:'#dcfce7',color:'#16a34a',icon:'fa-plus-circle',label:'Add Money'} : {bg:'#ede9fe',color:'#7c3aed',icon:'fa-wallet',label:'Withdraw'};
-    var sc = t.status==='confirmed' ? {bg:'#dcfce7',color:'#16a34a',label:'কনফার্ম'} : {bg:'#fee2e2',color:'#dc2626',label:'রিজেক্ট'};
-    var dateStr = t.createdAt ? new Date(t.createdAt.seconds*1000).toLocaleString('bn-BD') : '-';
-    html +=
-      '<div style="background:white;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)">' +
-        '<div style="background:'+accent.bg+';padding:10px 16px;display:flex;align-items:center;justify-content:space-between">' +
-          '<div style="font-size:13px;font-weight:700;color:'+accent.color+'"><i class="fas '+accent.icon+'"></i> '+accent.label+'</div>' +
-          '<span style="background:'+sc.bg+';color:'+sc.color+';font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px">'+sc.label+'</span>' +
-        '</div>' +
-        '<div style="padding:12px 16px;display:flex;align-items:center;gap:12px">' +
-          '<div style="width:44px;height:44px;background:'+accent.bg+';border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;color:'+accent.color+'"><i class="fas '+accent.icon+'"></i></div>' +
-          '<div style="flex:1">' +
-            '<div style="font-size:15px;font-weight:800;color:#111">৳'+t.amount+'</div>' +
-            '<div style="font-size:12px;color:#6b7280">'+t.merchantName+' &bull; '+t.shopName+'</div>' +
-            '<div style="font-size:11px;color:#9ca3af">'+dateStr+'</div>' +
-          '</div>' +
-        '</div>' +
-        '<div style="padding:10px 14px;border-top:1px solid #f3f4f6;display:flex;gap:8px;background:#fafafa;flex-wrap:wrap">' +
-          '<button onclick="openAdminTxnDetail(''+t.id+'')" style="background:#e0e7ff;color:#4338ca;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-info-circle"></i> বিস্তারিত</button>' +
-          '<button onclick="openAdminTxnMerchantDetail(''+t.merchantUid+'')" style="background:#ede9fe;color:#7c3aed;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-user-circle"></i> মার্চেন্ট ডিটেইলস</button>' +
-          '<button onclick="deleteConfirmedTxn(''+t.id+'')" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer"><i class="fas fa-trash-alt"></i></button>' +
-        '</div>' +
-      '</div>';
-  });
-  html += '</div>';
-  c.innerHTML = html;
-}
-
-async function deleteConfirmedTxn(txnId){
-  if(!confirm('এটি Firebase থেকে স্থায়ীভাবে ডিলিট করবেন?')) return;
-  try{
-    await db.collection('transactions').doc(txnId).delete();
-    _allConfirmedTxns = _allConfirmedTxns.filter(function(x){ return x.id!==txnId; });
-    renderConfirmedTransactions(_allConfirmedTxns);
-    showToast('🗑️ ডিলিট হয়েছে!','success');
-  }catch(e){ showToast('ডিলিট ব্যর্থ: '+(e.message||''),'error'); }
-}
-
 </script>
 
 <!-- ══ PRODUCT DETAIL MODAL ══ -->
@@ -3580,16 +3486,119 @@ async function deleteConfirmedTxn(txnId){
     </div>
   </div>
 </div>
-
-<!-- ══ ADMIN TRANSACTION DETAIL MODAL ══ -->
-<div id="admin-txn-detail-modal" class="modal-overlay" style="z-index:2200;">
-  <div class="modal" style="max-width:500px;padding:0;overflow:hidden;border-radius:18px;">
-    <div style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);padding:16px 20px;display:flex;align-items:center;gap:10px;position:relative">
-      <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-exchange-alt"></i></div>
-      <div style="font-size:16px;font-weight:800;color:white;font-family:'Poppins',sans-serif">সাবমিশন বিস্তারিত</div>
-      <button onclick="closeModal('admin-txn-detail-modal')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);color:white;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+<!-- ══ ADMIN RETURN MODAL ══ -->
+<div id="admin-return-modal" class="modal-overlay" style="z-index:2100;">
+  <div class="modal" style="max-width:540px;padding:0;overflow:hidden;border-radius:18px;">
+    <!-- হেডার -->
+    <div style="background:linear-gradient(135deg,#a21caf,#7c3aed);padding:18px 22px;display:flex;align-items:center;gap:12px;position:relative">
+      <div style="width:46px;height:46px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0"><i class="fas fa-undo-alt"></i></div>
+      <div>
+        <div style="font-size:17px;font-weight:800;color:white;font-family:'Poppins',sans-serif">পণ্য রিটার্ন</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.8);margin-top:1px">মার্চেন্টের কাছে রিটার্ন পাঠান</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('admin-return-modal')" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.2);color:white;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center">✕</button>
     </div>
-    <div style="padding:18px 20px;max-height:80vh;overflow-y:auto;scrollbar-width:none;" id="admin-txn-detail-body"></div>
+
+    <div style="padding:20px 22px;max-height:78vh;overflow-y:auto;scrollbar-width:none;">
+
+      <!-- পণ্যের ছবি ও তথ্য — App Parcel স্টাইল -->
+      <div style="background:#fdf4ff;border:2px solid #e9d5ff;border-radius:14px;padding:14px;margin-bottom:16px;display:flex;gap:14px;align-items:center">
+        <img id="return-modal-img" src="" style="width:80px;height:80px;object-fit:cover;border-radius:12px;flex-shrink:0;border:2px solid #d8b4fe;display:none">
+        <div style="flex:1;min-width:0">
+          <div id="return-modal-prod-name" style="font-size:15px;font-weight:800;color:#111;margin-bottom:4px"></div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span id="return-modal-prod-price" style="font-size:16px;font-weight:800;color:#a21caf"></span>
+            <span id="return-modal-sks" style="background:#ede9fe;color:#7c3aed;font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px"></span>
+          </div>
+          <div id="return-modal-shop" style="font-size:12px;color:#6b7280;margin-top:4px"><i class="fas fa-store" style="color:#a21caf"></i> <span></span></div>
+        </div>
+      </div>
+
+      <!-- কাস্টমার তথ্য -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px">
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:11px">
+          <div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-user"></i> কাস্টমার</div>
+          <div id="return-modal-cust-name" style="font-weight:700;color:#111;font-size:13px"></div>
+        </div>
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:11px">
+          <div style="font-size:10px;color:#0284c7;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-phone"></i> মোবাইল</div>
+          <div id="return-modal-cust-phone" style="font-weight:700;color:#0284c7;font-size:13px"></div>
+        </div>
+        <div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:10px;padding:11px;grid-column:1/-1">
+          <div style="font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-map-marker-alt"></i> ডেলিভারি ঠিকানা</div>
+          <div id="return-modal-cust-addr" style="font-weight:600;color:#111;font-size:13px;line-height:1.5"></div>
+        </div>
+        <div style="background:#f9fafb;border-radius:10px;padding:11px;grid-column:1/-1">
+          <div style="font-size:10px;color:#9ca3af;font-weight:700;text-transform:uppercase;margin-bottom:3px"><i class="fas fa-hashtag"></i> Order ID</div>
+          <div id="return-modal-order-id" style="font-weight:700;color:#7c3aed;font-size:12px;word-break:break-all"></div>
+        </div>
+      </div>
+
+      <!-- রিটার্নের কারণ ফর্ম -->
+      <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:12px;padding:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:10px"><i class="fas fa-exclamation-triangle"></i> রিটার্নের তথ্য পূরণ করুন</div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label style="font-size:12px;font-weight:700;color:#374151">রিটার্নের কারণ *</label>
+          <div class="input-wrap"><i class="fas fa-comment-alt ico"></i><input type="text" id="return-reason-input" placeholder="যেমন: পণ্য ক্ষতিগ্রস্ত, ভুল পণ্য..." style="padding-left:36px"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label style="font-size:12px;font-weight:700;color:#374151">বিস্তারিত (ঐচ্ছিক)</label>
+          <div class="input-wrap"><i class="fas fa-align-left ico-top"></i><textarea id="return-details-input" placeholder="সমস্যার বিস্তারিত বিবরণ..." style="height:70px;resize:none;padding-left:36px;padding-top:10px"></textarea></div>
+        </div>
+      </div>
+
+      <!-- কাস্টমার তথ্য ইনপুট (রিটার্নের জন্য) -->
+      <div style="background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:12px;padding:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#0284c7;margin-bottom:10px"><i class="fas fa-user-circle"></i> কাস্টমার তথ্য (রিটার্নের জন্য)</div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label style="font-size:12px;font-weight:700;color:#374151">কাস্টমার নাম *</label>
+          <div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="return-cust-name-input" placeholder="কাস্টমারের নাম লিখুন..." style="padding-left:36px"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px">
+          <label style="font-size:12px;font-weight:700;color:#374151">মোবাইল নাম্বার *</label>
+          <div class="input-wrap"><i class="fas fa-phone ico"></i><input type="text" id="return-cust-phone-input" placeholder="01XXXXXXXXX" style="padding-left:36px"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label style="font-size:12px;font-weight:700;color:#374151">ঠিকানা *</label>
+          <div class="input-wrap"><i class="fas fa-map-marker-alt ico-top"></i><textarea id="return-cust-addr-input" placeholder="কাস্টমারের সম্পূর্ণ ঠিকানা..." style="height:65px;resize:none;padding-left:36px;padding-top:10px"></textarea></div>
+        </div>
+      </div>
+
+      <!-- রিটার্ন পণ্যের ছবি আপলোড -->
+      <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#d97706;margin-bottom:10px"><i class="fas fa-camera"></i> রিটার্ন পণ্যের ছবি (ঐচ্ছিক)</div>
+        <div id="return-img-upload-area" style="border:2px dashed #fed7aa;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:.2s;background:#fffbf5" onclick="document.getElementById('return-img-file-input').click()" ondragover="event.preventDefault();this.style.borderColor='#f59e0b'" ondragleave="this.style.borderColor='#fed7aa'" ondrop="handleReturnImgDrop(event)">
+          <div style="font-size:24px;color:#f59e0b;margin-bottom:6px"><i class="fas fa-cloud-upload-alt"></i></div>
+          <div style="font-size:13px;font-weight:700;color:#d97706">ছবি আপলোড করুন</div>
+          <div style="font-size:11px;color:#9ca3af;margin-top:3px">ক্লিক করুন বা ড্র্যাগ করে ছবি আনুন • JPG, PNG • সর্বোচ্চ ৫টি ছবি</div>
+        </div>
+        <input type="file" id="return-img-file-input" accept="image/*" multiple style="display:none" onchange="handleReturnImgUpload(this)">
+        <div id="return-img-preview-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
+      </div>
+
+      <!-- সফল বার্তা -->
+      <div id="return-submit-msg" style="display:none;background:#dcfce7;border:1.5px solid #86efac;border-radius:10px;padding:12px 14px;margin-bottom:12px;align-items:center;gap:10px">
+        <i class="fas fa-check-circle" style="color:#16a34a;font-size:20px;flex-shrink:0"></i>
+        <div style="font-size:13px;color:#15803d;font-weight:700">রিটার্ন সফলভাবে মার্চেন্টের কাছে পাঠানো হয়েছে!</div>
+      </div>
+
+      <!-- পাঠান বাটন -->
+      <button id="return-send-btn" onclick="submitAdminReturn()" style="width:100%;background:linear-gradient(135deg,#a21caf,#7c3aed);color:white;border:none;border-radius:11px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px">
+        <i class="fas fa-paper-plane"></i> মার্চেন্টের কাছে পাঠান
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MERCHANT RETURN DETAIL MODAL ══ -->
+<div id="merchant-return-detail-modal" class="modal-overlay" style="z-index:2100;">
+  <div class="modal" style="max-width:500px;padding:0;overflow:hidden;border-radius:18px;">
+    <div style="background:linear-gradient(135deg,#a21caf,#7c3aed);padding:16px 20px;display:flex;align-items:center;gap:10px;position:relative">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;flex-shrink:0"><i class="fas fa-undo-alt"></i></div>
+      <div style="font-size:16px;font-weight:800;color:white;font-family:'Poppins',sans-serif">রিটার্ন বিস্তারিত</div>
+      <button onclick="closeModal('merchant-return-detail-modal')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.2);color:white;border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:18px 20px;max-height:80vh;overflow-y:auto;scrollbar-width:none;" id="merchant-return-detail-body"></div>
   </div>
 </div>
 
