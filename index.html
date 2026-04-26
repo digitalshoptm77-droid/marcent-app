@@ -797,6 +797,27 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
   </div>
 </div>
 
+<!-- FORGOT PASSWORD SUCCESS MODAL -->
+<div id="fp-success-modal" class="modal-overlay">
+  <div class="modal" style="max-width:420px;text-align:center">
+    <div class="modal-icon" style="background:#f0fdf4"><i class="fas fa-check-circle" style="color:#16a34a;font-size:40px"></i></div>
+    <h2 style="font-size:20px;color:#16a34a">পাসওয়ার্ড পরিবর্তন সফল!</h2>
+    <p style="font-size:14px;color:#555;margin:8px 0 4px">আপনার নতুন পাসওয়ার্ড:</p>
+    <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:10px;padding:14px 20px;margin:12px 0;display:flex;align-items:center;justify-content:space-between">
+      <span id="fp-new-pass-display" style="font-size:20px;font-weight:700;letter-spacing:4px;color:#16a34a;font-family:monospace"></span>
+      <button onclick="copyFpPass()" style="background:none;border:none;cursor:pointer;color:#16a34a;font-size:18px" title="কপি করুন"><i class="fas fa-copy"></i></button>
+    </div>
+    <p style="font-size:12px;color:#888;margin-bottom:16px">এই পাসওয়ার্ডটি মনে রাখুন বা কোথাও লিখে রাখুন।</p>
+    <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px;margin-bottom:10px;font-size:12px;color:#92400e;text-align:left">
+      <i class="fas fa-envelope"></i> আপনার ইমেইলে একটি <b>পাসওয়ার্ড রিসেট লিংক</b> পাঠানো হয়েছে। ঐ লিংকে ক্লিক করে উপরের পাসওয়ার্ডটি দিয়ে সেট করুন — তারপর লগইন করুন।
+    </div>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 12px;margin-bottom:18px;font-size:12px;color:#dc2626;text-align:left">
+      <i class="fas fa-exclamation-triangle"></i> <b>ইমেইল না পেলে</b> আপনার ইমেইলের <b>Spam / Junk</b> ফোল্ডারে চেক করুন।
+    </div>
+    <button class="btn btn-primary btn-block" onclick="closeModal('fp-success-modal');openModal('login-modal')"><i class="fas fa-sign-in-alt"></i> লগইনে যান</button>
+  </div>
+</div>
+
 <!-- FORGOT PASSWORD - STEP 1: EMAIL -->
 <div id="forgot-pw-modal" class="modal-overlay">
   <div class="modal" style="max-width:420px">
@@ -1032,7 +1053,7 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -1256,15 +1277,22 @@ function generateOTP(){
 }
 
 async function sendOtpEmail(toEmail, toName, otp){
-  // EmailJS initialize
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-  await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-    to_email: toEmail,
-    to_name: toName,
-    otp_code: otp,
-    site_name: 'Digital Shop TM',
-    expiry_min: '10'
-  });
+  try {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    var result = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: toEmail,
+      to_name: toName,
+      otp_code: otp,
+      site_name: 'Digital Shop TM',
+      expiry_min: '10'
+    });
+    if(result && result.status !== 200) {
+      throw new Error('EmailJS status: ' + result.status + ' - ' + result.text);
+    }
+  } catch(ejErr) {
+    var errMsg = ejErr && (ejErr.message || ejErr.text || (typeof ejErr === 'string' ? ejErr : JSON.stringify(ejErr))) || 'Email পাঠাতে ব্যর্থ';
+    throw new Error(errMsg);
+  }
 }
 
 function startOtpTimer(){
@@ -1432,7 +1460,23 @@ async function loginUser(){
       if(snap.empty){showErr('login-error','No account found with this mobile number!');btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Login';return;}
       emailToUse=snap.docs[0].data().email;
     }
-    await auth.signInWithEmailAndPassword(emailToUse,pass);closeModal('login-modal');
+    await auth.signInWithEmailAndPassword(emailToUse, pass);
+    // pendingPassword থাকলে Firebase Auth-এ এখনই update করো
+    try {
+      var lpSnap = await db.collection('merchants').where('email','==',emailToUse).get();
+      if(!lpSnap.empty && lpSnap.docs[0].data().pendingPassword) {
+        var lpDoc = lpSnap.docs[0];
+        var pendingPass = lpDoc.data().pendingPassword;
+        // নতুন password দিয়ে login হলে Firebase Auth-এ update করো
+        if(pass === pendingPass) {
+          // user ইতিমধ্যে নতুন password দিয়ে login করেছে — Auth already updated
+          await db.collection('merchants').doc(lpDoc.id).update({ 
+            pendingPassword: firebase.firestore.FieldValue.delete()
+          });
+        }
+      }
+    } catch(lpErr){ console.warn('pendingPassword:', lpErr.message); }
+    closeModal('login-modal');
   }catch(e){
     var msg='Login failed!';
     if(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'||e.code==='auth/invalid-login-credentials')msg='Incorrect email or password!';
@@ -1481,11 +1525,13 @@ async function sendForgotOtp(){
       expiry: expiry,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    // Send OTP via EmailJS
-    await emailjs.send('service_b6wi5mt', 'template_azkq1x9', {
+    // Send OTP via EmailJS (Password Reset Template)
+    emailjs.init({ publicKey: 'jm_v19PnXEZDEkNra' });
+    var ejRes = await emailjs.send('service_b6wi5mt', 'template_azkq1x9', {
       to_email: email,
       otp_code: fpOtpCode
     });
+    if(ejRes && ejRes.status !== 200) throw new Error('Email error: ' + ejRes.text);
     okEl.textContent = 'OTP পাঠানো হয়েছে! আপনার ইমেইল চেক করুন।';
     okEl.style.display='block';
     setTimeout(()=>{
@@ -1501,8 +1547,10 @@ async function sendForgotOtp(){
       document.getElementById('otp0').focus();
     }, 900);
   } catch(e) {
-    errEl.textContent = 'ত্রুটি হয়েছে: ' + e.message;
+    var msg = (e && (e.message || e.text || (typeof e === 'string' ? e : JSON.stringify(e)))) || 'অজানা ত্রুটি';
+    errEl.textContent = 'ত্রুটি: ' + msg;
     errEl.style.display='block';
+    console.error('FP Error:', e);
   }
   btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> OTP পাঠান';
 }
@@ -1533,6 +1581,7 @@ async function resendForgotOtp(){
     otp: fpOtpCode, expiry: expiry,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
+  emailjs.init({ publicKey: 'jm_v19PnXEZDEkNra' });
   await emailjs.send('service_b6wi5mt', 'template_azkq1x9', {
     to_email: fpTargetEmail,
     otp_code: fpOtpCode
@@ -1574,27 +1623,39 @@ async function verifyForgotOtp(){
     var data = doc.data();
     if(Date.now() > data.expiry){ errEl.textContent='OTP মেয়াদ শেষ হয়ে গেছে! পুনরায় পাঠান।'; errEl.style.display='block'; btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> পাসওয়ার্ড পরিবর্তন করুন'; return; }
     if(entered !== data.otp){ errEl.textContent='OTP সঠিক নয়!'; errEl.style.display='block'; btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> পাসওয়ার্ড পরিবর্তন করুন'; return; }
-    // OTP correct — update password via Firebase Auth password reset
-    // We use sendPasswordResetEmail as a secure bridge; also update Firestore record
-    // Update password in Firestore merchants collection
+    // OTP সঠিক — Firebase Auth এ sendPasswordResetEmail পাঠাও
     var mSnap = await db.collection('merchants').where('email','==',fpTargetEmail).get();
-    if(!mSnap.empty){
-      await db.collection('merchants').doc(mSnap.docs[0].id).update({ password: newPass });
-    }
-    // Send Firebase password reset link as well to update auth password
-    await auth.sendPasswordResetEmail(fpTargetEmail);
-    // Clean up OTP doc
+    if(mSnap.empty) throw new Error('মার্চেন্ট অ্যাকাউন্ট পাওয়া যায়নি!');
+    var mDoc = mSnap.docs[0];
+
+    // Firestore এ নতুন password save (reference হিসেবে)
+    await db.collection('merchants').doc(mDoc.id).update({ pendingPassword: newPass });
     await db.collection('passwordResets').doc(fpTargetEmail).delete();
     clearInterval(fpCountdownTimer);
+
+    // Firebase নিজের password reset email পাঠাবে
+    // User ঐ link-এ ক্লিক করে নতুন password সেট করবে
+    await auth.sendPasswordResetEmail(fpTargetEmail);
+
     closeModal('forgot-otp-modal');
-    showToast('পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে! নতুন পাসওয়ার্ড দিয়ে লগইন করুন।','success');
-    setTimeout(()=>openModal('login-modal'), 800);
+    // Success popup দেখাও নতুন password সহ
+    showFpSuccessModal(newPass, fpTargetEmail);
   } catch(e) {
     errEl.textContent = 'ত্রুটি: ' + e.message;
     errEl.style.display='block';
   }
   btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> পাসওয়ার্ড পরিবর্তন করুন';
 }
+
+function showFpSuccessModal(pass, email) {
+  document.getElementById('fp-new-pass-display').textContent = pass;
+  openModal('fp-success-modal');
+}
+function copyFpPass() {
+  var pass = document.getElementById('fp-new-pass-display').textContent;
+  navigator.clipboard.writeText(pass).then(()=>showToast('পাসওয়ার্ড কপি হয়েছে!','success'));
+}
+
 // ===== END FORGOT PASSWORD =====
 
 
