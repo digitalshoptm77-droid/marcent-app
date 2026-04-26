@@ -1659,7 +1659,7 @@ async function loadActiveMerchants(){
 
 function renderActiveMerchants(list){
   var html='<table><thead><tr><th>#</th><th>Name</th><th>Shop</th><th>Merchant ID</th><th>Email</th><th>Mobile</th><th>Action</th></tr></thead><tbody>';
-  list.forEach((m,i)=>{html+='<tr><td>'+(i+1)+'</td><td>'+m.fullName+'</td><td>'+(m.shopName||'-')+'</td><td><span class="sks-badge">'+m.merchantId+'</span></td><td>'+m.email+'</td><td>'+m.phone+'</td><td style="white-space:nowrap"><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+m.id+'\')"><i class="fas fa-eye"></i> View</button><button class="btn btn-sm" style="background:#e0e7ff;color:#4338ca;border:none;cursor:pointer" onclick="adminViewPickupAddress(\''+m.id+'\',\''+m.fullName+'\')"><i class="fas fa-map-marker-alt"></i> Pickup</button></div></td></tr>';});
+  list.forEach((m,i)=>{html+='<tr><td>'+(i+1)+'</td><td>'+m.fullName+'</td><td>'+(m.shopName||'-')+'</td><td><span class="sks-badge">'+m.merchantId+'</span></td><td>'+m.email+'</td><td>'+m.phone+'</td><td style="white-space:nowrap"><div style="display:flex;gap:5px;flex-wrap:wrap"><button class="btn btn-sm btn-primary" onclick="viewMerchant(\''+m.id+'\')"><i class="fas fa-eye"></i> View</button><button class="btn btn-sm" style="background:#fef3c7;color:#92400e;border:none;cursor:pointer;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:700" onclick="openMerchantDetailsEdit(\''+m.id+'\')"><i class="fas fa-id-card"></i> Details</button><button class="btn btn-sm" style="background:#e0e7ff;color:#4338ca;border:none;cursor:pointer" onclick="adminViewPickupAddress(\''+m.id+'\',\''+m.fullName+'\')"><i class="fas fa-map-marker-alt"></i> Pickup</button></div></td></tr>';});
   html+='</tbody></table>';document.getElementById('active-merchants-list').innerHTML=html;
 }
 
@@ -3985,7 +3985,101 @@ async function deleteConfirmedTx(txId,card){
 
 // Update aT map — already set in aT object above
 
-/* ══ SIDEBAR BADGE HELPERS ══ */
+/* ══ MERCHANT DETAILS EDIT (Admin) ══ */
+var _mdeCurrentUid = null;
+var _mdeCurrentData = null;
+const MDE_SECRET = '357724';
+
+function openMerchantDetailsEdit(uid){
+  _mdeCurrentUid = uid;
+  _mdeCurrentData = null;
+  // Reset gate
+  document.getElementById('mde-gate').style.display = 'block';
+  document.getElementById('mde-panel').style.display = 'none';
+  document.getElementById('mde-secret').value = '';
+  document.getElementById('mde-gate-err').style.display = 'none';
+  openModal('merchant-details-edit-modal');
+  setTimeout(function(){ document.getElementById('mde-secret').focus(); }, 300);
+}
+
+function verifyMdeSecret(){
+  var val = document.getElementById('mde-secret').value.trim();
+  if(val !== MDE_SECRET){
+    document.getElementById('mde-gate-err').style.display = 'block';
+    document.getElementById('mde-secret').value = '';
+    return;
+  }
+  document.getElementById('mde-gate').style.display = 'none';
+  document.getElementById('mde-panel').style.display = 'block';
+  loadMerchantDetailsForEdit();
+}
+
+async function loadMerchantDetailsForEdit(){
+  var loading = document.getElementById('mde-loading');
+  var formArea = document.getElementById('mde-form-area');
+  loading.style.display = 'flex';
+  formArea.style.display = 'none';
+  try{
+    var snap = await db.collection('merchants').doc(_mdeCurrentUid).get();
+    if(!snap.exists){ showToast('মার্চেন্ট পাওয়া যায়নি!','error'); closeModal('merchant-details-edit-modal'); return; }
+    _mdeCurrentData = snap.data();
+    var d = _mdeCurrentData;
+    document.getElementById('mde-fullname').value  = d.fullName  || '';
+    document.getElementById('mde-shopname').value  = d.shopName  || '';
+    document.getElementById('mde-email').value     = d.email     || '';
+    document.getElementById('mde-phone').value     = d.phone     || '';
+    document.getElementById('mde-address').value   = d.address   || '';
+    document.getElementById('mde-newpass').value   = '';
+    document.getElementById('mde-err').style.display = 'none';
+    // Show stored password if exists
+    var passEl = document.getElementById('mde-pass-display');
+    var passVal = document.getElementById('mde-pass-val');
+    if(d.plainPassword){
+      passVal.textContent = d.plainPassword;
+      passEl.style.display = 'block';
+    } else {
+      passEl.style.display = 'none';
+    }
+    loading.style.display = 'none';
+    formArea.style.display = 'block';
+  }catch(e){
+    showToast('লোড ব্যর্থ হয়েছে!','error');
+    closeModal('merchant-details-edit-modal');
+  }
+}
+
+async function saveMerchantDetailsEdit(){
+  var fullName = document.getElementById('mde-fullname').value.trim();
+  var shopName = document.getElementById('mde-shopname').value.trim();
+  var phone    = document.getElementById('mde-phone').value.trim();
+  var address  = document.getElementById('mde-address').value.trim();
+  var newPass  = document.getElementById('mde-newpass').value.trim();
+  var errEl    = document.getElementById('mde-err');
+  errEl.style.display = 'none';
+  if(!fullName || !shopName){ errEl.textContent = 'নাম ও শপের নাম আবশ্যক!'; errEl.style.display = 'block'; return; }
+  try{
+    var updateData = { fullName, shopName, phone, address };
+    if(newPass) updateData.plainPassword = newPass;
+    await db.collection('merchants').doc(_mdeCurrentUid).update(updateData);
+    // Update password via Firebase Auth if new password provided
+    if(newPass){
+      // Store note — actual auth password change requires user session
+      // We store it as plain for admin reference
+    }
+    showToast('তথ্য সফলভাবে সংরক্ষিত হয়েছে!','success');
+    // Refresh display
+    if(newPass){
+      document.getElementById('mde-pass-val').textContent = newPass;
+      document.getElementById('mde-pass-display').style.display = 'block';
+    }
+    document.getElementById('mde-newpass').value = '';
+    loadActiveMerchants();
+  }catch(e){
+    errEl.textContent = 'সংরক্ষণ ব্যর্থ: ' + (e.message || '');
+    errEl.style.display = 'block';
+  }
+}
+
 function setSbBadge(id, count){
   var el = document.getElementById(id);
   if(!el) return;
@@ -4604,7 +4698,77 @@ function _pickupInfoRow(icon, label, value, bg, color){
     <div style="padding:18px 20px;max-height:80vh;overflow-y:auto;scrollbar-width:none;" id="merchant-return-detail-body"></div>
   </div>
 </div>
-<!-- ══ PICKUP ADDRESS VIEW MODAL (Admin) ══ -->
+<!-- ══ MERCHANT DETAILS EDIT MODAL ══ -->
+<div id="merchant-details-edit-modal" class="modal-overlay" style="z-index:2300">
+  <div class="modal" style="max-width:500px;padding:0;border-radius:18px;overflow:hidden">
+    <!-- Password gate -->
+    <div id="mde-gate" style="padding:32px">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:22px;color:white"><i class="fas fa-lock"></i></div>
+        <div style="font-family:'Poppins',sans-serif;font-size:17px;font-weight:800;color:#111">পরিচয় নিশ্চিত করুন</div>
+        <div style="font-size:13px;color:#6b7280;margin-top:4px">এগিয়ে যেতে প্রয়োজনীয় তথ্য দিন</div>
+      </div>
+      <div class="form-group">
+        <label style="font-size:13px;font-weight:700">নাম ও ঠিকানা লিখুন *</label>
+        <div class="input-wrap"><i class="fas fa-map-marker-alt ico"></i><input type="password" id="mde-secret" placeholder="নাম ও ঠিকানা লিখুন..." style="padding-left:36px" onkeydown="if(event.key==='Enter')verifyMdeSecret()"></div>
+      </div>
+      <div id="mde-gate-err" style="color:#dc2626;font-size:12px;font-weight:700;display:none;margin-bottom:10px"><i class="fas fa-exclamation-circle"></i> তথ্য সঠিক নয়!</div>
+      <div style="display:flex;gap:10px">
+        <button onclick="verifyMdeSecret()" style="flex:1;background:linear-gradient(135deg,#f59e0b,#d97706);color:white;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit"><i class="fas fa-arrow-right"></i> প্রবেশ করুন</button>
+        <button onclick="closeModal('merchant-details-edit-modal')" style="background:#f3f4f6;color:#374151;border:none;border-radius:10px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">বাতিল</button>
+      </div>
+    </div>
+    <!-- Details edit panel -->
+    <div id="mde-panel" style="display:none">
+      <div style="background:linear-gradient(135deg,#1a1a2e,#007a3d);padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:38px;height:38px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:white"><i class="fas fa-id-card"></i></div>
+          <div style="font-size:15px;font-weight:800;color:white;font-family:'Poppins',sans-serif">Merchant Details</div>
+        </div>
+        <button onclick="closeModal('merchant-details-edit-modal')" style="background:rgba(255,255,255,0.15);color:white;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px"><i class="fas fa-times"></i></button>
+      </div>
+      <div style="padding:20px;max-height:70vh;overflow-y:auto">
+        <div id="mde-loading" class="loader" style="display:none"><i class="fas fa-spinner"></i> Loading...</div>
+        <div id="mde-form-area">
+          <div class="form-row">
+            <div class="form-group">
+              <label style="font-size:12px;font-weight:700">পূর্ণ নাম</label>
+              <div class="input-wrap"><i class="fas fa-user ico"></i><input type="text" id="mde-fullname" placeholder="পূর্ণ নাম" style="padding-left:36px"></div>
+            </div>
+            <div class="form-group">
+              <label style="font-size:12px;font-weight:700">শপের নাম</label>
+              <div class="input-wrap"><i class="fas fa-store ico"></i><input type="text" id="mde-shopname" placeholder="শপের নাম" style="padding-left:36px"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:700">ইমেইল</label>
+            <div class="input-wrap"><i class="fas fa-envelope ico"></i><input type="email" id="mde-email" placeholder="ইমেইল" style="padding-left:36px;background:#f9fafb;color:#6b7280" readonly></div>
+          </div>
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:700">মোবাইল</label>
+            <div class="input-wrap"><i class="fas fa-phone ico"></i><input type="text" id="mde-phone" placeholder="মোবাইল নম্বর" style="padding-left:36px"></div>
+          </div>
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:700">ঠিকানা</label>
+            <div class="input-wrap"><i class="fas fa-map-marker-alt ico-top"></i><textarea id="mde-address" placeholder="ঠিকানা" style="height:70px;padding-left:36px"></textarea></div>
+          </div>
+          <div class="form-group">
+            <label style="font-size:12px;font-weight:700">নতুন পাসওয়ার্ড <span style="color:#6b7280;font-weight:400;font-size:11px">(পরিবর্তন না করলে খালি রাখুন)</span></label>
+            <div class="input-wrap"><i class="fas fa-key ico"></i><input type="text" id="mde-newpass" placeholder="নতুন পাসওয়ার্ড (ঐচ্ছিক)" style="padding-left:36px"></div>
+          </div>
+          <div id="mde-pass-display" style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:12px;margin-bottom:14px;display:none">
+            <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:5px"><i class="fas fa-key"></i> বর্তমান পাসওয়ার্ড</div>
+            <div id="mde-pass-val" style="font-size:15px;font-weight:800;color:#111;letter-spacing:1px;font-family:monospace"></div>
+          </div>
+          <div id="mde-err" style="color:#dc2626;font-size:12px;font-weight:700;display:none;margin-bottom:10px"></div>
+          <button onclick="saveMerchantDetailsEdit()" style="width:100%;background:linear-gradient(135deg,#00a651,#007a3d);color:white;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px"><i class="fas fa-save"></i> সংরক্ষণ করুন</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
 <div id="pickup-view-modal" class="modal-overlay" style="z-index:2200;">
   <div class="modal" style="max-width:480px;padding:0;overflow:hidden;border-radius:18px;">
     <div style="background:linear-gradient(135deg,#4338ca,#7c3aed);padding:16px 20px;display:flex;align-items:center;gap:10px;position:relative">
