@@ -787,13 +787,61 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
     <div class="form-group"><label>Password</label><div class="input-wrap"><i class="fas fa-lock ico"></i><input type="password" id="login-pass" placeholder="Password"></div></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:var(--primary)"> Remember me</label>
-      <span style="font-size:13px;color:var(--primary);cursor:pointer;font-weight:600">Forgot password?</span>
+      <span style="font-size:13px;color:var(--primary);cursor:pointer;font-weight:600" onclick="openForgotPassword()">Forgot password?</span>
     </div>
     <div class="terms-wrap"><input type="checkbox" id="login-terms1"><span>I agree to <span class="terms-link" data-terms="terms">Terms &amp; Conditions</span></span></div>
     <div class="terms-wrap"><input type="checkbox" id="login-terms2"><span>I agree to <span class="terms-link" data-terms="privacy">Privacy Policy</span></span></div>
     <div id="login-error" class="err-box"></div>
     <button class="btn btn-primary btn-block" id="login-submit-btn"><i class="fas fa-sign-in-alt"></i> Login</button>
     <div style="text-align:center;margin-top:16px;font-size:13px">Don't have an account? <span style="color:var(--primary);cursor:pointer;font-weight:600" id="go-signup">Register here</span></div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD - STEP 1: EMAIL -->
+<div id="forgot-pw-modal" class="modal-overlay">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('forgot-pw-modal')"><i class="fas fa-times"></i></button>
+    <div class="modal-icon" style="background:#fff7ed"><i class="fas fa-key" style="color:#f59e0b"></i></div>
+    <h2 style="font-size:20px">পাসওয়ার্ড রিসেট</h2>
+    <p style="text-align:center;font-size:13px;color:var(--gray);margin-bottom:20px;margin-top:-12px">আপনার অ্যাকাউন্টের ইমেইল দিন। সঠিক হলে OTP পাঠানো হবে।</p>
+    <div class="form-group">
+      <label>ইমেইল অ্যাড্রেস</label>
+      <div class="input-wrap"><i class="fas fa-envelope ico"></i><input type="email" id="fp-email" placeholder="আপনার ইমেইল লিখুন" style="padding-left:36px" onkeydown="if(event.key==='Enter')sendForgotOtp()"></div>
+    </div>
+    <div id="fp-email-err" style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none"></div>
+    <div id="fp-email-ok" style="background:#f0fdf4;border:1px solid #86efac;color:#166534;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none"></div>
+    <button class="btn btn-primary btn-block" id="fp-send-btn" onclick="sendForgotOtp()"><i class="fas fa-paper-plane"></i> OTP পাঠান</button>
+    <div style="text-align:center;margin-top:14px;font-size:13px"><span style="color:var(--primary);cursor:pointer;font-weight:600" onclick="closeModal('forgot-pw-modal');openModal('login-modal')"><i class="fas fa-arrow-left"></i> লগইনে ফিরে যান</span></div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD - STEP 2: OTP + NEW PASSWORD -->
+<div id="forgot-otp-modal" class="modal-overlay">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-close" onclick="closeModal('forgot-otp-modal')"><i class="fas fa-times"></i></button>
+    <div class="modal-icon" style="background:#f0fdf4"><i class="fas fa-shield-alt" style="color:var(--primary)"></i></div>
+    <h2 style="font-size:20px">OTP যাচাই করুন</h2>
+    <p style="text-align:center;font-size:13px;color:var(--gray);margin-bottom:6px;margin-top:-12px">আপনার ইমেইলে <b id="fp-show-email" style="color:var(--dark)"></b>-এ পাঠানো ৬ সংখ্যার OTP দিন।</p>
+    <div style="display:flex;justify-content:center;gap:8px;margin:18px 0 6px">
+      <input class="otp-box" id="otp0" maxlength="1" oninput="otpMove(this,1)" onkeydown="otpBack(event,this,null)">
+      <input class="otp-box" id="otp1" maxlength="1" oninput="otpMove(this,2)" onkeydown="otpBack(event,this,0)">
+      <input class="otp-box" id="otp2" maxlength="1" oninput="otpMove(this,3)" onkeydown="otpBack(event,this,1)">
+      <input class="otp-box" id="otp3" maxlength="1" oninput="otpMove(this,4)" onkeydown="otpBack(event,this,2)">
+      <input class="otp-box" id="otp4" maxlength="1" oninput="otpMove(this,5)" onkeydown="otpBack(event,this,3)">
+      <input class="otp-box" id="otp5" maxlength="1" oninput="otpFinal(this)" onkeydown="otpBack(event,this,4)">
+    </div>
+    <div style="text-align:center;font-size:12px;color:var(--gray);margin-bottom:16px">OTP মেয়াদ: <span id="fp-countdown" style="color:var(--danger);font-weight:700">10:00</span> | <span style="color:var(--primary);cursor:pointer;font-weight:600" id="fp-resend-btn" onclick="resendForgotOtp()">পুনরায় পাঠান</span></div>
+    <div class="form-group">
+      <label>নতুন পাসওয়ার্ড</label>
+      <div class="input-wrap"><i class="fas fa-lock ico"></i><input type="password" id="fp-new-pass" placeholder="নতুন পাসওয়ার্ড (সর্বনিম্ন ৬ অক্ষর)" style="padding-left:36px"></div>
+    </div>
+    <div class="form-group">
+      <label>পাসওয়ার্ড নিশ্চিত করুন</label>
+      <div class="input-wrap"><i class="fas fa-lock ico"></i><input type="password" id="fp-confirm-pass" placeholder="পাসওয়ার্ড আবার লিখুন" style="padding-left:36px"></div>
+    </div>
+    <div id="fp-otp-err" style="background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none"></div>
+    <button class="btn btn-primary btn-block" id="fp-verify-btn" onclick="verifyForgotOtp()"><i class="fas fa-check-circle"></i> পাসওয়ার্ড পরিবর্তন করুন</button>
+    <div style="text-align:center;margin-top:14px;font-size:13px"><span style="color:var(--primary);cursor:pointer;font-weight:600" onclick="closeModal('forgot-otp-modal');openModal('forgot-pw-modal')"><i class="fas fa-arrow-left"></i> পেছনে যান</span></div>
   </div>
 </div>
 
@@ -1193,9 +1241,9 @@ auth.onAuthStateChanged(async function(user){
 // OTP SYSTEM
 // ══════════════════════════════════════════
 // EmailJS config — আপনার নিজের key দিন
-const EMAILJS_SERVICE_ID = 'service_idoblk7';
-const EMAILJS_TEMPLATE_ID = 'template_luxwoza';
-const EMAILJS_PUBLIC_KEY = 'xxfwdTjUcQYZXk8gs';
+const EMAILJS_SERVICE_ID = 'service_b6wi5mt';
+const EMAILJS_TEMPLATE_ID = 'template_azkq1x9';
+const EMAILJS_PUBLIC_KEY = 'jm_v19PnXEZDEkNra';
 
 var _pendingRegData = null;
 var _otpCode = null;
@@ -1393,6 +1441,162 @@ async function loginUser(){
   }
   btn.disabled=false;btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Login';
 }
+
+// ===== FORGOT PASSWORD =====
+var fpOtpCode = '';
+var fpTargetEmail = '';
+var fpCountdownTimer = null;
+
+function openForgotPassword(){
+  closeModal('login-modal');
+  document.getElementById('fp-email').value='';
+  document.getElementById('fp-email-err').style.display='none';
+  document.getElementById('fp-email-ok').style.display='none';
+  openModal('forgot-pw-modal');
+}
+
+async function sendForgotOtp(){
+  var email = document.getElementById('fp-email').value.trim();
+  var errEl = document.getElementById('fp-email-err');
+  var okEl = document.getElementById('fp-email-ok');
+  errEl.style.display='none'; okEl.style.display='none';
+  if(!email || !email.includes('@')) { errEl.textContent='সঠিক ইমেইল দিন!'; errEl.style.display='block'; return; }
+  var btn = document.getElementById('fp-send-btn');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> যাচাই হচ্ছে...';
+  try {
+    // Check if merchant exists with this email
+    var snap = await db.collection('merchants').where('email','==',email).get();
+    if(snap.empty){
+      errEl.textContent='এই ইমেইলে কোনো মার্চেন্ট অ্যাকাউন্ট নেই!';
+      errEl.style.display='block';
+      btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> OTP পাঠান';
+      return;
+    }
+    // Generate 6-digit OTP and store in Firestore with expiry
+    fpTargetEmail = email;
+    fpOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    var expiry = Date.now() + 10 * 60 * 1000; // 10 min
+    await db.collection('passwordResets').doc(email).set({
+      otp: fpOtpCode,
+      expiry: expiry,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // Send OTP via EmailJS
+    await emailjs.send('service_b6wi5mt', 'template_azkq1x9', {
+      to_email: email,
+      otp_code: fpOtpCode
+    });
+    okEl.textContent = 'OTP পাঠানো হয়েছে! আপনার ইমেইল চেক করুন।';
+    okEl.style.display='block';
+    setTimeout(()=>{
+      closeModal('forgot-pw-modal');
+      // Reset OTP boxes
+      for(var i=0;i<6;i++) { var el=document.getElementById('otp'+i); el.value=''; el.classList.remove('filled'); }
+      document.getElementById('fp-new-pass').value='';
+      document.getElementById('fp-confirm-pass').value='';
+      document.getElementById('fp-otp-err').style.display='none';
+      document.getElementById('fp-show-email').textContent = email;
+      openModal('forgot-otp-modal');
+      startFpCountdown();
+      document.getElementById('otp0').focus();
+    }, 900);
+  } catch(e) {
+    errEl.textContent = 'ত্রুটি হয়েছে: ' + e.message;
+    errEl.style.display='block';
+  }
+  btn.disabled=false; btn.innerHTML='<i class="fas fa-paper-plane"></i> OTP পাঠান';
+}
+
+function startFpCountdown(){
+  clearInterval(fpCountdownTimer);
+  var secs = 600;
+  var cd = document.getElementById('fp-countdown');
+  var resendBtn = document.getElementById('fp-resend-btn');
+  resendBtn.style.opacity='0.4'; resendBtn.style.pointerEvents='none';
+  fpCountdownTimer = setInterval(()=>{
+    secs--;
+    var m = Math.floor(secs/60), s = secs%60;
+    cd.textContent = m+':'+(s<10?'0':'')+s;
+    if(secs<=0){
+      clearInterval(fpCountdownTimer);
+      cd.textContent='মেয়াদ শেষ';
+      resendBtn.style.opacity='1'; resendBtn.style.pointerEvents='auto';
+    }
+  },1000);
+}
+
+async function resendForgotOtp(){
+  clearInterval(fpCountdownTimer);
+  fpOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+  var expiry = Date.now() + 10 * 60 * 1000;
+  await db.collection('passwordResets').doc(fpTargetEmail).set({
+    otp: fpOtpCode, expiry: expiry,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  await emailjs.send('service_b6wi5mt', 'template_azkq1x9', {
+    to_email: fpTargetEmail,
+    otp_code: fpOtpCode
+  });
+  showToast('নতুন OTP পাঠানো হয়েছে!','success');
+  startFpCountdown();
+  for(var i=0;i<6;i++){var el=document.getElementById('otp'+i);el.value='';el.classList.remove('filled');}
+  document.getElementById('otp0').focus();
+}
+
+function otpMove(el, nextIdx){
+  el.value = el.value.replace(/[^0-9]/g,'');
+  if(el.value){ el.classList.add('filled'); if(nextIdx<6) document.getElementById('otp'+nextIdx).focus(); }
+  else el.classList.remove('filled');
+}
+function otpFinal(el){
+  el.value = el.value.replace(/[^0-9]/g,'');
+  if(el.value) el.classList.add('filled'); else el.classList.remove('filled');
+}
+function otpBack(e,el,prevIdx){
+  if(e.key==='Backspace'&&!el.value&&prevIdx!==null) document.getElementById('otp'+prevIdx).focus();
+}
+
+async function verifyForgotOtp(){
+  var entered = '';
+  for(var i=0;i<6;i++) entered += document.getElementById('otp'+i).value;
+  var newPass = document.getElementById('fp-new-pass').value;
+  var confPass = document.getElementById('fp-confirm-pass').value;
+  var errEl = document.getElementById('fp-otp-err');
+  errEl.style.display='none';
+  if(entered.length<6){ errEl.textContent='৬ সংখ্যার OTP দিন!'; errEl.style.display='block'; return; }
+  if(!newPass||newPass.length<6){ errEl.textContent='পাসওয়ার্ড কমপক্ষে ৬ অক্ষর হতে হবে!'; errEl.style.display='block'; return; }
+  if(newPass!==confPass){ errEl.textContent='পাসওয়ার্ড দুটো মিলছে না!'; errEl.style.display='block'; return; }
+  var btn = document.getElementById('fp-verify-btn');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> যাচাই হচ্ছে...';
+  try {
+    var doc = await db.collection('passwordResets').doc(fpTargetEmail).get();
+    if(!doc.exists){ errEl.textContent='OTP পাওয়া যায়নি। পুনরায় চেষ্টা করুন।'; errEl.style.display='block'; btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> পাসওয়ার্ড পরিবর্তন করুন'; return; }
+    var data = doc.data();
+    if(Date.now() > data.expiry){ errEl.textContent='OTP মেয়াদ শেষ হয়ে গেছে! পুনরায় পাঠান।'; errEl.style.display='block'; btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> পাসওয়ার্ড পরিবর্তন করুন'; return; }
+    if(entered !== data.otp){ errEl.textContent='OTP সঠিক নয়!'; errEl.style.display='block'; btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> পাসওয়ার্ড পরিবর্তন করুন'; return; }
+    // OTP correct — update password via Firebase Auth password reset
+    // We use sendPasswordResetEmail as a secure bridge; also update Firestore record
+    // Update password in Firestore merchants collection
+    var mSnap = await db.collection('merchants').where('email','==',fpTargetEmail).get();
+    if(!mSnap.empty){
+      await db.collection('merchants').doc(mSnap.docs[0].id).update({ password: newPass });
+    }
+    // Send Firebase password reset link as well to update auth password
+    await auth.sendPasswordResetEmail(fpTargetEmail);
+    // Clean up OTP doc
+    await db.collection('passwordResets').doc(fpTargetEmail).delete();
+    clearInterval(fpCountdownTimer);
+    closeModal('forgot-otp-modal');
+    showToast('পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে! নতুন পাসওয়ার্ড দিয়ে লগইন করুন।','success');
+    setTimeout(()=>openModal('login-modal'), 800);
+  } catch(e) {
+    errEl.textContent = 'ত্রুটি: ' + e.message;
+    errEl.style.display='block';
+  }
+  btn.disabled=false; btn.innerHTML='<i class="fas fa-check-circle"></i> পাসওয়ার্ড পরিবর্তন করুন';
+}
+// ===== END FORGOT PASSWORD =====
+
 
 async function adminLoginUser(){
   var email=document.getElementById('admin-login-email').value.trim(),pass=document.getElementById('admin-login-pass').value;
