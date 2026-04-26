@@ -219,16 +219,16 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="sidebar-item active" data-section="dashboard"><i class="fas fa-th-large"></i> Dashboard</div>
       <div class="sidebar-item" data-section="add-product"><i class="fas fa-plus-circle"></i> Add Product</div>
       <div class="sidebar-item" data-section="my-products"><i class="fas fa-boxes"></i> Published Products</div>
-      <div class="sidebar-item" data-section="approval-products"><i class="fas fa-clipboard-check"></i> Approval Products</div>
-      <div class="sidebar-item" data-section="orders"><i class="fas fa-shopping-bag"></i> Orders</div>
-      <div class="sidebar-item" data-section="dstm-orders"><i class="fas fa-truck-moving"></i> Digital Shop TM Order</div>
+      <div class="sidebar-item" data-section="approval-products"><i class="fas fa-clipboard-check"></i> Approval Products <span id="sb-badge-approval-products" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
+      <div class="sidebar-item" data-section="orders"><i class="fas fa-shopping-bag"></i> Orders <span id="sb-badge-orders" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
+      <div class="sidebar-item" data-section="dstm-orders"><i class="fas fa-truck-moving"></i> Digital Shop TM Order <span id="sb-badge-dstm-orders" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
       <div class="sidebar-item" data-section="track-parcel"><i class="fas fa-map-marker-alt"></i> Track Parcel</div>
       <div class="sidebar-label">Financial</div>
       <div class="sidebar-item" data-section="withdraw"><i class="fas fa-wallet"></i> Withdraw</div>
       <div class="sidebar-item" data-section="add-money"><i class="fas fa-plus"></i> Add Money</div>
       <div class="sidebar-label">Others</div>
       <div class="sidebar-item" data-section="pickup"><i class="fas fa-map-pin"></i> Pickup Address</div>
-      <div class="sidebar-item" data-section="delivery"><i class="fas fa-truck"></i> Self Delivery</div>
+      <div class="sidebar-item" data-section="delivery"><i class="fas fa-truck"></i> Self Delivery <span id="sb-badge-delivery" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
       <div class="sidebar-item" data-section="returns"><i class="fas fa-undo"></i> Return</div>
       <div class="sidebar-item" data-section="support"><i class="fas fa-headset"></i> Support</div>
       <div class="sidebar-label">Account</div>
@@ -602,13 +602,13 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="sidebar-item active" data-admin-section="dashboard"><i class="fas fa-th-large"></i> Dashboard</div>
       <div class="sidebar-item" data-admin-section="new-merchants"><i class="fas fa-user-plus"></i> New Merchants <span id="new-merchant-count" style="background:var(--danger);color:white;border-radius:12px;padding:2px 8px;font-size:11px;margin-left:auto">0</span></div>
       <div class="sidebar-item" data-admin-section="merchant-details"><i class="fas fa-users"></i> Merchant Details</div>
-      <div class="sidebar-item" data-admin-section="published-products"><i class="fas fa-boxes"></i> Published Products</div>
-      <div class="sidebar-item" data-admin-section="approval-products"><i class="fas fa-clipboard-check"></i> Approval Products</div>
+      <div class="sidebar-item" data-admin-section="published-products"><i class="fas fa-boxes"></i> Published Products <span id="admin-sb-badge-published" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
+      <div class="sidebar-item" data-admin-section="approval-products"><i class="fas fa-clipboard-check"></i> Approval Products <span id="admin-sb-badge-approval" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
       <div class="sidebar-item" data-admin-section="parcels"><i class="fas fa-box"></i> Add Parcel</div>
-      <div class="sidebar-item" data-admin-section="edit-parcel"><i class="fas fa-user-check"></i> কাস্টমার ডেলিভারি দিবেন</div>
-      <div class="sidebar-item" data-admin-section="our-delivery"><i class="fas fa-truck"></i> আমাদের মাধ্যমে ডেলিভারি</div>
-      <div class="sidebar-item" data-admin-section="order-details"><i class="fas fa-list-alt"></i> User Order Details</div>
-      <div class="sidebar-item" data-admin-section="transactions"><i class="fas fa-exchange-alt"></i> আদান-প্রদান</div>
+      <div class="sidebar-item" data-admin-section="edit-parcel"><i class="fas fa-user-check"></i> কাস্টমার ডেলিভারি দিবেন <span id="admin-sb-badge-edit-parcel" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
+      <div class="sidebar-item" data-admin-section="our-delivery"><i class="fas fa-truck"></i> আমাদের মাধ্যমে ডেলিভারি <span id="admin-sb-badge-our-delivery" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
+      <div class="sidebar-item" data-admin-section="order-details"><i class="fas fa-list-alt"></i> User Order Details <span id="admin-sb-badge-order-details" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
+      <div class="sidebar-item" data-admin-section="transactions"><i class="fas fa-exchange-alt"></i> আদান-প্রদান <span id="admin-sb-badge-transactions" style="display:none;background:var(--danger);color:white;border-radius:12px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:auto">0</span></div>
       <div class="sidebar-label">Account</div>
       <div class="sidebar-item" id="admin-logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</div>
     </div>
@@ -1433,6 +1433,8 @@ function loadUserDashboard(){
   var cards=[{id:'add-product',icon:'fa-plus-circle',bg:'bg-green',title:'Add Product',locked:locked},{id:'my-products',icon:'fa-boxes',bg:'bg-blue',title:'Published Products',locked:locked},{id:'approval-products',icon:'fa-clipboard-check',bg:'bg-indigo',title:'Approval Products',locked:locked},{id:'orders',icon:'fa-shopping-bag',bg:'bg-orange',title:'Orders',locked:locked},{id:'track-parcel',icon:'fa-map-marker-alt',bg:'bg-purple',title:'Track Parcel',locked:false},{id:'withdraw',icon:'fa-wallet',bg:'bg-teal',title:'Withdraw',locked:locked},{id:'add-money',icon:'fa-plus',bg:'bg-yellow',title:'Add Money',locked:locked},{id:'pickup',icon:'fa-map-pin',bg:'bg-pink',title:'Pickup Address',locked:locked},{id:'delivery',icon:'fa-truck',bg:'bg-indigo',title:'Self Delivery',locked:locked},{id:'returns',icon:'fa-undo',bg:'bg-red',title:'Return',locked:locked},{id:'support',icon:'fa-headset',bg:'bg-gray',title:'Support',locked:false}];
   document.getElementById('user-dash-grid').innerHTML=cards.map(c=>'<div class="dash-card'+(c.locked?' locked':'')+'" data-nav="'+(c.locked?'locked':c.id)+'"><div class="dash-card-icon '+c.bg+'"><i class="fas '+c.icon+'"></i></div><h4>'+c.title+'</h4>'+(c.locked?'<div class="lock-icon"><i class="fas fa-lock"></i> Locked</div>':'')+' </div>').join('');
   document.querySelectorAll('[data-nav]').forEach(el=>el.onclick=()=>{var n=el.getAttribute('data-nav');if(n==='locked')showToast('Available after account approval!','warning');else showUserSection(n);});
+  // Load sidebar badges
+  refreshAllMerchantBadges();
 }
 
 var _allUserProducts = [];
@@ -1480,6 +1482,7 @@ async function loadUserApprovalProducts(){
     _allUserApprovalProducts=[];
     snap.forEach(d=>{_allUserApprovalProducts.push({id:d.id,...d.data()});});
     renderUserApprovalProducts(_allUserApprovalProducts);
+    setSbBadge('sb-badge-approval-products', _allUserApprovalProducts.length);
   }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
 }
 
@@ -1618,6 +1621,7 @@ async function loadAdminDashboard(){
       '<div class="admin-stat"><div class="admin-stat-icon bg-green"><i class="fas fa-check-circle"></i></div><div><div class="admin-stat-value">'+active.size+'</div><div class="admin-stat-label">Active Merchants</div></div></div>'+
       '<div class="admin-stat"><div class="admin-stat-icon bg-yellow"><i class="fas fa-clock"></i></div><div><div class="admin-stat-value">'+pending.size+'</div><div class="admin-stat-label">Pending Approval</div></div></div>'+
       '<div class="admin-stat"><div class="admin-stat-icon bg-orange"><i class="fas fa-boxes"></i></div><div><div class="admin-stat-value">'+prods.size+'</div><div class="admin-stat-label">Total Products</div></div></div>';
+    refreshAllAdminBadges();
   }catch(e){}
 }
 
@@ -1671,6 +1675,7 @@ async function loadAllProducts(){
     var snap=await db.collection('products').get();
     _allAdminPublishedProducts=[];snap.forEach(d=>{var p=d.data();if(p.status!=='confirmed')_allAdminPublishedProducts.push({id:d.id,...p});});
     renderAdminPublishedProducts(_allAdminPublishedProducts);
+    setSbBadge('admin-sb-badge-published', _allAdminPublishedProducts.length);
   }catch(e){}
 }
 
@@ -1706,6 +1711,7 @@ async function loadAdminApprovalProducts(){
     _allAdminApprovalProducts=[];
     snap.forEach(d=>{_allAdminApprovalProducts.push({id:d.id,...d.data()});});
     renderAdminApprovalProducts(_allAdminApprovalProducts);
+    setSbBadge('admin-sb-badge-approval', _allAdminApprovalProducts.length);
   }catch(e){c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load.</p></div>';}
 }
 
@@ -2169,6 +2175,7 @@ async function loadOrderDetails(){
     _allOrderDetails = [];
     snap.forEach(function(d){ _allOrderDetails.push({id:d.id,...d.data()}); });
     renderOrderDetails(_allOrderDetails);
+    setSbBadge('admin-sb-badge-order-details', _allOrderDetails.filter(function(o){return o.status==='pending';}).length);
   }catch(e){
     try{
       var snap2 = await db.collection('orders').get();
@@ -2176,6 +2183,7 @@ async function loadOrderDetails(){
       snap2.forEach(function(d){ _allOrderDetails.push({id:d.id,...d.data()}); });
       _allOrderDetails.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
       renderOrderDetails(_allOrderDetails);
+      setSbBadge('admin-sb-badge-order-details', _allOrderDetails.filter(function(o){return o.status==='pending';}).length);
     }catch(e2){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
   }
 }
@@ -2254,6 +2262,7 @@ async function loadMerchantOrders(){
     _allMerchantOrders = _allMerchantOrders.filter(function(o){ return o.status === 'pending' && !o.adminAssigned; });
     _allMerchantOrders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
     renderMerchantOrders(_allMerchantOrders);
+    setSbBadge('sb-badge-orders', _allMerchantOrders.length);
   }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
 }
 
@@ -2342,6 +2351,7 @@ async function loadMerchantDstmOrders(){
     _allMerchantDstmOrders = _allMerchantDstmOrders.filter(function(o){ return o.status === 'confirmed' && o.deliveryMode === 'dstm'; });
     _allMerchantDstmOrders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
     renderMerchantDstmOrders(_allMerchantDstmOrders);
+    setSbBadge('sb-badge-dstm-orders', _allMerchantDstmOrders.length);
   }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
 }
 
@@ -2553,6 +2563,7 @@ async function loadMerchantSelfDeliveryOrders(){
     _allMerchantSelfDeliveryOrders = _allMerchantSelfDeliveryOrders.filter(function(o){ return o.status === 'self-delivery' || (o.status === 'confirmed' && o.deliveryMode === 'self'); });
     _allMerchantSelfDeliveryOrders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
     renderMerchantSelfDeliveryOrders(_allMerchantSelfDeliveryOrders);
+    setSbBadge('sb-badge-delivery', _allMerchantSelfDeliveryOrders.length);
   }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
 }
 
@@ -2803,6 +2814,7 @@ async function loadCustomerDeliveryOrders(){
     });
     _allCustomerDeliveryOrders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
     renderCustomerDeliveryOrders(_allCustomerDeliveryOrders);
+    setSbBadge('admin-sb-badge-edit-parcel', _allCustomerDeliveryOrders.length);
   }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
 }
 
@@ -2857,6 +2869,7 @@ async function loadOurDeliveryOrders(){
     });
     _allOurDeliveryOrders.sort(function(a,b){ return (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0); });
     renderOurDeliveryOrders(_allOurDeliveryOrders);
+    setSbBadge('admin-sb-badge-our-delivery', _allOurDeliveryOrders.length);
   }catch(e){ c.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Load failed.</p></div>'; }
 }
 
@@ -3811,6 +3824,7 @@ async function loadAdminTransactions(){
         +'</div>';
     });
     container.innerHTML=html;
+    setSbBadge('admin-sb-badge-transactions', docs.length);
   }catch(e){console.error(e);container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>লোড ব্যর্থ</p></div>';}
 }
 
@@ -3971,8 +3985,74 @@ async function deleteConfirmedTx(txId,card){
 
 // Update aT map — already set in aT object above
 
-/* ══════════════════════════════════════════
-   BANGLADESH GEO DATA — বিভাগ / জেলা / থানা
+/* ══ SIDEBAR BADGE HELPERS ══ */
+function setSbBadge(id, count){
+  var el = document.getElementById(id);
+  if(!el) return;
+  if(count > 0){ el.textContent = count > 99 ? '99+' : count; el.style.display = 'inline-block'; }
+  else { el.style.display = 'none'; }
+}
+
+async function refreshAllMerchantBadges(){
+  if(!currentUser) return;
+  var uid = currentUser.uid;
+  try{
+    // Approval products (confirmed) — single field query OK
+    var apSnap = await db.collection('products').where('merchantUid','==',uid).get();
+    var apCount = 0, pubCount = 0;
+    apSnap.forEach(function(d){ 
+      var s = d.data().status;
+      if(s === 'confirmed') apCount++;
+      else pubCount++;
+    });
+    setSbBadge('sb-badge-approval-products', apCount);
+
+    // All orders for this merchant — filter client side
+    var ordSnap = await db.collection('orders').where('merchantUid','==',uid).get();
+    var orderCount = 0, dstmCount = 0, selfCount = 0;
+    ordSnap.forEach(function(d){
+      var o = d.data();
+      if(o.status === 'pending' && !o.adminAssigned) orderCount++;
+      if(o.status === 'confirmed' && o.deliveryMode === 'dstm') dstmCount++;
+      if(o.status === 'self-delivery' || (o.status === 'confirmed' && o.deliveryMode === 'self')) selfCount++;
+    });
+    setSbBadge('sb-badge-orders', orderCount);
+    setSbBadge('sb-badge-dstm-orders', dstmCount);
+    setSbBadge('sb-badge-delivery', selfCount);
+  }catch(e){ console.warn('Merchant badge error:', e); }
+}
+
+async function refreshAllAdminBadges(){
+  try{
+    // Published products (non-confirmed)
+    var pubSnap = await db.collection('products').get();
+    var pubCount = 0;
+    pubSnap.forEach(function(d){ if(d.data().status !== 'confirmed') pubCount++; });
+    setSbBadge('admin-sb-badge-published', pubCount);
+
+    // Approval products (confirmed only)
+    var approvalSnap = await db.collection('products').where('status','==','confirmed').get();
+    setSbBadge('admin-sb-badge-approval', approvalSnap.size);
+
+    // Customer delivery (self delivery orders)
+    var allOrders = await db.collection('orders').get();
+    var selfCount = 0, ourCount = 0, pendingCount = 0;
+    allOrders.forEach(function(d){
+      var o = d.data();
+      if(o.status === 'self-delivery' || (o.status === 'confirmed' && o.deliveryMode === 'self')) selfCount++;
+      if(o.status === 'confirmed' && o.deliveryMode === 'dstm') ourCount++;
+      if(o.status === 'pending') pendingCount++;
+    });
+    setSbBadge('admin-sb-badge-edit-parcel', selfCount);
+    setSbBadge('admin-sb-badge-our-delivery', ourCount);
+    setSbBadge('admin-sb-badge-order-details', pendingCount);
+
+    // Transactions
+    var txSnap = await db.collection('transactions').where('status','==','pending').get();
+    setSbBadge('admin-sb-badge-transactions', txSnap.size);
+  }catch(e){ console.warn('Badge refresh error:', e); }
+}
+
    ══════════════════════════════════════════ */
 var BD_GEO = {
   'ঢাকা': {
