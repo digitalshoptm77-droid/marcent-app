@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# GitHub Pages Sitemap
+Sitemap: https://digitalshoptm77-droid.github.io/marcent-app/sitemap.xml
+
+# Vercel Sitemap
+Sitemap: https://marcent-app.vercel.app/sitemap.xml
