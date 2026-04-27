@@ -50,9 +50,9 @@ body{font-family:'Hind Siliguri',sans-serif;background:#f8fafb;color:var(--dark)
 .btn-warning{background:var(--warning);color:white}
 .btn-success{background:var(--primary);color:white}
 .btn-sm{padding:6px 14px;font-size:13px}
-.hero{background:#111;position:relative;overflow:hidden;min-height:400px;display:flex;align-items:center}
-.hero-banner-img{width:100%;height:420px;object-fit:cover;display:block}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.2) 60%,transparent 100%);display:flex;align-items:center;padding:0 60px}
+.hero{background:#111;position:relative;overflow:hidden;height:100vh;max-height:600px;min-height:420px;display:flex;align-items:center;width:100%}
+.hero-banner-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.78) 0%,rgba(0,0,0,0.35) 55%,rgba(0,0,0,0.1) 100%);display:flex;align-items:center;padding:0 60px;z-index:2}
 .hero-text{color:white;max-width:520px}
 .hero-text h1{font-family:'Poppins',sans-serif;font-size:40px;font-weight:800;margin-bottom:14px;line-height:1.2}
 .hero-text h1 span{color:#4ade80}
@@ -227,7 +227,59 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
       <div class="feature-card"><div class="feature-icon"><i class="fas fa-headset"></i></div><h3>24/7 Support</h3><p>Our support team is always ready to help you anytime.</p></div>
     </div>
   </div>
+
+  <!-- Home Page Banner (Before Login) -->
+  <div style="width:100%;background:linear-gradient(135deg,#1a1a2e 0%,#003d1a 100%);overflow:hidden;position:relative">
+    <img src="orjo.png" alt="Delivery Banner" style="width:100%;max-height:280px;object-fit:cover;object-position:center;display:block;opacity:0.92" onerror="this.style.display='none'">
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.1) 65%,transparent 100%);display:flex;align-items:center;padding:0 48px">
+      <div>
+        <div style="font-family:'Poppins',sans-serif;font-size:26px;font-weight:800;color:white;line-height:1.25;margin-bottom:10px">বাংলাদেশের সেরা<br><span style="color:#4ade80">ডেলিভারি নেটওয়ার্ক</span></div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.85);margin-bottom:18px">300k+ মার্চেন্ট · 10k+ ডেলিভারিম্যান · 500+ পয়েন্ট</div>
+        <button onclick="document.getElementById('nav-signup-btn').click()" style="background:white;color:#00a651;font-family:'Hind Siliguri',sans-serif;font-size:14px;font-weight:700;padding:10px 24px;border:none;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'"><i class="fas fa-store"></i> মার্চেন্ট হিসেবে যোগ দিন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home Page Footer -->
+  <footer style="background:#1a1a2e;color:white;padding:40px 24px 20px">
+    <div style="max-width:1100px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;margin-bottom:32px">
+        <div>
+          <img src="ko.jpeg" alt="Digital Shop TM" style="height:52px;border-radius:8px;margin-bottom:12px" onerror="this.style.display='none'">
+          <p style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8">বাংলাদেশের সেরা অনলাইন মার্চেন্ট প্ল্যাটফর্ম। পণ্য বিক্রি করুন, অর্ডার ট্র্যাক করুন সহজেই।</p>
+          <div style="display:flex;gap:10px;margin-top:14px">
+            <a href="https://www.facebook.com/digitalshopt.mbd" target="_blank" style="width:36px;height:36px;background:#1877f2;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;text-decoration:none"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://wa.me/8801329885689" target="_blank" style="width:36px;height:36px;background:#25d366;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;text-decoration:none"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.youtube.com/@DIGITATSHOP" target="_blank" style="width:36px;height:36px;background:#ff0000;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;text-decoration:none"><i class="fab fa-youtube"></i></a>
+            <a href="https://t.me/+8801822963824" target="_blank" style="width:36px;height:36px;background:#0088cc;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;text-decoration:none"><i class="fab fa-telegram-plane"></i></a>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;margin-bottom:14px;color:#4ade80">Quick Links</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <a href="#" onclick="document.getElementById('nav-signup-btn').click();return false" style="color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px" onmouseover="this.style.color='#4ade80'" onmouseout="this.style.color='rgba(255,255,255,0.65)'"><i class="fas fa-chevron-right" style="font-size:10px;margin-right:6px"></i>মার্চেন্ট রেজিস্ট্রেশন</a>
+            <a href="#" onclick="document.getElementById('nav-login-btn').click();return false" style="color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px" onmouseover="this.style.color='#4ade80'" onmouseout="this.style.color='rgba(255,255,255,0.65)'"><i class="fas fa-chevron-right" style="font-size:10px;margin-right:6px"></i>লগইন করুন</a>
+            <a href="mailto:digital.shop.t.m77@gmail.com" style="color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px" onmouseover="this.style.color='#4ade80'" onmouseout="this.style.color='rgba(255,255,255,0.65)'"><i class="fas fa-chevron-right" style="font-size:10px;margin-right:6px"></i>সাপোর্ট</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;margin-bottom:14px;color:#4ade80">যোগাযোগ</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <a href="tel:+8801822963824" style="color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px"><i class="fas fa-phone" style="margin-right:8px;color:#4ade80"></i>+88 01822-963824</a>
+            <a href="https://wa.me/8801329885689" target="_blank" style="color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px"><i class="fab fa-whatsapp" style="margin-right:8px;color:#25d366"></i>+88 01329-885689</a>
+            <a href="mailto:digital.shop.t.m77@gmail.com" style="color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px"><i class="fas fa-envelope" style="margin-right:8px;color:#f59e0b"></i>digital.shop.t.m77@gmail.com</a>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="font-size:12px;color:rgba(255,255,255,0.4)">© 2024 Digital Shop TM. সকল অধিকার সংরক্ষিত।</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4)">Made with <span style="color:#ef4444">❤</span> in Bangladesh</div>
+      </div>
+    </div>
+  </footer>
 </div>
+
+
 
 <!-- USER DASHBOARD -->
 <div id="page-user-dashboard" class="page">
@@ -274,6 +326,16 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
     <div class="content-area">
 
       <div id="section-dashboard" class="content-section active">
+        <!-- Merchant Dashboard Banner -->
+        <div style="border-radius:14px;overflow:hidden;position:relative;margin-bottom:20px;background:#1a1a2e">
+          <img src="orjo.png" alt="Banner" style="width:100%;height:160px;object-fit:cover;object-position:center;display:block;opacity:0.85" onerror="this.style.display='none'">
+          <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.1) 70%);display:flex;align-items:center;padding:0 24px">
+            <div>
+              <div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:white;margin-bottom:6px">স্বাগতম, <span id="banner-merchant-name" style="color:#4ade80">Merchant</span> 👋</div>
+              <div style="font-size:13px;color:rgba(255,255,255,0.8)">আপনার ড্যাশবোর্ড থেকে সব কিছু পরিচালনা করুন</div>
+            </div>
+          </div>
+        </div>
         <div id="approval-banner"></div>
         <div id="user-stats-row" class="stats-row"></div>
         <div class="sec-heading">Quick Actions</div>
@@ -608,11 +670,42 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#fafafa}
         </div>
       </div>
 
+      <!-- Merchant Panel Banner (bottom of content) -->
+      <div style="margin:24px 0 0;border-radius:14px;overflow:hidden;position:relative;background:#1a1a2e">
+        <img src="orjo.png" alt="Banner" style="width:100%;height:140px;object-fit:cover;object-position:center;display:block;opacity:0.8" onerror="this.style.display='none'">
+        <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.1) 70%);display:flex;align-items:center;padding:0 24px">
+          <div>
+            <div style="font-family:'Poppins',sans-serif;font-size:16px;font-weight:800;color:white;margin-bottom:4px">Digital Shop TM — <span style="color:#4ade80">আপনার ব্যবসার অংশীদার</span></div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.75)">300k+ মার্চেন্ট · 10k+ ডেলিভারিম্যান · 500+ পয়েন্ট</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Merchant Dashboard Footer -->
+      <footer style="background:#1a1a2e;color:white;padding:28px 24px 16px;margin-top:24px;border-radius:14px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;margin-bottom:20px">
+          <div>
+            <img src="ko.jpeg" alt="Digital Shop TM" style="height:40px;border-radius:6px;margin-bottom:10px" onerror="this.style.display='none'">
+            <p style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.7">বাংলাদেশের সেরা অনলাইন মার্চেন্ট প্ল্যাটফর্ম।</p>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <a href="https://www.facebook.com/digitalshopt.mbd" target="_blank" style="width:32px;height:32px;background:#1877f2;border-radius:7px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;text-decoration:none"><i class="fab fa-facebook-f"></i></a>
+              <a href="https://wa.me/8801329885689" target="_blank" style="width:32px;height:32px;background:#25d366;border-radius:7px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;text-decoration:none"><i class="fab fa-whatsapp"></i></a>
+              <a href="https://www.youtube.com/@DIGITATSHOP" target="_blank" style="width:32px;height:32px;background:#ff0000;border-radius:7px;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;text-decoration:none"><i class="fab fa-youtube"></i></a>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#4ade80;margin-bottom:10px">হেল্পলাইন</div>
+            <a href="tel:+8801822963824" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:12px;display:block;margin-bottom:6px"><i class="fas fa-phone" style="margin-right:6px;color:#4ade80"></i>+88 01822-963824</a>
+            <a href="https://wa.me/8801329885689" target="_blank" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:12px;display:block;margin-bottom:6px"><i class="fab fa-whatsapp" style="margin-right:6px;color:#25d366"></i>+88 01329-885689</a>
+            <a href="mailto:digital.shop.t.m77@gmail.com" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:12px;display:block"><i class="fas fa-envelope" style="margin-right:6px;color:#f59e0b"></i>Gmail</a>
+          </div>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;text-align:center;font-size:11px;color:rgba(255,255,255,0.35)">© 2024 Digital Shop TM. সকল অধিকার সংরক্ষিত। Made with <span style="color:#ef4444">❤</span> in Bangladesh</div>
+      </footer>
+
     </div>
   </div>
 </div>
-
-<!-- ADMIN DASHBOARD -->
 <div id="page-admin-dashboard" class="page">
   <div class="overlay-backdrop" id="admin-sidebar-backdrop"></div>
   <div class="sidebar" id="admin-sidebar">
@@ -1708,6 +1801,7 @@ async function logoutUser(){await auth.signOut();currentUser=null;showPage('home
 function loadUserDashboard(){
   var u=currentUser;if(!u)return;
   document.getElementById('sidebar-username').textContent=u.fullName||'Merchant';
+  var bn=document.getElementById('banner-merchant-name');if(bn)bn.textContent=u.fullName||'Merchant';
   document.getElementById('sidebar-uid').textContent='ID: '+(u.merchantId||'---');
   var ok=u.status==='active',rej=u.status==='rejected';
   var b=document.getElementById('approval-banner');
